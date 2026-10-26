@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="134.1 203 89 89" width="512" height="512">
+<rect x="134.1" y="203" width="89" height="89" fill="#FF914C"/>
+<circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#FFFFFF" stroke-width="2.2"/>
+<clipPath id="vc"><circle cx="178.6" cy="247.5" r="40.5"/></clipPath>
+<polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FFFFFF"/>
+<path clip-path="url(#vc)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="#FFFFFF"/>
+</svg>

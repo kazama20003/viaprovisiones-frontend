@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Cartel QR — VIA Provisiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&amp;family=Montserrat:wght@500&amp;family=Roboto:wght@400;500;700&amp;family=Roboto+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111111}a:hover{color:#111111}
+</style>
+</helmet>
+<div style="width: 600px; height: 850px; box-sizing: border-box; background: {{accent}}; color: #111111; font-family: Roboto, system-ui, sans-serif; padding: 48px; display: flex; flex-direction: column; align-items: center; gap: 26px; text-align: center">
+<svg width="300" height="99" viewBox="134 205 278 92" role="img" aria-label="VIA Provisiones">
+<circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#FFFFFF" stroke-width="3"></circle>
+<clipPath id="via-clip-qr"><circle cx="178.6" cy="247.5" r="40.5"></circle></clipPath>
+<polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FFFFFF"></polygon>
+<path clip-path="url(#via-clip-qr)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="#FFFFFF"></path>
+<g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M242.6 229 L257.8 248.25 L281.1 229"></path><path d="M310.1 248 L334.3 228 L349.6 248"></path><path d="M295.8 229 V248.25"></path></g>
+<text transform="translate(0 283.4) skewX(-12) translate(0 -283.4)" x="229" y="283.4" textLength="178" lengthAdjust="spacing" font-family="Montserrat, 'Segoe UI', Arial, sans-serif" font-size="20" font-weight="500" fill="#FFFFFF">PROVISIONES</text>
+</svg>
+<h1 style="margin: 0; font-family: Archivo, sans-serif; font-weight: 900; font-size: 76px; line-height: 0.92; text-transform: uppercase">Escanéanos</h1>
+<p style="margin: 0; font-size: 20px; font-weight: 500; line-height: 1.4; max-width: 420px">Síguenos en redes, compra por WhatsApp o cotiza para tu empresa.</p>
+<div style="position: relative; background: #FFFFFF; border: 4px solid #111111; border-radius: 28px; padding: 22px; width: 300px; height: 300px; box-sizing: border-box">
+<img src="img/2d7ff64ebc4cab97ff138aeb7ef049b7.svg" alt="Código QR a www.viaprovisiones.com/enlaces" style="width: 100%; height: 100%; display: block">
+<span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: {{accent}}; border: 4px solid #FFFFFF; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,18 82,64 50,52 18,64" fill="#FFFFFF"></polygon></svg></span>
+</div>
+<span style="font-family: 'Roboto Mono', monospace; font-size: 17px; font-weight: 700; background: #111111; color: #FFFFFF; padding: 10px 18px; border-radius: 999px">viaprovisiones.com/enlaces</span>
+<div style="display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; font-family: 'Roboto Mono', monospace; font-size: 14px; font-weight: 700; text-transform: uppercase">
+<span>Instagram</span><span aria-hidden="true">·</span><span>Facebook</span><span aria-hidden="true">·</span><span>TikTok</span><span aria-hidden="true">·</span><span>WhatsApp</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF914C","options":["#FF914C","#FF5F00","#F27420"]},"$preview":{"width":600,"height":850}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#FF914C' };
+  }
+}
+</script>
+</body>
+</html>

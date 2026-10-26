@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Carrito — VIA Provisiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&amp;family=Montserrat:wght@500&amp;family=Roboto:wght@400;500;700&amp;family=Roboto+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#111111}a:hover{color:#E8701F}
+.marquee{animation:via-marquee 40s linear infinite}
+@keyframes via-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.marquee{animation:none}}
+</style>
+</helmet>
+<div style="font-family: Roboto, system-ui, sans-serif; font-size: 17px; letter-spacing: 0.02em; color: #111111; background: #FFFFFF; min-height: 100vh">
+
+<dc-import name="Header" accent="{{accent}}" cart="{{cartCount}}" active="" hint-size="100%,200px"></dc-import>
+
+<main style="max-width: 1520px; margin: 0 auto; padding: 48px 40px 80px">
+<h1 style="margin: 0 0 32px; font-family: Archivo, sans-serif; font-weight: 900; font-size: 56px; text-transform: uppercase; line-height: 1">Tu carrito <span style="font-family: 'Roboto Mono', monospace; font-size: 20px; font-weight: 700; vertical-align: middle; background: {{accent}}; padding: 4px 12px; border-radius: 999px">{{countLabel}}</span></h1>
+
+<div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+
+<!-- Productos -->
+<section aria-label="Productos" style="flex: 999 1 640px; min-width: 0; border-top: 2px solid #111111">
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 48px 0; display: flex; flex-direction: column; gap: 16px; align-items: flex-start">
+<p style="margin: 0; font-size: 20px">Tu carrito está vacío.</p>
+<a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 54px; padding: 0 28px; border-radius: 999px; background: {{accent}}; text-decoration: none; font-family: 'Roboto Mono', monospace; font-size: 15px; font-weight: 700; text-transform: uppercase">Ver productos</a>
+</div>
+</sc-if>
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="3">
+<div style="display: flex; gap: 20px; align-items: center; padding: 22px 0; border-bottom: 1px solid #111111; flex-wrap: wrap">
+<img src="{{l.img}}" alt="" style="width: 120px; height: 120px; object-fit: cover; border-radius: 14px; flex: none">
+<div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 700; text-transform: uppercase">{{l.cat}}</span>
+<a href="Producto.dc.html" style="font-family: Archivo, sans-serif; font-size: 19px; font-weight: 800; text-transform: uppercase; text-decoration: none; line-height: 1.25">{{l.name}}</a>
+<span style="font-family: 'Roboto Mono', monospace; font-size: 15px">{{l.unit}} c/u</span>
+</div>
+<div role="group" aria-label="Cantidad" style="display: flex; align-items: center; height: 48px; border: 2px solid #111111; border-radius: 999px; box-sizing: border-box">
+<button onClick="{{l.dec}}" aria-label="Quitar uno" style="width: 44px; height: 44px; border: none; background: transparent; cursor: pointer; font-size: 20px; color: #111111">−</button>
+<span style="min-width: 28px; text-align: center; font-family: 'Roboto Mono', monospace; font-size: 16px; font-weight: 700">{{l.qty}}</span>
+<button onClick="{{l.inc}}" aria-label="Agregar uno" style="width: 44px; height: 44px; border: none; background: transparent; cursor: pointer; font-size: 20px; color: #111111">+</button>
+</div>
+<span style="min-width: 120px; text-align: right; font-family: 'Roboto Mono', monospace; font-size: 18px; font-weight: 700">{{l.total}}</span>
+<button onClick="{{l.remove}}" aria-label="Quitar del carrito" style="width: 44px; height: 44px; border: 1px solid #111111; border-radius: 50%; background: #FFFFFF; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg></button>
+</div>
+</sc-for>
+<div style="margin-top: 28px; padding: 22px 24px; border: 2px dashed #111111; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+<span style="font-size: 16px"><strong>¿Compras para tu empresa?</strong> Pide precios por volumen y entrega programada.</span>
+<a href="Empresas.dc.html" style="font-family: 'Roboto Mono', monospace; font-size: 14px; font-weight: 700; text-transform: uppercase; text-underline-offset: 4px">Solicitar cotización →</a>
+</div>
+</section>
+
+<!-- Resumen -->
+<aside aria-label="Resumen del pedido" style="flex: 1 1 380px; max-width: 460px; border: 2px solid #111111; border-radius: 20px; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
+<h2 style="margin: 0; font-family: Archivo, sans-serif; font-size: 24px; font-weight: 900; text-transform: uppercase">Resumen</h2>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700; text-transform: uppercase">Comprobante</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{docs}}" as="d" hint-placeholder-count="2">
+<button onClick="{{d.pick}}" aria-pressed="{{d.pressed}}" style="height: 46px; border-radius: 999px; border: 2px solid #111111; background: {{d.bg}}; color: #111111; cursor: pointer; font-family: 'Roboto Mono', monospace; font-size: 14px; font-weight: 700; text-transform: uppercase">{{d.name}}</button>
+</sc-for>
+</div>
+<sc-if value="{{isFactura}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">RUC<input type="text" inputmode="numeric" placeholder="20XXXXXXXXX" style="height: 46px; border: 1px solid #111111; border-radius: 10px; padding: 0 14px; font-family: inherit; font-size: 15px"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500">Razón social<input type="text" style="height: 46px; border: 1px solid #111111; border-radius: 10px; padding: 0 14px; font-family: inherit; font-size: 15px"></label>
+</div>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 700; text-transform: uppercase">Método de pago</span>
+<sc-for list="{{pays}}" as="p" hint-placeholder-count="3">
+<button onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; border-radius: 14px; border: {{p.border}}; background: #FFFFFF; color: #111111; cursor: pointer; text-align: left; font-family: Roboto, sans-serif; font-size: 15px; font-weight: 500"><span style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #111111; box-sizing: border-box; background: {{p.dot}}"></span>{{p.name}}</button>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #111111; padding-top: 18px; font-size: 16px">
+<div style="display: flex; justify-content: space-between"><span>Subtotal</span><span style="font-family: 'Roboto Mono', monospace; font-weight: 700">{{subtotal}}</span></div>
+<div style="display: flex; justify-content: space-between"><span>Envío</span><span style="font-family: 'Roboto Mono', monospace; font-weight: 700">{{shipping}}</span></div>
+<span style="font-size: 13px; color: #444444">Precios con IGV incluido. {{shipNote}}</span>
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px"><span style="font-family: Archivo, sans-serif; font-size: 20px; font-weight: 900; text-transform: uppercase">Total</span><span style="font-family: 'Roboto Mono', monospace; font-size: 26px; font-weight: 700">{{total}}</span></div>
+</div>
+
+<a href="Checkout.dc.html" style="height: 58px; border-radius: 999px; background: {{accent}}; color: #111111; display: flex; align-items: center; justify-content: center; text-decoration: none; font-family: 'Roboto Mono', monospace; font-size: 16px; font-weight: 700; letter-spacing: 0.56px; text-transform: uppercase">Ir a pagar</a>
+<a href="Enlaces.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 52px; border-radius: 999px; border: 2px solid #111111; box-sizing: border-box; text-decoration: none; font-family: 'Roboto Mono', monospace; font-size: 14px; font-weight: 700; text-transform: uppercase"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"></path></svg>Enviar pedido por WhatsApp</a>
+</aside>
+</div>
+</main>
+
+<dc-import name="Footer" accent="{{accent}}" hint-size="100%,980px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF914C","options":["#FF914C","#FF5F00","#F27420"]},"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      doc: 0,
+      pay: 0,
+      lines: [
+        { id: 1, cat: 'Camping', name: 'Lámpara de camping recargable', price: 69.9, qty: 2, img: 'a58999411e32d7481815ba8cdc175e97' },
+        { id: 2, cat: 'Solar', name: 'Panel solar monocristalino 100 W', price: 349, qty: 1, img: '972ceb606bfca75ef6208d8d3966c77d' },
+        { id: 3, cat: 'Cables', name: 'Cable USB-C carga rápida 1 m', price: 19.9, qty: 3, img: '3aba2390d3fbd5f06fdd2cede507b16f' }
+      ]
+    };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#FF914C';
+    const money = (n) => 'S/ ' + n.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const setQty = (id, d) => this.setState({ lines: this.state.lines.map((l) => (l.id === id ? { ...l, qty: Math.max(1, l.qty + d) } : l)) });
+    const lines = this.state.lines;
+    const subtotal = lines.reduce((s, l) => s + l.price * l.qty, 0);
+    const freeShip = subtotal >= 200;
+    const shipping = lines.length === 0 || freeShip ? 0 : 15;
+    const count = lines.reduce((s, l) => s + l.qty, 0);
+    const docNames = ['Boleta', 'Factura'];
+    const payNames = ['Tarjeta de crédito o débito', 'Yape / Plin', 'Transferencia bancaria'];
+    return {
+      accent,
+      cartCount: count,
+      countLabel: count + (count === 1 ? ' producto' : ' productos'),
+      empty: lines.length === 0,
+      lines: lines.map((l) => ({
+        ...l,
+        img: 'img/' + l.img,
+        unit: money(l.price),
+        total: money(l.price * l.qty),
+        inc: () => setQty(l.id, 1),
+        dec: () => setQty(l.id, -1),
+        remove: () => this.setState({ lines: this.state.lines.filter((x) => x.id !== l.id) })
+      })),
+      docs: docNames.map((name, i) => ({
+        name,
+        pressed: i === this.state.doc ? 'true' : 'false',
+        bg: i === this.state.doc ? accent : '#FFFFFF',
+        pick: () => this.setState({ doc: i })
+      })),
+      isFactura: this.state.doc === 1,
+      pays: payNames.map((name, i) => ({
+        name,
+        pressed: i === this.state.pay ? 'true' : 'false',
+        border: i === this.state.pay ? '3px solid #111111' : '1px solid #111111',
+        dot: i === this.state.pay ? accent : '#FFFFFF',
+        pick: () => this.setState({ pay: i })
+      })),
+      subtotal: money(subtotal),
+      shipping: shipping === 0 ? 'Gratis' : money(shipping),
+      shipNote: freeShip ? 'Tu pedido tiene envío gratis.' : 'Envío gratis desde S/ 200.00 (ejemplo).',
+      total: money(subtotal + shipping)
+    };
+  }
+}
+</script>
+</body>
+</html>

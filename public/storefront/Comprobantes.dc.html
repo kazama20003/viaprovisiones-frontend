@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Comprobantes SUNAT — VIA Provisiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Roboto+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E9E7}
+a{color:#111111}
+.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}
+.cp-row:hover{background:#F4F4F2}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #E9E9E7; padding: 0; box-sizing: border-box; font-family: Manrope, system-ui, sans-serif; color: #111111">
+<div style="position: relative; width: 100%; max-width: none; min-height: 100vh; margin: 0 auto; background: #F4F4F2; border-radius: 40px; overflow: hidden">
+<div>
+<!-- Menú fijado arriba (opcional, con la chincheta) -->
+<sc-if value="{{pinned}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 20px 20px 0"><dc-import name="MenuPanel" mode="bar" active="Comprobantes" on-pin="{{togglePin}}" hint-size="100%,58px"></dc-import></div>
+</sc-if>
+<div>
+
+<!-- Encabezado -->
+<div style="padding: 28px 32px 30px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
+<button onClick="{{menuBtn}}" aria-label="{{menuBtnLabel}}" style="width: 52px; height: 52px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"></path></svg></button>
+<a href="Dashboard.dc.html" aria-label="Ir al panel" style="width: 52px; height: 52px; border-radius: 50%; background: #111111; display: flex; align-items: center; justify-content: center; flex: none"><svg width="30" height="30" viewBox="136 205 86 86" aria-hidden="true"><circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#FFFFFF" stroke-width="5"></circle><clipPath id="via-clip-cpe"><circle cx="178.6" cy="247.5" r="40.5"></circle></clipPath><polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FFFFFF"></polygon><path clip-path="url(#via-clip-cpe)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="#FFFFFF"></path></svg></a>
+<span style="display: flex; flex-direction: column; line-height: 1.2"><span style="font-size: 16px; font-weight: 700">Comprobantes SUNAT</span><span style="font-size: 16px; font-weight: 500; color: #8C8C8C">Finanzas · boletas y facturas</span></span>
+<span style="flex: 1"></span>
+<button onClick="{{emitNew}}" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: 999px; border: none; background: #E8701F; color: #FFFFFF; cursor: pointer; font-family: Manrope, sans-serif; font-size: 14px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Emitir comprobante</button>
+<span style="width: 52px; height: 52px; border-radius: 50%; background: {{accent}}; color: #111111; display: flex; align-items: center; justify-content: center; font-weight: 800">BC</span>
+<label style="display: flex; align-items: center; gap: 12px"><span style="width: 52px; height: 52px; border-radius: 50%; border: 1px solid #DCDCD8; display: flex; align-items: center; justify-content: center; flex: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar comprobante</span><input type="search" placeholder="Serie, cliente o RUC…" style="width: 170px; border: none; background: transparent; font-family: inherit; font-size: 13px; outline: none"></label>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap">
+<span style="display: flex; flex-direction: column; line-height: 1.12; min-width: 300px"><span style="font-size: 38px; font-weight: 600; letter-spacing: -0.02em">Comprobantes</span><span style="font-size: 38px; font-weight: 400; letter-spacing: -0.02em; color: #9A9A9A">{{monthCount}} emitidos en octubre</span></span>
+<span style="flex: 1"></span>
+<sc-for list="{{headStats}}" as="h" hint-placeholder-count="4">
+<span style="display: flex; align-items: center; gap: 12px"><span style="min-width: 76px; height: 76px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 1px solid #DCDCD8; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; background: {{h.bg}}; color: {{h.fg}}">{{h.v}}</span><span style="display: flex; flex-direction: column; font-size: 13px; font-weight: 600; line-height: 1.25"><span>{{h.k1}}</span><span style="color: #8C8C8C">{{h.k2}}</span></span></span>
+</sc-for>
+</div>
+<sc-if value="{{notice}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 20px; background: #FFF1E6; color: #8A3B0A; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5M12 16h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"></path></svg><span style="flex: 1">{{notice}}</span><button onClick="{{clearNotice}}" aria-label="Cerrar aviso" style="width: 32px; height: 32px; border-radius: 50%; border: none; background: transparent; cursor: pointer; color: inherit; font-size: 18px">×</button></div>
+</sc-if>
+</div>
+
+<!-- Bloques de resumen -->
+<div style="padding: 0 20px 16px; display: flex; gap: 16px; flex-wrap: wrap">
+
+<div style="flex: 1 1 300px; min-width: 0; border-radius: 30px; background: #111111; color: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 15px; font-weight: 700">Emitidos este mes</span>
+<span style="font-size: 34px; font-weight: 700; letter-spacing: -0.02em"><span style="color: #FF914C">S/</span> {{monthTotal}}</span>
+<sc-for list="{{series}}" as="s" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #CFCFCF">{{s.name}} <span style="font-family: 'Roboto Mono', monospace; color: #9A9A9A">{{s.code}}</span></span><span style="font-weight: 800">{{s.n}} · {{s.amount}}</span></span><span style="height: 6px; border-radius: 999px; background: #2A2A2A"><span style="display: block; width: {{s.w}}; height: 100%; border-radius: 999px; background: #FF914C"></span></span></div>
+</sc-for>
+</div>
+
+<div style="flex: 1 1 240px; min-width: 0; border-radius: 30px; background: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 15px; font-weight: 700">IGV del mes</span>
+<span style="font-size: 12px; color: #6B6B6B">Lo que cobraste de IGV en tus ventas (débito fiscal)</span>
+<span style="font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px"><span style="color: #E8701F">S/</span> {{igvMonth}}</span>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto">
+<span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #6B6B6B">Op. gravadas</span><span style="font-weight: 700">S/ {{gravMonth}}</span></span>
+<span style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #6B6B6B">Crédito fiscal de compras</span><span style="font-weight: 700">[MONTO]</span></span>
+<span style="display: flex; justify-content: space-between; font-size: 13px; padding-top: 8px; border-top: 1px solid #EFEFEC"><span style="color: #6B6B6B">Declarar hasta</span><span style="font-weight: 700">[FECHA SEGÚN RUC]</span></span>
+</div>
+</div>
+
+<div style="flex: 1 1 280px; min-width: 0; border-radius: 30px; background: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 15px; font-weight: 700">Estado ante SUNAT</span>
+<sc-for list="{{stateTiles}}" as="t" hint-placeholder-count="4">
+<button onClick="{{t.pick}}" style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 18px; border: none; background: {{t.rowBg}}; cursor: pointer; font-family: inherit; text-align: left"><span style="width: 34px; height: 34px; border-radius: 50%; background: {{t.bg}}; display: flex; align-items: center; justify-content: center; flex: none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="{{t.fg}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg></span><span style="flex: 1; font-size: 13px; font-weight: 700">{{t.name}}</span><span style="font-size: 18px; font-weight: 800">{{t.n}}</span></button>
+</sc-for>
+</div>
+
+<div style="flex: 1 1 220px; min-width: 0; border-radius: 30px; background: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 15px; font-weight: 700">Notas de crédito</span>
+<span style="font-size: 12px; color: #6B6B6B">Anulan o corrigen un comprobante ya emitido</span>
+<span style="font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px">{{ncCount}}</span>
+<span style="font-size: 13px; color: #6B6B6B">por <strong style="color: #111111">S/ {{ncTotal}}</strong> este mes</span>
+<span style="margin-top: auto; font-size: 12px; color: #6B6B6B">Motivos: devolución de producto, descuento posterior, error en RUC.</span>
+</div>
+</div>
+
+<!-- Lista + vista previa -->
+<div style="padding: 0 20px 16px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start">
+
+<div style="flex: 999 1 560px; min-width: 0; border-radius: 30px; background: #FFFFFF; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 18px; font-weight: 700; margin-right: 8px">Comprobantes emitidos</span>
+<span style="flex: 1"></span>
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="height: 38px; padding: 0 14px; border-radius: 999px; border: none; background: {{t.bg}}; color: {{t.fg}}; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700">{{t.label}} <span style="opacity: 0.6">{{t.n}}</span></button>
+</sc-for>
+</div>
+<sc-if value="{{stateFilterOn}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #6B6B6B">Mostrando solo: <strong style="color: #111111">{{stateFilter}}</strong><button onClick="{{clearState}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: none; background: #F4F4F2; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700">Quitar filtro</button></div>
+</sc-if>
+<div class="noscroll" style="overflow-x: auto">
+<div style="min-width: 760px; display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 150px minmax(0, 1fr) 90px 80px 110px 170px; gap: 12px; padding: 0 12px 10px; font-size: 12px; font-weight: 600; color: #8C8C8C; border-bottom: 1px solid #EFEFEC"><span>Serie-número</span><span>Cliente</span><span>Fecha</span><span>Pedido</span><span style="text-align: right">Total</span><span>Estado SUNAT</span></div>
+<sc-for list="{{docs}}" as="d" hint-placeholder-count="7">
+<div onClick="{{d.pick}}" class="{{d.cls}}" style="display: grid; grid-template-columns: 150px minmax(0, 1fr) 90px 80px 110px 170px; gap: 12px; align-items: center; min-height: 58px; padding: 6px 12px; border-radius: 18px; cursor: pointer; background: {{d.bg}}; font-size: 13px">
+<span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-family: 'Roboto Mono', monospace; font-weight: 700">{{d.id}}</span><span style="font-size: 11px; color: #8C8C8C">{{d.type}}</span></span>
+<span style="display: flex; flex-direction: column; line-height: 1.25; min-width: 0"><span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.client}}</span><span style="font-size: 11px; color: #8C8C8C">{{d.docId}}</span></span>
+<span style="color: #444444">{{d.date}}</span>
+<a href="Pedidos.dc.html" style="font-weight: 700; color: #C2410C; text-decoration: none">{{d.order}}</a>
+<span style="text-align: right; font-weight: 800">{{d.totalTxt}}</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; justify-self: start; height: 28px; padding: 0 10px; border-radius: 999px; background: {{d.sbg}}; color: {{d.sfg}}; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.sicon}}"></path></svg>{{d.status}}</span>
+</div>
+</sc-for>
+<sc-if value="{{noDocs}}" hint-placeholder-val="{{ false }}"><span style="padding: 24px 12px; font-size: 14px; color: #6B6B6B">No hay comprobantes con este filtro.</span></sc-if>
+</div>
+</div>
+</div>
+
+<!-- Representación impresa -->
+<div style="flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="border-radius: 30px; background: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 14px; font-size: 12px">
+<div style="display: flex; gap: 14px; align-items: flex-start">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 4px; line-height: 1.4">
+<svg width="150" height="50" viewBox="134 205 278 92" role="img" aria-label="VIA Provisiones"><circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#111111" stroke-width="3"></circle><clipPath id="via-clip-cpe-doc"><circle cx="178.6" cy="247.5" r="40.5"></circle></clipPath><polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FF914C"></polygon><path clip-path="url(#via-clip-cpe-doc)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="#FF914C"></path><g fill="none" stroke="#111111" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M242.6 229 L257.8 248.25 L281.1 229"></path><path d="M310.1 248 L334.3 228 L349.6 248"></path><path d="M295.8 229 V248.25"></path></g><text x="229" y="283.4" textLength="178" lengthAdjust="spacing" font-family="Montserrat, 'Segoe UI', Arial, sans-serif" font-size="20" font-weight="500" fill="#E8701F">PROVISIONES</text></svg>
+<strong style="font-size: 13px">VIA PROVISIONES</strong>
+<span style="color: #444444">Dean Valdivia 533 - Cercado, Arequipa</span>
+<span style="color: #444444">+51 954 802 744 · viaprovisionesperu@gmail.com</span>
+</span>
+<span style="flex: none; width: 170px; border: 2px solid #111111; border-radius: 14px; padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 4px; font-weight: 800">
+<span>RUC [RUC]</span>
+<span style="font-size: 11px; text-transform: uppercase">{{pvTitle}}</span>
+<span style="font-family: 'Roboto Mono', monospace; font-size: 13px">{{pvId}}</span>
+</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; padding: 12px; border-radius: 14px; background: #F4F4F2; line-height: 1.35">
+<span><span style="color: #6B6B6B">Cliente:</span> <strong>{{pvClient}}</strong></span>
+<span><span style="color: #6B6B6B">{{pvDocLabel}}:</span> {{pvDocId}}</span>
+<span><span style="color: #6B6B6B">Fecha de emisión:</span> {{pvDate}} 2026</span>
+<span><span style="color: #6B6B6B">Moneda:</span> Soles (PEN)</span>
+<span><span style="color: #6B6B6B">Forma de pago:</span> {{pvPay}}</span>
+<span><span style="color: #6B6B6B">Referencia:</span> {{pvRef}}</span>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 80px 80px; gap: 8px; padding: 8px 4px; font-weight: 700; border-bottom: 1px solid #111111"><span>Cant.</span><span>Descripción</span><span style="text-align: right">P. unit.</span><span style="text-align: right">Importe</span></div>
+<sc-for list="{{pvLines}}" as="l" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 80px 80px; gap: 8px; padding: 8px 4px; border-bottom: 1px solid #EFEFEC"><span>{{l.q}}</span><span>{{l.name}}</span><span style="text-align: right">{{l.p}}</span><span style="text-align: right; font-weight: 700">{{l.t}}</span></div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 14px; align-items: flex-end">
+<span style="flex: none; width: 96px; height: 96px; border-radius: 10px; border: 1px dashed #8C8C8C; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 10px; color: #8C8C8C; line-height: 1.3">Código QR<br>de SUNAT</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 5px">
+<span style="display: flex; justify-content: space-between"><span style="color: #6B6B6B">Op. gravada</span><span>S/ {{pvGrav}}</span></span>
+<span style="display: flex; justify-content: space-between"><span style="color: #6B6B6B">IGV 18 %</span><span>S/ {{pvIgv}}</span></span>
+<span style="display: flex; justify-content: space-between; padding-top: 6px; border-top: 1px solid #111111; font-size: 15px; font-weight: 800"><span>Importe total</span><span>S/ {{pvTotal}}</span></span>
+</span>
+</div>
+<span style="font-size: 11px; color: #6B6B6B; line-height: 1.45">{{pvWords}}<br>Representación impresa de la {{pvKind}} electrónica. Hash: <span style="font-family: 'Roboto Mono', monospace">[HASH DEL XML]</span>. Consulte su validez en www.sunat.gob.pe.</span>
+<span style="display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; height: 28px; padding: 0 10px; border-radius: 999px; background: {{pvSbg}}; color: {{pvSfg}}; font-size: 12px; font-weight: 700"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{pvSicon}}"></path></svg>SUNAT: {{pvStatus}}</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{docActions}}" as="a" hint-placeholder-count="4">
+<button onClick="{{a.run}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; border-radius: 999px; border: none; background: {{a.bg}}; color: {{a.fg}}; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{a.icon}}"></path></svg>{{a.label}}</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<!-- Pendientes + configuración -->
+<div style="padding: 0 20px 24px; display: flex; gap: 16px; flex-wrap: wrap">
+
+<div style="flex: 999 1 520px; min-width: 0; border-radius: 30px; background: #FFFFFF; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<span style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap"><span style="font-size: 18px; font-weight: 700">Pendientes por emitir</span><span style="font-size: 13px; color: #6B6B6B">Pedidos pagados que todavía no tienen comprobante</span></span>
+<sc-for list="{{pending}}" as="p" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 20px; background: #F4F4F2; flex-wrap: wrap">
+<span style="width: 40px; height: 40px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0"></path></svg></span>
+<span style="flex: 1; min-width: 160px; display: flex; flex-direction: column; line-height: 1.3"><span style="font-size: 14px; font-weight: 700">{{p.order}} · {{p.client}}</span><span style="font-size: 12px; color: #6B6B6B">Pagado {{p.paid}} · corresponde {{p.kind}}</span></span>
+<span style="font-size: 15px; font-weight: 800">{{p.totalTxt}}</span>
+<button onClick="{{p.emit}}" style="height: 40px; padding: 0 18px; border-radius: 999px; border: none; background: #111111; color: #FFFFFF; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700">Emitir {{p.kindShort}}</button>
+</div>
+</sc-for>
+<sc-if value="{{noPending}}" hint-placeholder-val="{{ false }}"><div style="display: flex; align-items: center; gap: 10px; padding: 16px; border-radius: 20px; background: #E4F4E7; color: #1B5E20; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>Todos los pedidos pagados tienen su comprobante.</div></sc-if>
+</div>
+
+<div style="flex: 1 1 340px; min-width: 0; border-radius: 30px; background: #111111; color: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 15px; font-weight: 700">Configuración de emisión</span>
+<sc-for list="{{config}}" as="c" hint-placeholder-count="5">
+<span style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #2A2A2A; font-size: 13px"><span style="color: #BDBDBD">{{c.k}}</span><span style="font-weight: 700; text-align: right">{{c.v}}</span></span>
+</sc-for>
+<span style="font-size: 12px; line-height: 1.5; color: #CFCFCF">Esto es un diseño. Para emitir comprobantes de verdad se necesita un proveedor autorizado por SUNAT (OSE o PSE) y el certificado digital de la empresa.</span>
+<a href="Ajustes.dc.html" style="margin-top: auto; height: 44px; border-radius: 999px; background: #FF914C; color: #111111; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: 700">Abrir ajustes de facturación</a>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- Menú de navegación (componente compartido MenuPanel) -->
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 20; background: rgba(17,17,17,0.3); padding: 96px 24px 24px; box-sizing: border-box">
+<div style="max-width: 1100px"><dc-import name="MenuPanel" mode="pop" active="Comprobantes" on-pin="{{togglePin}}" on-close="{{closeMenu}}" hint-size="100%,600px"></dc-import></div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF914C","options":["#FF914C","#FF5F00","#F27420"]},"menuAbierto":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), tab: 'Todos', sstate: '', sel: 'F001-00087', emitted: [], notice: '' };
+  }
+  renderVals() {
+    const st = this.state;
+    const accent = this.props.accent ?? '#FF914C';
+    const money = (n) => (n < 0 ? '−' : '') + Math.abs(n).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const SC = {
+      'Aceptado': ['#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'],
+      'Pendiente de envío': ['#FFF4D6', '#7A4A00', 'M12 7v5l3 2'],
+      'Observado': ['#EDE7FF', '#4A2E9A', 'M12 7v6M12 17h.01'],
+      'Rechazado': ['#FDE4E2', '#8E1C14', 'M6 6l12 12M18 6L6 18']
+    };
+    const KIND = { B: 'Boleta', F: 'Factura', N: 'Nota de crédito' };
+    // [serie-número, tipo, fecha, cliente, documento, pedido, pago, líneas [cant, producto, precio con IGV], estado, referencia]
+    const BASE = [
+      ['F001-00087', 'F', '26 oct', 'Bodega San Martín', 'RUC [RUC]', '#1041', 'Transferencia', [[24, 'Foco LED 9 W luz cálida', 8.9], [10, 'Cable USB-C carga rápida 1 m', 19.9], [6, 'Extensión de uso rudo 5 m', 69.9], [1, 'Gancho multiuso de acero', 10.0]], 'Aceptado', '—'],
+      ['B001-00421', 'B', '26 oct', 'María Q.', 'DNI [DNI]', '#1042', 'Yape', [[1, 'Lámpara de camping recargable', 69.9], [2, 'Llavero linterna LED', 14.9], [4, 'Gancho multiuso de acero', 15.0]], 'Aceptado', '—'],
+      ['F001-00086', 'F', '25 oct', 'Ferretería Cayma', 'RUC [RUC]', '#1040', 'Crédito 30 días', [[100, 'Foco LED 9 W luz cálida', 7.6], [40, 'Extensión de uso rudo 5 m', 67.5]], 'Pendiente de envío', '—'],
+      ['B001-00420', 'B', '25 oct', 'Luis R.', 'DNI [DNI]', '#1039', 'Tarjeta', [[1, 'Panel solar monocristalino 100 W', 459.0]], 'Aceptado', '—'],
+      ['F001-00085', 'F', '25 oct', 'Constructora [Cliente]', 'RUC [RUC]', '#1038', 'Transferencia', [[8, 'Panel solar monocristalino 100 W', 420.0], [40, 'Extensión de uso rudo 5 m', 44.0]], 'Observado', '—'],
+      ['FC01-00004', 'N', '24 oct', 'Bodega San Martín', 'RUC [RUC]', '#1031', 'Devolución', [[-2, 'Extensión de uso rudo 5 m (devolución)', 43.0]], 'Aceptado', 'F001-00079'],
+      ['B001-00419', 'B', '24 oct', 'Ana P.', 'DNI [DNI]', '#1035', 'Efectivo', [[1, 'Pulsera de acero inoxidable', 49.9], [2, 'Aretes de plata 925', 20.0]], 'Rechazado', '—']
+    ];
+    const PEND = [
+      ['#1043', 'Minimarket El Sol', 'RUC [RUC]', 'F', 'hoy 09:12', [[30, 'Foco LED 9 W luz cálida', 8.2], [12, 'Cable USB-C carga rápida 1 m', 18.0], [3, 'Extensión de uso rudo 5 m', 39.8]]],
+      ['#1044', 'Carla V.', 'DNI [DNI]', 'B', 'hoy 10:40', [[1, 'Lámpara de camping recargable', 74.5]]],
+      ['#1045', 'Minera [Cliente]', 'RUC [RUC]', 'F', 'ayer 17:05', [[15, 'Panel solar monocristalino 100 W', 430.0], [20, 'Linterna de cabeza recargable', 70.0]]]
+    ];
+    const sum = (lines) => Math.round(lines.reduce((a, l) => a + l[0] * l[2], 0) * 100) / 100;
+    let nB = 421, nF = 87;
+    const extra = st.emitted.map((oid) => {
+      const p = PEND.find((x) => x[0] === oid);
+      const id = p[3] === 'F' ? 'F001-' + String(++nF).padStart(5, '0') : 'B001-' + String(++nB).padStart(5, '0');
+      return [id, p[3], '26 oct', p[1], p[2], p[0], 'Según pedido', p[5], 'Aceptado', '—'];
+    });
+    const ALL = extra.reverse().concat(BASE);
+    const TABS = [['Todos', ''], ['Boletas', 'B'], ['Facturas', 'F'], ['Notas de crédito', 'N']];
+    const tabKind = (TABS.find((t) => t[0] === st.tab) || TABS[0])[1];
+    const list = ALL.filter((d) => (!tabKind || d[1] === tabKind) && (!st.sstate || d[8] === st.sstate));
+    const sel = ALL.find((d) => d[0] === st.sel) || ALL[0];
+    const tot = sum(sel[7]);
+    const grav = Math.round((tot / 1.18) * 100) / 100;
+    const sales = ALL.filter((d) => d[1] !== 'N');
+    const monthBase = 268;
+    const monthTotalN = 184320.5 + extra.reduce((a, d) => a + sum(d[7]), 0);
+    const byKind = (k) => ALL.filter((d) => d[1] === k);
+    const countState = (s) => ALL.filter((d) => d[8] === s).length;
+    const pendingLeft = PEND.filter((p) => st.emitted.indexOf(p[0]) === -1);
+    const words = (n) => 'Son: ' + Math.floor(Math.abs(n)).toLocaleString('es-PE') + ' con ' + String(Math.round((Math.abs(n) % 1) * 100)).padStart(2, '0') + '/100 soles';
+    const S = SC[sel[8]];
+    return {
+      accent,
+      menuOpen: st.menu || !!this.props.menuAbierto,
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      pinned: this.state.pinned,
+      menuBtnLabel: 'Abrir menú',
+      menuBtn: () => this.setState({ menu: true }),
+      togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
+      notice: st.notice,
+      clearNotice: () => this.setState({ notice: '' }),
+      emitNew: () => this.setState({ notice: 'Para emitir un comprobante nuevo elige un pedido pagado en "Pendientes por emitir" (diseño de ejemplo; aún no se envía a SUNAT).' }),
+      monthCount: String(monthBase + extra.length),
+      monthTotal: Math.round(monthTotalN).toLocaleString('es-PE'),
+      headStats: [
+        [String(byKind('F').length + 79), 'Facturas', 'serie F001', '#FFFFFF', '#111111'],
+        [String(byKind('B').length + 182), 'Boletas', 'serie B001', '#FFFFFF', '#111111'],
+        [String(countState('Pendiente de envío') + countState('Observado')), 'Por revisar', 'ante SUNAT', '#FFF4D6', '#7A4A00'],
+        [String(pendingLeft.length), 'Pedidos sin', 'comprobante', '#E8701F', '#FFFFFF']
+      ].map((h) => ({ v: h[0], k1: h[1], k2: h[2], bg: h[3], fg: h[4] })),
+      series: [['Facturas', 'F001', 81, 132460], ['Boletas', 'B001', 184, 52180], ['Notas de crédito', 'FC01', 4, 320]].map((s) => ({ name: s[0], code: s[1], n: String(s[2]), amount: 'S/ ' + s[3].toLocaleString('es-PE'), w: Math.max(3, Math.round((s[3] / 132460) * 100)) + '%' })),
+      igvMonth: money(Math.round((monthTotalN - monthTotalN / 1.18) * 100) / 100),
+      gravMonth: money(Math.round((monthTotalN / 1.18) * 100) / 100),
+      stateTiles: ['Aceptado', 'Pendiente de envío', 'Observado', 'Rechazado'].map((s) => ({
+        name: s === 'Aceptado' ? 'Aceptados' : s === 'Observado' ? 'Observados' : s === 'Rechazado' ? 'Rechazados' : 'Pendientes de envío',
+        n: String(countState(s) + (s === 'Aceptado' ? 258 : 0)), bg: SC[s][0], fg: SC[s][1], icon: SC[s][2],
+        rowBg: st.sstate === s ? '#F4F4F2' : 'transparent',
+        pick: () => this.setState({ sstate: st.sstate === s ? '' : s })
+      })),
+      ncCount: String(byKind('N').length + 3),
+      ncTotal: money(320),
+      tabs: TABS.map((t) => ({ label: t[0], n: String(ALL.filter((d) => !t[1] || d[1] === t[1]).length), pressed: st.tab === t[0] ? 'true' : 'false', bg: st.tab === t[0] ? '#111111' : '#F4F4F2', fg: st.tab === t[0] ? '#FFFFFF' : '#111111', pick: () => this.setState({ tab: t[0] }) })),
+      stateFilterOn: !!st.sstate,
+      stateFilter: st.sstate,
+      clearState: () => this.setState({ sstate: '' }),
+      docs: list.map((d) => ({
+        id: d[0], type: KIND[d[1]], date: d[2], client: d[3], docId: d[4], order: d[5],
+        totalTxt: 'S/ ' + money(sum(d[7])), status: d[8], sbg: SC[d[8]][0], sfg: SC[d[8]][1], sicon: SC[d[8]][2],
+        bg: d[0] === sel[0] ? '#F4F4F2' : 'transparent', cls: d[0] === sel[0] ? '' : 'cp-row',
+        pick: () => this.setState({ sel: d[0] })
+      })),
+      noDocs: list.length === 0,
+      pvTitle: sel[1] === 'F' ? 'Factura electrónica' : sel[1] === 'B' ? 'Boleta de venta electrónica' : 'Nota de crédito electrónica',
+      pvKind: sel[1] === 'F' ? 'factura' : sel[1] === 'B' ? 'boleta de venta' : 'nota de crédito',
+      pvId: sel[0],
+      pvClient: sel[3],
+      pvDocLabel: sel[4].indexOf('RUC') === 0 ? 'RUC' : 'DNI',
+      pvDocId: sel[4].replace(/^(RUC|DNI) /, ''),
+      pvDate: sel[2],
+      pvPay: sel[6],
+      pvRef: sel[1] === 'N' ? 'Anula parcialmente ' + sel[9] : 'Pedido ' + sel[5],
+      pvLines: sel[7].map((l) => ({ q: String(Math.abs(l[0])), name: l[1], p: money(l[2]), t: money(l[0] * l[2]) })),
+      pvGrav: money(grav),
+      pvIgv: money(Math.round((tot - grav) * 100) / 100),
+      pvTotal: money(tot),
+      pvWords: words(tot),
+      pvStatus: sel[8], pvSbg: S[0], pvSfg: S[1], pvSicon: S[2],
+      docActions: [
+        ['Descargar PDF', 'M12 3v12M7 10l5 5 5-5M5 21h14', '#111111', '#FFFFFF', 'Se descargaría el PDF de ' + sel[0] + ' (diseño de ejemplo).'],
+        ['Descargar XML', 'M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14', '#F4F4F2', '#111111', 'Se descargaría el XML firmado de ' + sel[0] + ' (diseño de ejemplo).'],
+        ['Enviar por WhatsApp', 'M4 20l1.4-4A8 8 0 1 1 8 18.6zM9 10c0 3 2 5 5 5', '#F4F4F2', '#111111', 'Se enviaría ' + sel[0] + ' al WhatsApp del cliente (diseño de ejemplo).'],
+        ['Emitir nota de crédito', 'M4 9h11a5 5 0 0 1 0 10H9M4 9l4-4M4 9l4 4', '#FFF1E6', '#8A3B0A', 'Se abriría una nota de crédito que hace referencia a ' + sel[0] + ' (diseño de ejemplo).']
+      ].map((a) => ({ label: a[0], icon: a[1], bg: a[2], fg: a[3], run: () => this.setState({ notice: a[4] }) })),
+      pending: pendingLeft.map((p) => ({
+        order: p[0], client: p[1], paid: p[4], kind: p[3] === 'F' ? 'factura (' + p[2] + ')' : 'boleta (' + p[2] + ')', kindShort: p[3] === 'F' ? 'factura' : 'boleta',
+        totalTxt: 'S/ ' + money(sum(p[5])),
+        emit: () => {
+          const next = st.emitted.concat([p[0]]);
+          let b = 421, f = 87, id = '';
+          next.forEach((oid) => { const q = PEND.find((x) => x[0] === oid); id = q[3] === 'F' ? 'F001-' + String(++f).padStart(5, '0') : 'B001-' + String(++b).padStart(5, '0'); });
+          this.setState({ emitted: next, sel: id, tab: 'Todos', sstate: '', notice: 'Se emitió ' + id + ' para el pedido ' + p[0] + ' (diseño de ejemplo).' });
+        }
+      })),
+      noPending: pendingLeft.length === 0,
+      config: [['Serie de facturas', 'F001'], ['Serie de boletas', 'B001'], ['Notas de crédito', 'FC01 · BC01'], ['Proveedor OSE / PSE', '[PROVEEDOR]'], ['Certificado digital vence', '[FECHA]']].map((c) => ({ k: c[0], v: c[1] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

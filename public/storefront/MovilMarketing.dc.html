@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel móvil · Marketing y avisos — VIA Provisiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Archivo:wght@800;900&amp;family=Roboto+Mono:wght@700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E9E7}
+a{color:inherit}
+.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; max-width: none; height: 100vh; height: 100dvh; margin: 0 auto; border-radius: 24px; overflow: hidden; background: #E9E9E7; font-family: Manrope, system-ui, sans-serif; color: #111111">
+
+<!-- Barra superior -->
+<div style="position: absolute; top: 0; left: 0; right: 0; z-index: 5; padding: 16px 16px 12px; display: flex; align-items: center; gap: 10px; background: #E9E9E7">
+<button onClick="{{openMenu}}" aria-label="Abrir menú" style="width: 46px; height: 46px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"></path></svg></button>
+<a href="AdminMovil.dc.html" aria-label="Ir al inicio del panel" style="width: 46px; height: 46px; border-radius: 50%; background: #111111; display: flex; align-items: center; justify-content: center; flex: none"><svg width="26" height="26" viewBox="136 205 86 86" aria-hidden="true"><circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#FFFFFF" stroke-width="5"></circle><clipPath id="via-clip-mmkt"><circle cx="178.6" cy="247.5" r="40.5"></circle></clipPath><polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FFFFFF"></polygon><path clip-path="url(#via-clip-mmkt)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="{{accent}}"></path></svg></a>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2"><span style="font-size: 15px; font-weight: 700">{{title}}</span><span style="font-size: 13px; font-weight: 500; color: #8C8C8C">{{subtitle}}</span></span>
+<span style="width: 46px; height: 46px; border-radius: 50%; background: {{accent}}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex: none">BC</span>
+</div>
+
+<!-- Contenido con scroll -->
+<div class="noscroll" style="position: absolute; inset: 0; overflow-y: auto; padding: 82px 14px 120px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 18px; background: #111111; color: #FFFFFF; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF914C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg><span style="flex: 1">{{toast}}</span><button onClick="{{closeToast}}" aria-label="Cerrar aviso" style="width: 28px; height: 28px; border: none; border-radius: 50%; background: #2A2A2A; color: #FFFFFF; cursor: pointer">×</button></div>
+</sc-if>
+
+<!-- ============ OFERTAS Y CUPONES ============ -->
+<sc-if value="{{isOfertas}}" hint-placeholder-val="{{ true }}">
+
+<div style="border-radius: 26px; background: #111111; color: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 13px; color: #BDBDBD">Descuento otorgado · octubre</span><span style="font-size: 11px; color: #8C8C8C">ejemplo</span></span>
+<span style="font-size: 30px; font-weight: 800; letter-spacing: -0.02em">S/ 812</span>
+<sc-for list="{{giveaway}}" as="g" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 12px"><span style="width: 62px; color: #CFCFCF">{{g.name}}</span><span style="flex: 1; height: 6px; border-radius: 999px; background: #2A2A2A"><span style="display: block; width: {{g.w}}; height: 100%; border-radius: 999px; background: #FF914C"></span></span><span style="width: 50px; text-align: right; font-weight: 700">{{g.v}}</span></div>
+</sc-for>
+</div>
+
+<div role="tablist" aria-label="Tipo" style="display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: #FFFFFF">
+<sc-for list="{{otabs}}" as="t" hint-placeholder-count="3">
+<button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="flex: 1; height: 40px; border-radius: 999px; border: none; background: {{t.bg}}; color: {{t.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{t.label}} <span style="opacity: 0.6">{{t.n}}</span></button>
+</sc-for>
+</div>
+
+<!-- Editor compacto (Crear oferta) -->
+<sc-if value="{{creating}}" hint-placeholder-val="{{ false }}">
+<div style="border-radius: 26px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 2px solid #E8701F">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 16px; font-weight: 800">Nueva oferta</span><button onClick="{{cancelCreate}}" aria-label="Cerrar editor" style="width: 34px; height: 34px; border-radius: 50%; border: none; background: #F4F4F2; cursor: pointer; font-size: 16px">×</button></span>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B6B6B">Nombre<input value="{{ed.name}}" onInput="{{edName}}" onChange="{{edName}}" style="height: 44px; border-radius: 14px; border: 1px solid #E4E4E0; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111111"></label>
+<span style="font-size: 12px; font-weight: 600; color: #6B6B6B">Tipo de descuento</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+<button onClick="{{t.pick}}" aria-pressed="{{t.sel}}" style="height: 42px; border-radius: 14px; border: 1px solid {{t.border}}; background: {{t.bg}}; font-family: inherit; font-size: 13px; font-weight: 700; color: #111111; cursor: pointer">{{t.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{ed.showValue}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 14px; border-radius: 16px; background: #F4F4F2"><span style="font-size: 13px; font-weight: 600">Valor</span><span style="display: flex; align-items: center; gap: 10px"><button onClick="{{edMinus}}" aria-label="Bajar valor" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; font-size: 18px; font-weight: 700">−</button><span style="min-width: 62px; text-align: center; font-size: 18px; font-weight: 800">{{ed.valueText}}</span><button onClick="{{edPlus}}" aria-label="Subir valor" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #111111; color: #FFFFFF; cursor: pointer; font-size: 18px; font-weight: 700">+</button></span></div>
+</sc-if>
+<span style="font-size: 12px; font-weight: 600; color: #6B6B6B">Aplica a la categoría</span>
+<div class="noscroll" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+<sc-for list="{{edCats}}" as="c" hint-placeholder-count="5">
+<button onClick="{{c.pick}}" aria-pressed="{{c.sel}}" style="flex: none; height: 36px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">{{c.label}}</button>
+</sc-for>
+</div>
+<span style="font-size: 12px; font-weight: 600; color: #6B6B6B">Así se verá en la tienda</span>
+<div style="display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 18px; background: #F4F4F2">
+<span style="position: relative; width: 84px; height: 84px; border-radius: 14px; overflow: hidden; background: #FFFFFF; flex: none"><img src="{{pv.img}}" alt="" style="width: 100%; height: 100%; object-fit: cover"><span style="position: absolute; top: 6px; left: 6px; padding: 3px 7px; border-radius: 999px; background: #FF914C; color: #111111; font-family: 'Roboto Mono', monospace; font-size: 10px; font-weight: 700">{{pv.badge}}</span></span>
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 13px; font-weight: 700; line-height: 1.25">{{pv.prod}}</span><span style="display: flex; align-items: baseline; gap: 8px"><span style="font-size: 18px; font-weight: 800">{{pv.price}}</span><sc-if value="{{pv.hasOld}}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; color: #8C8C8C; text-decoration: line-through">{{pv.old}}</span></sc-if></span><span style="font-size: 11px; color: #6B6B6B">{{pv.note}}</span></span>
+</div>
+<button onClick="{{saveOffer}}" style="height: 48px; border-radius: 999px; border: none; background: #E8701F; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer">Guardar como programada</button>
+</div>
+</sc-if>
+
+<sc-if value="{{tabOfertas}}" hint-placeholder-val="{{ true }}">
+<div class="noscroll" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -14px; padding: 0 14px">
+<sc-for list="{{ofChips}}" as="c" hint-placeholder-count="4">
+<button onClick="{{c.pick}}" aria-pressed="{{c.sel}}" style="flex: none; height: 38px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{c.label}}</button>
+</sc-for>
+</div>
+<sc-for list="{{offers}}" as="o" hint-placeholder-count="4">
+<div style="border-radius: 24px; background: #FFFFFF; padding: 12px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; gap: 12px; align-items: center">
+<img src="{{o.img}}" alt="" style="width: 56px; height: 56px; border-radius: 16px; object-fit: cover; flex: none">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 700; line-height: 1.25">{{o.name}}</span><span style="display: inline-flex; align-self: flex-start; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-size: 11px; font-weight: 700"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{o.icon}}"></path></svg>{{o.state}}</span></span>
+<sc-if value="{{o.canToggle}}" hint-placeholder-val="{{ true }}">
+<button role="switch" aria-checked="{{o.onAria}}" aria-label="{{o.toggleLabel}}" onClick="{{o.toggle}}" style="width: 48px; height: 28px; padding: 3px; box-sizing: border-box; border-radius: 999px; border: none; background: {{o.swBg}}; display: flex; justify-content: {{o.swJ}}; cursor: pointer; flex: none"><span style="width: 22px; height: 22px; border-radius: 50%; background: #FFFFFF"></span></button>
+</sc-if>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid #F0F0EE; font-size: 12px"><span style="color: #6B6B6B">{{o.dates}}</span><span style="font-weight: 700">{{o.uses}} · {{o.sales}}</span></div>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{tabCupones}}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{coupons}}" as="c" hint-placeholder-count="4">
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 10px; opacity: {{c.o}}">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Roboto Mono', monospace; font-size: 17px; font-weight: 700; letter-spacing: 0.04em">{{c.code}}</span><span style="font-size: 13px; font-weight: 600">{{c.value}}</span></span>
+<button onClick="{{c.copy}}" style="display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.btnBg}}; color: {{c.btnFg}}; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{c.btnIcon}}"></path></svg>{{c.btnText}}</button>
+</div>
+<span style="font-size: 12px; color: #6B6B6B">{{c.rule}} · {{c.until}}</span>
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 1; height: 6px; border-radius: 999px; background: #F4F4F2"><span style="display: block; width: {{c.w}}; height: 100%; border-radius: 999px; background: #E8701F"></span></span><span style="font-size: 12px; font-weight: 700">{{c.usage}}</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: {{c.bg}}; color: {{c.fg}}; font-size: 10px; font-weight: 700"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{c.icon}}"></path></svg>{{c.state}}</span></div>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{tabPacks}}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{packs}}" as="p" hint-placeholder-count="3">
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 12px">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 800">{{p.name}}</span><span style="height: 24px; padding: 0 10px; border-radius: 999px; background: #FFF1E6; color: #8A3B0A; font-size: 11px; font-weight: 700; display: flex; align-items: center">Ahorra {{p.save}}</span></span>
+<div style="display: flex; gap: 6px">
+<sc-for list="{{p.lines}}" as="l" hint-placeholder-count="3">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px"><img src="{{l.img}}" alt="" style="width: 100%; height: 64px; border-radius: 14px; object-fit: cover"><span style="font-size: 10px; color: #6B6B6B; line-height: 1.25">{{l.name}}</span></span>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 10px; border-top: 1px solid #F0F0EE"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #8C8C8C">Por separado <span style="text-decoration: line-through">{{p.sum}}</span></span><span style="font-size: 20px; font-weight: 800">{{p.price}}</span></span><span style="text-align: right; font-size: 11px; color: #6B6B6B; line-height: 1.4">{{p.sold}} vendidos<br>Stock para {{p.stock}}</span></div>
+</div>
+</sc-for>
+</sc-if>
+</sc-if>
+
+<!-- ============ BANNERS Y PORTADA ============ -->
+<sc-if value="{{isBanners}}" hint-placeholder-val="{{ false }}">
+
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 20px; background: {{pub.bg}}; color: {{pub.fg}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{pub.icon}}"></path></svg><span style="flex: 1; font-size: 13px; font-weight: 700">{{pub.text}}</span><button onClick="{{publish}}" style="height: 36px; padding: 0 14px; border-radius: 999px; border: none; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">Publicar</button></div>
+
+<!-- Vista previa de la portada -->
+<div style="position: relative; height: 230px; border-radius: 24px; overflow: hidden; background: #111111">
+<img src="{{pv2.img}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
+<span style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17,17,17,0.05) 30%, rgba(17,17,17,0.75) 100%)"></span>
+<span style="position: absolute; left: 16px; right: 16px; bottom: 50px; display: flex; flex-direction: column; gap: 8px; color: {{pv2.color}}"><span style="font-family: Archivo, sans-serif; font-size: 24px; font-weight: 900; line-height: 0.98; text-transform: uppercase">{{pv2.title}}</span><span style="align-self: flex-start; height: 32px; padding: 0 14px; border-radius: 999px; background: #FF914C; color: #111111; display: flex; align-items: center; font-family: 'Roboto Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase">{{pv2.cta}}</span></span>
+<div style="position: absolute; left: 10px; right: 10px; bottom: 10px; display: flex; gap: 4px">
+<sc-for list="{{pvTabs}}" as="t" hint-placeholder-count="4">
+<span style="flex: 1; height: 28px; border-radius: 999px; background: {{t.bg}}; color: {{t.fg}}; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700">{{t.label}}</span>
+</sc-for>
+</div>
+<span style="position: absolute; top: 10px; left: 10px; height: 24px; padding: 0 10px; border-radius: 999px; background: rgba(255,255,255,0.9); font-size: 10px; font-weight: 700; display: flex; align-items: center">Vista previa · celular</span>
+</div>
+
+<span style="font-size: 15px; font-weight: 800; padding: 4px 2px 0">Diapositivas de la portada</span>
+<sc-for list="{{slides}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 22px; background: #FFFFFF; border: 2px solid {{s.border}}; opacity: {{s.o}}">
+<button onClick="{{s.pick}}" aria-label="{{s.editLabel}}" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; border: none; background: transparent; padding: 0; font-family: inherit; text-align: left; cursor: pointer"><img src="{{s.img}}" alt="" style="width: 64px; height: 48px; border-radius: 12px; object-fit: cover; flex: none"><span style="min-width: 0; display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 11px; font-weight: 700; color: #C2410C">{{s.n}} · {{s.tab}}</span><span style="font-size: 13px; font-weight: 700; color: #111111">{{s.title}}</span></span></button>
+<span style="display: flex; flex-direction: column; gap: 2px"><button onClick="{{s.up}}" aria-label="Subir" style="width: 28px; height: 24px; border-radius: 8px; border: none; background: #F4F4F2; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg></button><button onClick="{{s.down}}" aria-label="Bajar" style="width: 28px; height: 24px; border-radius: 8px; border: none; background: #F4F4F2; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></span>
+<button role="switch" aria-checked="{{s.onAria}}" aria-label="Mostrar en la portada" onClick="{{s.toggle}}" style="width: 44px; height: 26px; padding: 3px; box-sizing: border-box; border-radius: 999px; border: none; background: {{s.swBg}}; display: flex; justify-content: {{s.swJ}}; cursor: pointer; flex: none"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF"></span></button>
+</div>
+</sc-for>
+
+<!-- Editor de la diapositiva elegida -->
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 15px; font-weight: 800">Editar «{{pv2.tab}}»</span>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B6B6B">Título<input value="{{pv2.title}}" onInput="{{editTitle}}" onChange="{{editTitle}}" style="height: 44px; border-radius: 14px; border: 1px solid #E4E4E0; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111111"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B6B6B">Texto del botón<input value="{{pv2.cta}}" onInput="{{editCta}}" onChange="{{editCta}}" style="height: 44px; border-radius: 14px; border: 1px solid #E4E4E0; padding: 0 12px; font-family: inherit; font-size: 14px; color: #111111"></label>
+<span style="font-size: 12px; font-weight: 600; color: #6B6B6B">Imagen</span>
+<div class="noscroll" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -14px; padding: 0 14px">
+<sc-for list="{{imgs}}" as="i" hint-placeholder-count="8">
+<button onClick="{{i.pick}}" aria-label="{{i.alt}}" aria-pressed="{{i.sel}}" style="flex: none; width: 70px; height: 52px; padding: 0; border-radius: 12px; border: 3px solid {{i.ring}}; overflow: hidden; cursor: pointer; background: #F4F4F2"><img src="{{i.src}}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block"></button>
+</sc-for>
+</div>
+</div>
+
+<!-- Barra de anuncios -->
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 15px; font-weight: 800">Barra de anuncios</span>
+<div style="height: 36px; border-radius: 12px; background: #111111; color: #FFFFFF; overflow: hidden; display: flex; align-items: center; padding: 0 12px; font-family: 'Roboto Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; white-space: nowrap">{{ticker}}</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{msgs}}" as="m" hint-placeholder-count="6">
+<span style="display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 4px 0 12px; border-radius: 999px; background: #F4F4F2; font-size: 12px; font-weight: 600">{{m.text}}<button onClick="{{m.remove}}" aria-label="{{m.removeLabel}}" style="width: 26px; height: 26px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; font-size: 13px">×</button></span>
+</sc-for>
+</div>
+<div style="display: flex; gap: 6px"><input value="{{newMsg}}" onInput="{{onNewMsg}}" onChange="{{onNewMsg}}" placeholder="Nuevo mensaje…" aria-label="Nuevo mensaje" style="flex: 1; min-width: 0; height: 42px; border-radius: 999px; border: 1px solid #E4E4E0; padding: 0 14px; font-family: inherit; font-size: 13px"><button onClick="{{addMsg}}" style="height: 42px; padding: 0 16px; border-radius: 999px; border: none; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">Agregar</button></div>
+</div>
+</sc-if>
+
+<!-- ============ NOTIFICACIONES ============ -->
+<sc-if value="{{isNotif}}" hint-placeholder-val="{{ false }}">
+
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.02em">Avisos</span><span style="font-size: 13px; color: #8C8C8C">{{unreadText}}</span></span>
+<button onClick="{{readAll}}" style="height: 40px; padding: 0 14px; border-radius: 999px; border: none; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">Marcar todo leído</button>
+</div>
+
+<div class="noscroll" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -14px; padding: 0 14px">
+<sc-for list="{{nChips}}" as="c" hint-placeholder-count="7">
+<button onClick="{{c.pick}}" aria-pressed="{{c.sel}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap">{{c.label}}<sc-if value="{{c.n}}" hint-placeholder-val="{{ false }}"><span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: {{c.nBg}}; color: {{c.nFg}}; font-size: 11px; display: flex; align-items: center; justify-content: center">{{c.n}}</span></sc-if></button>
+</sc-for>
+</div>
+
+<sc-if value="{{nEmpty}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 30px 16px; border-radius: 24px; background: #FFFFFF; text-align: center"><span style="width: 46px; height: 46px; border-radius: 50%; background: #E4F4E7; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B5E20" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span><span style="font-size: 15px; font-weight: 700">Todo al día</span><span style="font-size: 12px; color: #6B6B6B">No hay avisos en este filtro.</span></div>
+</sc-if>
+
+<sc-for list="{{nGroups}}" as="g" hint-placeholder-count="3">
+<span style="font-size: 13px; font-weight: 700; color: #8C8C8C; padding: 6px 2px 0">{{g.day}}</span>
+<sc-for list="{{g.items}}" as="n" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; padding: 12px; border-radius: 22px; background: {{n.bgCard}}">
+<span style="position: relative; width: 40px; height: 40px; border-radius: 50%; background: {{n.bg}}; display: flex; align-items: center; justify-content: center; flex: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{n.fg}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.icon}}"></path></svg><sc-if value="{{n.unread}}" hint-placeholder-val="{{ false }}"><span aria-label="Sin leer" style="position: absolute; top: -1px; right: -1px; width: 11px; height: 11px; border-radius: 50%; background: #E8701F; border: 2px solid #FFFFFF"></span></sc-if></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<span style="display: flex; justify-content: space-between; gap: 8px"><span style="font-size: 11px; font-weight: 700; color: {{n.fg}}">{{n.type}}</span><span style="font-size: 11px; color: #8C8C8C">{{n.time}}</span></span>
+<span style="font-size: 14px; font-weight: 700; line-height: 1.25">{{n.title}}</span>
+<span style="font-size: 12px; color: #6B6B6B; line-height: 1.35">{{n.detail}}</span>
+<span style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap"><a href="{{n.href}}" style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 999px; background: #111111; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 700">{{n.action}}</a><sc-if value="{{n.unread}}" hint-placeholder-val="{{ false }}"><button onClick="{{n.markRead}}" style="height: 32px; padding: 0 12px; border-radius: 999px; border: none; background: #F4F4F2; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">Marcar leído</button></sc-if></span>
+</span>
+</div>
+</sc-for>
+</sc-for>
+
+<!-- Perfil -->
+<div id="perfil" style="border-radius: 26px; background: #111111; color: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 12px; margin-top: 6px">
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 52px; height: 52px; border-radius: 50%; background: {{accent}}; color: #111111; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; flex: none">BC</span><span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 16px; font-weight: 800">Beltran Carlos Ccapa</span><span style="font-size: 12px; color: #BDBDBD">Gerente Comercial · Administrador</span></span></div>
+<span style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #CFCFCF"><span>viaprovisionesperu@gmail.com</span><span>+51 954 802 744</span><span>Dean Valdivia 533 - Cercado, Arequipa</span></span>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid #2A2A2A">
+<span style="font-size: 12px; font-weight: 700; color: #BDBDBD">Sesiones activas</span>
+<sc-for list="{{sessions}}" as="s" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; background: #2A2A2A; display: flex; align-items: center; justify-content: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2"><span style="font-size: 12px; font-weight: 700">{{s.name}}</span><span style="font-size: 11px; color: #9A9A9A">{{s.where}}</span></span><sc-if value="{{s.current}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 700; color: #FF914C">Esta</span></sc-if><sc-if value="{{s.closable}}" hint-placeholder-val="{{ true }}"><button onClick="{{s.close}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: none; background: #2A2A2A; color: #FFFFFF; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer">Cerrar</button></sc-if></div>
+</sc-for>
+</div>
+</div>
+
+<!-- Preferencias -->
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 15px; font-weight: 800">Cómo recibir cada aviso</span><span style="font-size: 12px; color: #8C8C8C">Toca para activar o desactivar</span></span>
+<sc-for list="{{prefs}}" as="p" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-top: 1px solid #F0F0EE">
+<span style="font-size: 13px; font-weight: 700">{{p.name}}</span>
+<div style="display: flex; gap: 6px">
+<sc-for list="{{p.ch}}" as="c" hint-placeholder-count="3">
+<button role="switch" aria-checked="{{c.aria}}" aria-label="{{c.aria2}}" onClick="{{c.toggle}}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 34px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{c.icon}}"></path></svg>{{c.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+</div>
+
+<!-- Botón de acción -->
+<button onClick="{{fabAct}}" aria-label="{{fabLabel}}" style="position: absolute; right: 18px; bottom: 100px; z-index: 6; width: 58px; height: 58px; border-radius: 50%; border: none; background: #E8701F; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px rgba(232,112,31,0.4)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="{{fabIcon}}"></path></svg></button>
+
+<!-- Barra inferior -->
+<nav aria-label="Navegación de marketing" style="position: absolute; left: 14px; right: 14px; bottom: 18px; z-index: 6; height: 66px; padding: 7px; box-sizing: border-box; border-radius: 999px; background: #111111; display: flex; gap: 4px">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button onClick="{{t.pick}}" aria-current="{{t.current}}" aria-label="{{t.label}}" style="position: relative; flex: {{t.flex}}; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; border: none; background: {{t.bg}}; color: {{t.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg><sc-if value="{{t.on}}" hint-placeholder-val="{{ false }}"><span>{{t.label}}</span></sc-if><sc-if value="{{t.badge}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; top: 6px; right: 12px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 999px; background: #FF914C; color: #111111; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{t.badge}}</span></sc-if></button>
+</sc-for>
+</nav>
+
+<!-- ============ MENÚ (hoja inferior) ============ -->
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 20; background: rgba(17,17,17,0.45); display: flex; flex-direction: column; justify-content: flex-end">
+<button onClick="{{closeMenu}}" aria-label="Cerrar menú" style="flex: 1; min-height: 40px; border: none; background: transparent; cursor: pointer"></button>
+<nav aria-label="Menú del panel" style="height: 92%; background: #FFFFFF; border-radius: 30px 30px 0 0; box-sizing: border-box; display: flex; flex-direction: column">
+
+<!-- Cabecera fija de la hoja -->
+<div style="padding: 10px 16px 12px; display: flex; flex-direction: column; gap: 12px; flex: none">
+<span style="align-self: center; width: 44px; height: 5px; border-radius: 999px; background: #DCDCD8"></span>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em">Menú</span><span style="font-size: 12px; font-weight: 500; color: #8C8C8C">¿A dónde vamos?</span></span>
+<button onClick="{{closeMenu}}" aria-label="Cerrar menú" style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<label style="display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 6px 0 16px; border-radius: 999px; background: #F4F4F2; box-sizing: border-box">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" aria-hidden="true" style="flex: none"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar en el menú</span>
+<input type="search" value="{{q}}" onInput="{{onSearch}}" onChange="{{onSearch}}" placeholder="Buscar módulo: ofertas, caja, lotes…" style="flex: 1; min-width: 0; border: none; background: transparent; font-family: inherit; font-size: 14px; outline: none">
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button onClick="{{clearSearch}}" aria-label="Borrar búsqueda" style="width: 34px; height: 34px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+</label>
+<sc-if value="{{noQ}}" hint-placeholder-val="{{ true }}">
+<div class="noscroll" role="tablist" aria-label="Grupos del menú" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="7">
+<button role="tab" aria-selected="{{c.sel}}" onClick="{{c.pick}}" style="flex: none; display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap">{{c.label}}<sc-if value="{{c.count}}" hint-placeholder-val="{{ false }}"><span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: {{c.countBg}}; color: {{c.countFg}}; font-size: 11px; display: flex; align-items: center; justify-content: center">{{c.count}}</span></sc-if></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<!-- Contenido con scroll -->
+<div class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{noQ}}" hint-placeholder-val="{{ true }}">
+<span style="display: flex; flex-direction: column; line-height: 1.25; padding: 0 2px"><span style="font-size: 17px; font-weight: 700">{{grpTitle}}</span><span style="font-size: 12px; color: #8C8C8C">{{grpDesc}}</span></span>
+</sc-if>
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 13px; font-weight: 600; color: #8C8C8C; padding: 0 2px">{{resultLabel}}</span>
+</sc-if>
+<sc-if value="{{noResults}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 34px 16px; border-radius: 22px; background: #F4F4F2; text-align: center"><span style="width: 48px; height: 48px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><span style="font-size: 15px; font-weight: 700">Sin resultados</span><span style="font-size: 12px; color: #6B6B6B">Prueba con otra palabra, por ejemplo "cupón" o "lote".</span></div>
+</sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{cards}}" as="i" hint-placeholder-count="4">
+<sc-if value="{{i.isScreen}}" hint-placeholder-val="{{ true }}">
+<button onClick="{{i.pick}}" aria-current="{{i.current}}" style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-height: 112px; padding: 12px; border-radius: 22px; border: none; background: {{i.bg}}; color: {{i.fg}}; font-family: inherit; text-align: left; cursor: pointer"><span style="display: flex; align-items: center; justify-content: space-between; gap: 6px"><span style="width: 38px; height: 38px; border-radius: 50%; background: {{i.iconBg}}; display: flex; align-items: center; justify-content: center; flex: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{i.iconFg}}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span><sc-if value="{{i.badge}}" hint-placeholder-val="{{ false }}"><span style="height: 22px; padding: 0 8px; border-radius: 999px; background: {{i.badgeBg}}; color: {{i.badgeFg}}; font-size: 10px; font-weight: 700; display: flex; align-items: center; white-space: nowrap">{{i.badge}}</span></sc-if></span><span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">{{i.label}}</span><span style="font-size: 12px; color: {{i.subFg}}">{{i.sub}}</span><sc-if value="{{i.group}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 600; color: {{i.subFg}}; margin-top: 2px">{{i.group}}</span></sc-if></span></button>
+</sc-if>
+<sc-if value="{{i.isLink}}" hint-placeholder-val="{{ false }}">
+<a href="{{i.href}}" style="display: flex; flex-direction: column; gap: 10px; min-height: 112px; padding: 12px; border-radius: 22px; background: #F4F4F2; color: #111111; text-decoration: none; box-sizing: border-box"><span style="display: flex; align-items: center; justify-content: space-between; gap: 6px"><span style="width: 38px; height: 38px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span><sc-if value="{{i.badge}}" hint-placeholder-val="{{ false }}"><span style="height: 22px; padding: 0 8px; border-radius: 999px; background: {{i.badgeBg}}; color: {{i.badgeFg}}; font-size: 10px; font-weight: 700; display: flex; align-items: center; white-space: nowrap">{{i.badge}}</span></sc-if></span><span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">{{i.label}}</span><span style="font-size: 12px; color: #8C8C8C">{{i.sub}}</span><sc-if value="{{i.group}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 600; color: #8C8C8C; margin-top: 2px">{{i.group}}</span></sc-if></span></a>
+</sc-if>
+</sc-for>
+</div>
+</div>
+
+<!-- Pie fijo: acciones y cuenta -->
+<div style="flex: none; padding: 12px 16px 22px; border-top: 1px solid #EFEFEC; display: flex; flex-direction: column; gap: 10px; background: #FFFFFF">
+<div class="noscroll" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+<sc-for list="{{quick}}" as="a" hint-placeholder-count="4">
+<a href="{{a.href}}" style="flex: none; display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px 0 11px; border-radius: 999px; background: {{a.bg}}; color: {{a.fg}}; text-decoration: none; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{a.icon}}"></path></svg>{{a.label}}</a>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 40px; height: 40px; border-radius: 50%; background: {{accent}}; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex: none">BC</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">Beltran Carlos Ccapa</span><span style="font-size: 12px; color: #8C8C8C">Administrador</span></span>
+<a href="AdminLogin.dc.html" style="display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px; border-radius: 999px; background: #111111; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"></path></svg>Cerrar sesión</a>
+</div>
+</div>
+</nav>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF914C","options":["#FF914C","#FF5F00","#F27420"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const B = 'img/';
+    this.state = {
+      screen: 'ofertas', menu: false, grp: 'tienda', q: '', toast: '',
+      otab: 'ofertas', ofilter: 'Todas', paused: {}, extraOffers: [], creating: false,
+      ed: { name: 'Nueva oferta', type: 'Porcentaje', value: 10, cat: 'Focos' }, copied: '',
+      sel: 0, dirty: false, newMsg: '',
+      slides: [
+        { tab: 'Camping', img: B + '621ce65a45113393656af23955c4e044', title: 'Para la noche más larga', cta: 'Comprar camping', on: true, color: '#FFFFFF' },
+        { tab: 'Solar', img: B + '1e3cbb6a8497f7e680445500f1240a3b', title: 'Energía que no se corta', cta: 'Comprar solar', on: true, color: '#FFFFFF' },
+        { tab: 'Focos', img: B + '0e200ae6333f48d1adeafc046ff925a6', title: 'Luz para cada cuarto', cta: 'Comprar focos', on: true, color: '#FFFFFF' },
+        { tab: 'Cables', img: B + '96c00ebc0862099877967a7af4e3ef8e', title: 'Siempre conectado', cta: 'Comprar cables', on: true, color: '#FFFFFF' }
+      ],
+      msgs: ['Envío a todo el país', 'Entrega programada', 'Pago seguro', 'Atención por WhatsApp', 'Paneles solares y energía portátil', 'Ofertas de temporada'],
+      nfilter: 'Todas', read: { n5: true, n7: true, n10: true, n11: true },
+      prefs: [[1, 1, 0], [1, 1, 1], [1, 0, 1], [1, 1, 0], [1, 0, 1], [1, 0, 1]],
+      closedSes: {}
+    };
+  }
+  renderVals() {
+    const st = this.state;
+    const B = 'img/';
+    const go = (s) => () => this.setState({ screen: s, menu: false, toast: '' });
+    const money = (n, d) => 'S/ ' + n.toLocaleString('es-PE', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+    const IC = {
+      inicio: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z',
+      pedidos: 'M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0',
+      cotiz: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4',
+      clientes: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6',
+      inv: 'M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10',
+      compras: 'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a2 2 0 1 0 0-.1M17 19a2 2 0 1 0 0-.1',
+      reportes: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+      tienda: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18',
+      qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2z',
+      ajustes: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      pos: 'M3 4h18v10H3zM8 20h8M12 14v6M7 9h4',
+      devol: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5',
+      prov: 'M3 21V9l9-6 9 6v12M9 21v-6h6v6',
+      tras: 'M4 8h13l-3-3M20 16H7l3 3',
+      kardex: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+      caja: 'M3 7h18v12H3zM3 11h18M7 15h3',
+      cobro: 'M12 3v18M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6',
+      gasto: 'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5',
+      sunat: 'M7 3h10v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5zM10 8h4M10 12h4',
+      oferta: 'M3 12l9-9h9v9l-9 9zM16 8h.01',
+      banner: 'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6',
+      bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4',
+      users: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1',
+      mas: 'M5 12h.01M12 12h.01M19 12h.01',
+      ok: 'M5 12l5 5 9-10', no: 'M8 12h8', plus: 'M12 5v14M5 12h14', copy: 'M8 8h12v12H8zM4 16V4h12'
+    };
+    const ST = {
+      Activa: ['#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'], Programada: ['#E3F1FF', '#0B4A8A', 'M12 7v5l3 2'],
+      Pausada: ['#FFF4D6', '#7A4A00', 'M9 6v12M15 6v12'], Vencida: ['#EFEFEC', '#555555', 'M6 6l12 12M18 6L6 18'],
+      Activo: ['#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'], Agotado: ['#FDE4E2', '#8E1C14', 'M12 7v6M12 17h.01']
+    };
+    const IMG = { lamp: B + 'a58999411e32d7481815ba8cdc175e97', solar: B + '972ceb606bfca75ef6208d8d3966c77d', foco: B + '52dc55c2523393f8f60ab89499fa3ec1', cable: B + '3aba2390d3fbd5f06fdd2cede507b16f', ext: B + '323e29809539c2fb4b229651c8081ee9', otro: B + '56a034356f25e7cd0fe7251db3cbbddc' };
+
+    // ---------- Ofertas ----------
+    const OF = [
+      { id: 'O1', name: 'Temporada camping −15%', state: 'Activa', from: '01 oct', to: '15 nov', uses: 86, limit: 0, sales: 3180, img: IMG.lamp },
+      { id: 'O2', name: 'Focos LED 3x2', state: 'Activa', from: '10 oct', to: '31 oct', uses: 54, limit: 200, sales: 1420, img: IMG.foco },
+      { id: 'O3', name: 'Mayorista: −8% desde 12 und', state: 'Activa', from: '01 ene', to: 'sin fin', uses: 37, limit: 0, sales: 1640, img: IMG.ext },
+      { id: 'O4', name: 'Envío gratis en Arequipa desde S/ 150', state: 'Programada', from: '01 nov', to: '30 nov', uses: 0, limit: 0, sales: 0, img: IMG.cable },
+      { id: 'O5', name: 'Cyber Solar −10%', state: 'Vencida', from: '15 jul', to: '31 jul', uses: 21, limit: 50, sales: 2310, img: IMG.solar }
+    ].concat(st.extraOffers);
+    const FIL = { Todas: null, Activas: ['Activa', 'Pausada'], Programadas: ['Programada'], Vencidas: ['Vencida'] };
+    const offers = OF.map((o) => Object.assign({}, o, { state: o.state === 'Activa' && st.paused[o.id] ? 'Pausada' : o.state }))
+      .filter((o) => !FIL[st.ofilter] || FIL[st.ofilter].indexOf(o.state) >= 0)
+      .map((o) => {
+        const s = ST[o.state];
+        const on = o.state === 'Activa';
+        return {
+          name: o.name, img: o.img, state: o.state, bg: s[0], fg: s[1], icon: s[2],
+          dates: o.from + ' – ' + o.to, uses: o.uses + (o.limit ? ' de ' + o.limit : '') + ' usos', sales: money(o.sales),
+          canToggle: o.state === 'Activa' || o.state === 'Pausada', onAria: on ? 'true' : 'false',
+          toggleLabel: on ? 'Pausar ' + o.name : 'Reactivar ' + o.name,
+          swBg: on ? '#E8701F' : '#DCDCD8', swJ: on ? 'flex-end' : 'flex-start',
+          toggle: () => this.setState({ paused: Object.assign({}, st.paused, { [o.id]: !st.paused[o.id] }), toast: (on ? 'Pausaste ' : 'Reactivaste ') + '«' + o.name + '».' })
+        };
+      });
+    const CP = [
+      ['VIA5', '5% de descuento', 'Compra mínima S/ 50', 'Vence 31 dic 2026', 64, 200, 'Activo'],
+      ['BIENVENIDA10', '10% en la primera compra', 'Compra mínima S/ 80', 'Sin vencimiento', 51, 0, 'Activo'],
+      ['EMPRESA50', 'S/ 50 de descuento', 'Mínimo S/ 1,000 · lista Empresa', 'Vence 30 nov 2026', 12, 30, 'Activo'],
+      ['CAMPING20', 'S/ 20 de descuento', 'Mínimo S/ 150 · Camping', 'Vence 15 nov 2026', 16, 50, 'Activo'],
+      ['FERIA2025', '15% de descuento', 'Feria de Arequipa', 'Venció 31 ago 2025', 100, 100, 'Agotado']
+    ];
+    const coupons = CP.map((c) => {
+      const s = ST[c[6]];
+      const done = st.copied === c[0];
+      const dead = c[6] !== 'Activo';
+      return {
+        code: c[0], value: c[1], rule: c[2], until: c[3], state: c[6], bg: s[0], fg: s[1], icon: s[2],
+        usage: c[4] + (c[5] ? '/' + c[5] : ' usos'), w: (c[5] ? Math.round((c[4] / c[5]) * 100) : 40) + '%', o: dead ? '0.6' : '1',
+        btnText: done ? 'Copiado' : 'Copiar', btnIcon: done ? IC.ok : IC.copy, btnBg: done ? '#E4F4E7' : '#111111', btnFg: done ? '#1B5E20' : '#FFFFFF',
+        copy: () => this.setState({ copied: c[0] })
+      };
+    });
+    const PK = [
+      ['Kit camping', [['Lámpara de camping', 89.9, IMG.lamp], ['Linterna de cabeza', 39.9, IMG.otro], ['Panel solar 20 W', 129, IMG.solar]], 219, 18, 12],
+      ['Kit instalación', [['Extensión 5 m', 45, IMG.ext], ['3 focos LED 9 W', 26.7, IMG.foco], ['Cable USB-C 1 m', 19.9, IMG.cable]], 79, 34, 25],
+      ['Kit regalo llavero', [['2 llaveros linterna', 30, IMG.otro], ['Gancho multiuso', 8.9, IMG.ext], ['Cable USB-C 1 m', 19.9, IMG.cable]], 49, 52, 40]
+    ];
+    const packs = PK.map((p) => {
+      const sum = p[1].reduce((a, l) => a + l[1], 0);
+      return { name: p[0], lines: p[1].map((l) => ({ name: l[0], img: l[2] })), sum: money(sum, 2), price: money(p[2], 2), save: money(sum - p[2], 2) + ' (' + Math.round(((sum - p[2]) / sum) * 100) + '%)', sold: String(p[3]), stock: String(p[4]) };
+    });
+    // editor
+    const ed = st.ed;
+    const BASE = { Focos: [IMG.foco, 'Foco LED 9 W luz cálida', 8.9], Cables: [IMG.cable, 'Cable USB-C carga rápida 1 m', 19.9], Extensiones: [IMG.ext, 'Extensión de uso rudo 5 m', 45], Camping: [IMG.lamp, 'Lámpara de camping recargable', 89.9], Solar: [IMG.solar, 'Panel solar monocristalino 100 W', 389] };
+    const bp = BASE[ed.cat];
+    let price = bp[2], badge = '', note = '', hasOld = true;
+    if (ed.type === 'Porcentaje') { price = bp[2] * (1 - ed.value / 100); badge = '−' + ed.value + '%'; note = 'Descuento en toda la categoría ' + ed.cat; }
+    else if (ed.type === 'Monto fijo') { price = Math.max(0, bp[2] - ed.value); badge = '−S/ ' + ed.value; note = 'Se descuenta por unidad'; }
+    else if (ed.type === '3x2') { price = (bp[2] * 2) / 3; badge = '3x2'; note = 'Lleva 3, paga 2 · precio por unidad'; }
+    else { badge = 'Envío gratis'; note = 'Envío gratis en Arequipa'; hasOld = false; }
+    const showValue = ed.type === 'Porcentaje' || ed.type === 'Monto fijo';
+    const step = (d) => () => {
+      const max = ed.type === 'Porcentaje' ? 70 : 200;
+      this.setState({ ed: Object.assign({}, ed, { value: Math.min(max, Math.max(5, ed.value + d)) }) });
+    };
+    const setEd = (o) => this.setState({ ed: Object.assign({}, ed, o) });
+
+    // ---------- Banners ----------
+    const slides = st.slides;
+    const sel = Math.min(st.sel, slides.length - 1);
+    const cur = slides[sel];
+    const setSlides = (next, extra) => this.setState(Object.assign({ slides: next, dirty: true }, extra || {}));
+    const move = (i, d) => () => {
+      const j = i + d;
+      if (j < 0 || j >= slides.length) return;
+      const next = slides.slice();
+      const t = next[i]; next[i] = next[j]; next[j] = t;
+      setSlides(next, { sel: st.sel === i ? j : (st.sel === j ? i : st.sel) });
+    };
+    const editCur = (o) => setSlides(slides.map((s, i) => (i === sel ? Object.assign({}, s, o) : s)));
+    const active = slides.filter((s) => s.on);
+    const IMGS = [
+      ['621ce65a45113393656af23955c4e044', 'Sendero con linterna de noche'], ['1e3cbb6a8497f7e680445500f1240a3b', 'Paneles solares'],
+      ['0e200ae6333f48d1adeafc046ff925a6', 'Foco encendido'], ['96c00ebc0862099877967a7af4e3ef8e', 'Cables de colores'],
+      ['6bfeade76520c7a9cd478f997069e6ca', 'Carpa iluminada'], ['c475e40bec8fdd711d15f0e45dd911ee', 'Kit solar para casa'],
+      ['21203a7db58c579a492fb8673b0da391', 'Focos en la sala'], ['270fef37ab257fc6383d3c904a7f2911', 'Kit de camping']
+    ];
+
+    // ---------- Notificaciones ----------
+    const T = {
+      Pedidos: ['Pedido', '#E3F1FF', '#0B4A8A', 'M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0'],
+      Stock: ['Stock y lotes', '#FFF4D6', '#7A4A00', 'M12 7v6M12 17h.01M10.3 3.9L2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'],
+      Pagos: ['Pago', '#E4F4E7', '#1B5E20', 'M3 6h18v12H3zM3 10h18M7 15h4'],
+      Cotizaciones: ['Cotización', '#EDE7FF', '#4A2E9A', 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4'],
+      Sistema: ['Sistema', '#EFEFEC', '#444444', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM4 12h2M18 12h2M12 4v2M12 18v2']
+    };
+    // destino móvil de cada aviso
+    const N = [
+      ['n1', 'Hoy', 'Pedidos', 'Nuevo pedido #1043', 'María Q. · Tienda web · S/ 548.50 · pago por Yape', '10:42', 'MovilAlmacen.dc.html', 'Ver pedido'],
+      ['n2', 'Hoy', 'Pagos', 'Constancia de Yape recibida', 'Pedido #1042 · S/ 159.70 · falta confirmar en la cuenta', '10:25', 'MovilAlmacen.dc.html', 'Confirmar pago'],
+      ['n3', 'Hoy', 'Stock', 'Stock bajo: Foco LED 9 W luz cálida', 'Quedan 18 unidades (mínimo 40) · se vende del lote L-1008', '09:58', 'AdminMovil.dc.html', 'Ver inventario'],
+      ['n4', 'Hoy', 'Cotizaciones', 'Cotización COT-0218 por vencer', 'Constructora [Cliente] · vence en 2 días · S/ 14,320.90', '09:30', 'AdminMovil.dc.html', 'Ver cotización'],
+      ['n5', 'Hoy', 'Sistema', 'Caja abierta por Beltran C.', 'Apertura con S/ 200.00', '08:30', 'MovilFinanzas.dc.html', 'Ver caja'],
+      ['n6', 'Ayer', 'Stock', 'Lote L-1102 en camino', 'Panel solar 100 W · llega el 28 oct · OC-0417', '17:12', 'AdminMovil.dc.html', 'Ver lote'],
+      ['n7', 'Ayer', 'Pedidos', 'Pedido #1040 enviado', 'Ferretería Cayma · agencia a Cusco', '15:40', 'AdminMovil.dc.html', 'Ver pedidos'],
+      ['n8', 'Ayer', 'Sistema', '3 pedidos pagados sin comprobante', 'Emite las boletas para cerrar el día', '19:05', 'MovilFinanzas.dc.html', 'Emitir comprobantes'],
+      ['n9', 'Esta semana', 'Pagos', 'Alquiler vence el 01 nov', 'Pago programado · S/ [MONTO]', 'Lun', 'MovilFinanzas.dc.html', 'Ver gastos'],
+      ['n10', 'Esta semana', 'Cotizaciones', 'Cotización COT-0215 aceptada', 'Minera [Cliente] · S/ 8,940.00 · lista para pedido', 'Dom', 'AdminMovil.dc.html', 'Convertir en pedido'],
+      ['n11', 'Esta semana', 'Sistema', 'Nuevo inicio de sesión', 'Celular Android · Arequipa', 'Sáb', '#perfil', 'Revisar sesiones']
+    ];
+    const isUnread = (n) => !st.read[n[0]];
+    const unread = N.filter(isUnread).length;
+    const CH = [['Todas', null], ['Sin leer', 'unread'], ['Pedidos', 'Pedidos'], ['Stock y lotes', 'Stock'], ['Pagos', 'Pagos'], ['Cotizaciones', 'Cotizaciones'], ['Sistema', 'Sistema']];
+    const fil = (CH.find((c) => c[0] === st.nfilter) || CH[0])[1];
+    const pass = (n) => !fil || (fil === 'unread' ? isUnread(n) : n[2] === fil);
+    const nGroups = ['Hoy', 'Ayer', 'Esta semana'].map((d) => ({
+      day: d,
+      items: N.filter((n) => n[1] === d && pass(n)).map((n) => {
+        const t = T[n[2]];
+        const un = isUnread(n);
+        return { type: t[0], bg: t[1], fg: t[2], icon: t[3], title: n[3], detail: n[4], time: n[5], href: n[6], action: n[7], unread: un, bgCard: un ? '#FFFFFF' : '#F4F4F2', markRead: () => this.setState({ read: Object.assign({}, st.read, { [n[0]]: true }) }) };
+      })
+    })).filter((g) => g.items.length > 0);
+    const PREF = ['Pedidos nuevos', 'Pagos y constancias', 'Stock bajo y lotes', 'Cotizaciones', 'Comprobantes SUNAT', 'Inicios de sesión'];
+    const CHN = ['Panel', 'WhatsApp', 'Correo'];
+
+    // ---------- Pantalla actual ----------
+    const META = {
+      ofertas: ['Ofertas y cupones', '3 activas · 1 programada', 'Crear oferta', IC.plus],
+      banners: ['Banners y portada', st.dirty ? 'Cambios sin publicar' : 'Publicado', 'Agregar diapositiva', IC.plus],
+      notificaciones: ['Notificaciones', unread + ' sin leer', 'Marcar todo como leído', IC.ok]
+    };
+    const m = META[st.screen];
+
+    // ---------- Menú ----------
+    const HERE = ['ofertas', 'banners', 'notificaciones'];
+    const WHERE = {
+      inicio: 'AdminMovil.dc.html', pedidos: 'AdminMovil.dc.html', inventario: 'AdminMovil.dc.html', clientes: 'AdminMovil.dc.html', cotizaciones: 'AdminMovil.dc.html', compras: 'AdminMovil.dc.html', reportes: 'AdminMovil.dc.html', ajustes: 'AdminMovil.dc.html',
+      caja: 'MovilFinanzas.dc.html', gastos: 'MovilFinanzas.dc.html', comprobantes: 'MovilFinanzas.dc.html', puntoventa: 'MovilFinanzas.dc.html',
+      pedidodetalle: 'MovilAlmacen.dc.html', kardex: 'MovilAlmacen.dc.html', traslados: 'MovilAlmacen.dc.html', devoluciones: 'MovilAlmacen.dc.html', productoeditar: 'MovilAlmacen.dc.html'
+    };
+    const I = (label, sub, icon, scr, o) => Object.assign({ label, sub, icon, scr }, o || {});
+    const GROUPS = [
+      ['fav', 'Favoritos', 'Lo que más usas', [
+        I('Punto de venta', 'Vender en el mostrador', IC.pos, 'puntoventa'),
+        I('Pedidos', 'Tablero por estado', IC.pedidos, 'pedidos', { badge: '8 por atender' }),
+        I('Inventario y lotes', 'Stock por lote', IC.inv, 'inventario', { badge: '6 bajos' }),
+        I('Cotizaciones', 'Empresas y mayoristas', IC.cotiz, 'cotizaciones', { badge: '5 nuevas' }),
+        I('Caja del día', 'Apertura, arqueo y cierre', IC.caja, 'caja', { badge: 'Abierta', plain: true }),
+        I('Panel de inicio', 'Resumen del día', IC.inicio, 'inicio')]],
+      ['ventas', 'Ventas', 'Mostrador, pedidos y clientes', [
+        I('Punto de venta', 'Vender en el mostrador', IC.pos, 'puntoventa'),
+        I('Pedidos', 'Tablero por estado', IC.pedidos, 'pedidos', { badge: '8 por atender' }),
+        I('Cotizaciones', 'Empresas y mayoristas', IC.cotiz, 'cotizaciones', { badge: '5 nuevas' }),
+        I('Clientes', 'Fichas y cobranzas', IC.clientes, 'clientes', { badge: '414', plain: true }),
+        I('Devoluciones', 'Cambios y garantías', IC.devol, 'devoluciones', { badge: '2 abiertas' })]],
+      ['almacen', 'Almacén', 'Stock, lotes y compras', [
+        I('Inventario y lotes', 'Stock por lote', IC.inv, 'inventario', { badge: '6 bajos' }),
+        I('Kardex', 'Historial por producto y lote', IC.kardex, 'kardex'),
+        I('Compras', 'Órdenes de compra', IC.compras, 'compras', { badge: '3 en camino', plain: true }),
+        I('Proveedores', 'Datos y deudas', IC.prov, 'compras'),
+        I('Traslados', 'Entre tienda y almacén', IC.tras, 'traslados')]],
+      ['finanzas', 'Finanzas', 'Caja, cobros y gastos', [
+        I('Caja del día', 'Apertura, arqueo y cierre', IC.caja, 'caja', { badge: 'Abierta', plain: true }),
+        I('Cobranzas', 'Cuentas por cobrar', IC.cobro, 'clientes', { badge: 'S/ 18k', plain: true }),
+        I('Gastos', 'Luz, alquiler, sueldos', IC.gasto, 'gastos', { badge: '2 por pagar' }),
+        I('Comprobantes SUNAT', 'Boletas y facturas', IC.sunat, 'comprobantes', { badge: '3 por emitir' })]],
+      ['tienda', 'Tienda y marketing', 'Canales de venta', [
+        I('Tienda web', 'viaprovisiones.com', IC.tienda, '', { href: 'Main.dc.html' }),
+        I('Enlaces y QR', 'Página del QR y redes', IC.qr, '', { href: 'Enlaces.dc.html' }),
+        I('Ofertas y cupones', 'Descuentos y packs', IC.oferta, 'ofertas', { badge: '3 activas', plain: true }),
+        I('Banners de la tienda', 'Portada y anuncios', IC.banner, 'banners')]],
+      ['analisis', 'Análisis', 'Cómo va el negocio', [
+        I('Panel de inicio', 'Resumen del día', IC.inicio, 'inicio'),
+        I('Reportes', 'Ventas y márgenes', IC.reportes, 'reportes')]],
+      ['cuenta', 'Cuenta', 'Configuración', [
+        I('Notificaciones y perfil', 'Avisos y tu cuenta', IC.bell, 'notificaciones', { badge: unread ? unread + ' sin leer' : '' }),
+        I('Ajustes', 'Negocio, pagos, envíos', IC.ajustes, 'ajustes'),
+        I('Usuarios y roles', 'Quién ve qué', IC.users, 'ajustes')]]
+    ];
+    const card = (it, groupName) => {
+      const here = HERE.indexOf(it.scr) >= 0;
+      const on = here && st.screen === it.scr;
+      return {
+        label: it.label, sub: it.sub, icon: it.icon, group: groupName || '',
+        isScreen: here, isLink: !here, href: it.href || WHERE[it.scr] || '#',
+        current: on ? 'page' : 'false',
+        bg: on ? '#111111' : '#F4F4F2', fg: on ? '#FFFFFF' : '#111111', subFg: on ? '#BDBDBD' : '#8C8C8C',
+        iconBg: on ? '#E8701F' : '#FFFFFF', iconFg: on ? '#FFFFFF' : '#111111',
+        badge: it.badge || '',
+        badgeBg: on ? '#2A2A2A' : (it.plain ? '#FFFFFF' : '#FFF1E6'), badgeFg: on ? '#FFFFFF' : (it.plain ? '#6B6B6B' : '#8A3B0A'),
+        pick: here ? go(it.scr) : () => {}
+      };
+    };
+    const norm = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const q = norm((st.q || '').trim());
+    const seen = {};
+    const hits = [];
+    if (q) GROUPS.slice(1).forEach((g) => g[3].forEach((it) => {
+      if (seen[it.label]) return;
+      if (norm(it.label + ' ' + it.sub + ' ' + g[1]).indexOf(q) >= 0) { seen[it.label] = 1; hits.push(card(it, g[1])); }
+    }));
+    const G = GROUPS.find((g) => g[0] === st.grp) || GROUPS[0];
+    const pending = (g) => g[3].filter((it) => it.badge && !it.plain).length;
+
+    return {
+      accent: this.props.accent ?? '#FF914C',
+      title: m[0], subtitle: m[1], fabLabel: m[2], fabIcon: m[3],
+      fabAct: () => {
+        if (st.screen === 'ofertas') this.setState({ otab: 'ofertas', creating: true, toast: '' });
+        else if (st.screen === 'banners') setSlides(slides.concat([{ tab: 'Nueva', img: B + IMGS[4][0], title: 'Nueva diapositiva', cta: 'Ver más', on: false, color: '#FFFFFF' }]), { sel: slides.length, toast: 'Diapositiva agregada como borrador (apagada).' });
+        else this.setState({ read: N.reduce((a, n) => Object.assign(a, { [n[0]]: true }), {}), toast: 'Todos los avisos quedaron como leídos.' });
+      },
+      toast: st.toast,
+      closeToast: () => this.setState({ toast: '' }),
+      menuOpen: st.menu,
+      openMenu: () => this.setState({ menu: true, q: '' }),
+      closeMenu: () => this.setState({ menu: false }),
+      isOfertas: st.screen === 'ofertas', isBanners: st.screen === 'banners', isNotif: st.screen === 'notificaciones',
+
+      // ofertas
+      giveaway: [['Ofertas', 512], ['Cupones', 241], ['Packs', 59]].map((g) => ({ name: g[0], v: money(g[1]), w: Math.round((g[1] / 512) * 100) + '%' })),
+      otabs: [['ofertas', 'Ofertas', OF.length], ['cupones', 'Cupones', CP.length], ['packs', 'Packs', PK.length]].map((t) => {
+        const on = st.otab === t[0];
+        return { label: t[1], n: String(t[2]), sel: on ? 'true' : 'false', bg: on ? '#111111' : 'transparent', fg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ otab: t[0] }) };
+      }),
+      tabOfertas: st.otab === 'ofertas', tabCupones: st.otab === 'cupones', tabPacks: st.otab === 'packs',
+      ofChips: Object.keys(FIL).map((c) => { const on = st.ofilter === c; return { label: c, sel: on ? 'true' : 'false', bg: on ? '#111111' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ ofilter: c }) }; }),
+      offers, coupons, packs,
+      creating: st.creating,
+      cancelCreate: () => this.setState({ creating: false }),
+      ed: { name: ed.name, showValue, valueText: ed.type === 'Porcentaje' ? ed.value + '%' : 'S/ ' + ed.value },
+      edName: (e) => setEd({ name: e && e.target ? e.target.value : ed.name }),
+      edMinus: step(-5), edPlus: step(5),
+      types: ['Porcentaje', 'Monto fijo', '3x2', 'Envío gratis'].map((t) => { const on = ed.type === t; return { label: t, sel: on ? 'true' : 'false', bg: on ? '#FFF1E6' : '#FFFFFF', border: on ? '#E8701F' : '#E4E4E0', pick: () => setEd({ type: t, value: t === 'Monto fijo' ? 5 : 10 }) }; }),
+      edCats: Object.keys(BASE).map((c) => { const on = ed.cat === c; return { label: c, sel: on ? 'true' : 'false', bg: on ? '#111111' : '#F4F4F2', fg: on ? '#FFFFFF' : '#111111', pick: () => setEd({ cat: c }) }; }),
+      pv: { img: bp[0], prod: bp[1], price: money(price, 2), old: money(bp[2], 2), hasOld, badge, note },
+      saveOffer: () => {
+        const name = (ed.name || '').trim() || 'Nueva oferta';
+        this.setState({
+          extraOffers: st.extraOffers.concat([{ id: 'N' + (st.extraOffers.length + 1), name, state: 'Programada', from: '01 nov', to: '30 nov', uses: 0, limit: 0, sales: 0, img: bp[0] }]),
+          creating: false, ofilter: 'Todas', toast: '«' + name + '» quedó programada para noviembre (ejemplo).'
+        });
+      },
+
+      // banners
+      pub: st.dirty ? { bg: '#FFF4D6', fg: '#7A4A00', icon: 'M12 7v6M12 17h.01', text: 'Borrador · cambios sin publicar' } : { bg: '#E4F4E7', fg: '#1B5E20', icon: IC.ok, text: 'Publicado en la tienda' },
+      publish: () => this.setState({ dirty: false, toast: 'Cambios publicados en la portada (ejemplo).' }),
+      pv2: { img: cur.img, title: cur.title, cta: cur.cta, tab: cur.tab, color: cur.color },
+      pvTabs: active.map((s) => { const on = s === cur; return { label: s.tab, bg: on ? '#FF914C' : 'rgba(255,255,255,0.18)', fg: on ? '#111111' : '#FFFFFF' }; }),
+      slides: slides.map((s, i) => ({
+        n: String(i + 1), tab: s.tab, title: s.title, img: s.img, border: i === sel ? '#111111' : '#FFFFFF', o: s.on ? '1' : '0.6',
+        editLabel: 'Editar ' + s.tab, onAria: s.on ? 'true' : 'false', swBg: s.on ? '#E8701F' : '#DCDCD8', swJ: s.on ? 'flex-end' : 'flex-start',
+        pick: () => this.setState({ sel: i }), up: move(i, -1), down: move(i, 1),
+        toggle: () => setSlides(slides.map((x, k) => (k === i ? Object.assign({}, x, { on: !x.on }) : x)))
+      })),
+      editTitle: (e) => editCur({ title: e && e.target ? e.target.value : cur.title }),
+      editCta: (e) => editCur({ cta: e && e.target ? e.target.value : cur.cta }),
+      imgs: IMGS.map((x) => { const src = B + x[0]; const on = cur.img === src; return { src, alt: x[1], sel: on ? 'true' : 'false', ring: on ? '#E8701F' : '#FFFFFF', pick: () => editCur({ img: src }) }; }),
+      ticker: st.msgs.join('  ·  '),
+      msgs: st.msgs.map((t, i) => ({ text: t, removeLabel: 'Quitar «' + t + '»', remove: () => this.setState({ msgs: st.msgs.filter((_, k) => k !== i), dirty: true }) })),
+      newMsg: st.newMsg,
+      onNewMsg: (e) => this.setState({ newMsg: e && e.target ? e.target.value : '' }),
+      addMsg: () => { const t = (st.newMsg || '').trim(); if (t) this.setState({ msgs: st.msgs.concat([t]), newMsg: '', dirty: true }); },
+
+      // notificaciones
+      unreadText: unread ? unread + ' sin leer' : 'Todo leído',
+      readAll: () => this.setState({ read: N.reduce((a, n) => Object.assign(a, { [n[0]]: true }), {}) }),
+      nChips: CH.map((c) => {
+        const on = st.nfilter === c[0];
+        const n = c[1] === 'unread' ? unread : (c[1] ? N.filter((x) => x[2] === c[1] && isUnread(x)).length : 0);
+        return { label: c[0], sel: on ? 'true' : 'false', n: n ? String(n) : '', bg: on ? '#111111' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111111', nBg: on ? '#E8701F' : '#F4F4F2', nFg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ nfilter: c[0] }) };
+      }),
+      nGroups, nEmpty: nGroups.length === 0,
+      sessions: [['s1', 'Este celular', 'Arequipa · ahora', 'M7 3h10v18H7zM11 18h2', true], ['s2', 'Computadora · Chrome', 'Arequipa · hace 2 h', 'M3 5h18v11H3zM8 20h8M12 16v4'], ['s3', 'Tablet del mostrador', 'Tienda · ayer 18:40', 'M5 3h14v18H5zM11 18h2']]
+        .filter((s) => !st.closedSes[s[0]])
+        .map((s) => ({ name: s[1], where: s[2], icon: s[3], current: !!s[4], closable: !s[4], close: () => this.setState({ closedSes: Object.assign({}, st.closedSes, { [s[0]]: true }), toast: 'Cerraste la sesión «' + s[1] + '».' }) })),
+      prefs: PREF.map((name, r) => ({
+        name,
+        ch: CHN.map((label, k) => {
+          const on = !!st.prefs[r][k];
+          return {
+            label, icon: on ? IC.ok : IC.no, aria: on ? 'true' : 'false', aria2: name + ' ' + label,
+            bg: on ? '#111111' : '#F4F4F2', fg: on ? '#FFFFFF' : '#8C8C8C',
+            toggle: () => this.setState({ prefs: st.prefs.map((row, i) => (i === r ? row.map((v, j) => (j === k ? (v ? 0 : 1) : v)) : row)) })
+          };
+        })
+      })),
+
+      // barra inferior
+      tabs: [['ofertas', 'Ofertas', IC.oferta], ['banners', 'Banners', IC.banner], ['notificaciones', 'Avisos', IC.bell], ['mas', 'Más', IC.mas]].map((t) => {
+        const on = st.screen === t[0];
+        return {
+          label: t[1], icon: t[2], on, current: on ? 'page' : 'false', flex: on ? '1.8 1 0' : '1 1 0',
+          bg: on ? '#E8701F' : 'transparent', fg: on ? '#FFFFFF' : '#BDBDBD',
+          badge: t[0] === 'notificaciones' && !on && unread ? String(unread) : '',
+          pick: t[0] === 'mas' ? () => this.setState({ menu: true, q: '' }) : go(t[0])
+        };
+      }),
+
+      // menú
+      q: st.q || '',
+      hasQ: !!q, noQ: !q,
+      onSearch: (e) => this.setState({ q: e && e.target ? e.target.value : '' }),
+      clearSearch: () => this.setState({ q: '' }),
+      chips: GROUPS.map((g) => {
+        const on = g[0] === G[0];
+        const n = pending(g);
+        return { label: g[1], sel: on ? 'true' : 'false', count: n ? String(n) : '', bg: on ? '#111111' : '#F4F4F2', fg: on ? '#FFFFFF' : '#111111', countBg: on ? '#E8701F' : '#FFFFFF', countFg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ grp: g[0] }) };
+      }),
+      grpTitle: G[1], grpDesc: G[2],
+      cards: q ? hits : G[3].map((it) => card(it)),
+      resultLabel: hits.length + (hits.length === 1 ? ' resultado' : ' resultados'),
+      noResults: !!q && hits.length === 0,
+      quick: [['Vender', IC.plus, 'MovilFinanzas.dc.html', true], ['Nuevo pedido', IC.pedidos, 'AdminMovil.dc.html'], ['Ingresar lote', IC.inv, 'AdminMovil.dc.html'], ['Orden de compra', IC.compras, 'AdminMovil.dc.html']].map((a) => ({
+        label: a[0], icon: a[1], href: a[2], bg: a[3] ? '#E8701F' : '#F4F4F2', fg: a[3] ? '#FFFFFF' : '#111111'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

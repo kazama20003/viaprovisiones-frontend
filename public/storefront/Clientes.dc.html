@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Clientes — VIA Provisiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E9E7}
+a{color:#111111}
+.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #E9E9E7; padding: 0; box-sizing: border-box; font-family: Manrope, system-ui, sans-serif; color: #111111">
+<div style="position: relative; width: 100%; max-width: none; min-height: 100vh; margin: 0 auto; background: #F4F4F2; border-radius: 40px; overflow: hidden">
+<div>
+<!-- Menú fijado arriba (opcional, con la chincheta) -->
+<sc-if value="{{pinned}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 20px 20px 0"><dc-import name="MenuPanel" mode="bar" active="Clientes" on-pin="{{togglePin}}" hint-size="100%,58px"></dc-import></div>
+</sc-if>
+<div>
+
+<!-- Encabezado -->
+<div style="padding: 28px 32px 30px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap">
+<button onClick="{{menuBtn}}" aria-label="{{menuBtnLabel}}" style="width: 52px; height: 52px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"></path></svg></button>
+<a href="Dashboard.dc.html" aria-label="Ir al panel" style="width: 52px; height: 52px; border-radius: 50%; background: #111111; display: flex; align-items: center; justify-content: center; flex: none"><svg width="30" height="30" viewBox="136 205 86 86" aria-hidden="true"><circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#FFFFFF" stroke-width="5"></circle><clipPath id="via-clip-cli"><circle cx="178.6" cy="247.5" r="40.5"></circle></clipPath><polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FFFFFF"></polygon><path clip-path="url(#via-clip-cli)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="#FFFFFF"></path></svg></a>
+<span style="display: flex; flex-direction: column; line-height: 1.2"><span style="font-size: 16px; font-weight: 700">Clientes</span><span style="font-size: 16px; font-weight: 500; color: #8C8C8C">Cartera y cobranzas</span></span>
+<span style="flex: 1"></span>
+<button style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: 999px; border: none; background: #E8701F; color: #FFFFFF; cursor: pointer; font-family: Manrope, sans-serif; font-size: 14px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Nuevo cliente</button>
+<span style="width: 52px; height: 52px; border-radius: 50%; background: {{accent}}; color: #111111; display: flex; align-items: center; justify-content: center; font-weight: 800">BC</span>
+<label style="display: flex; align-items: center; gap: 12px"><span style="width: 52px; height: 52px; border-radius: 50%; border: 1px solid #DCDCD8; display: flex; align-items: center; justify-content: center; flex: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar cliente</span><input type="search" placeholder="Nombre, RUC o celular…" style="width: 170px; border: none; background: transparent; font-family: inherit; font-size: 13px; outline: none"></label>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap">
+<span style="display: flex; flex-direction: column; line-height: 1.12; min-width: 300px"><span style="font-size: 38px; font-weight: 600; letter-spacing: -0.02em">Clientes</span><span style="font-size: 38px; font-weight: 400; letter-spacing: -0.02em; color: #9A9A9A">23 nuevos en octubre</span></span>
+<span style="flex: 1"></span>
+<sc-for list="{{headStats}}" as="h" hint-placeholder-count="4">
+<span style="display: flex; align-items: center; gap: 12px"><span style="min-width: 76px; height: 76px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 1px solid #DCDCD8; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; background: {{h.bg}}; color: {{h.fg}}">{{h.v}}</span><span style="display: flex; flex-direction: column; font-size: 13px; font-weight: 600; line-height: 1.25"><span>{{h.k1}}</span><span style="color: #8C8C8C">{{h.k2}}</span></span></span>
+</sc-for>
+</div>
+</div>
+
+<!-- Mosaico -->
+<div style="background: #FFFFFF; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+
+<!-- Fila 1: tipos, cobranzas, nuevos -->
+<div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch">
+
+<div style="flex: 1.3 1 380px; min-width: 0; border-radius: 30px; background: #F4F4F2; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 700">Clientes por tipo</span><span style="font-size: 12px; color: #6B6B6B">Toca un tipo para filtrar la lista</span></span>
+<sc-for list="{{segments}}" as="s" hint-placeholder-count="4">
+<button onClick="{{s.pick}}" aria-pressed="{{s.pressed}}" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 18px; border: 1px solid {{s.border}}; background: #FFFFFF; cursor: pointer; text-align: left; font-family: Manrope, sans-serif; color: #111111">
+<span style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><span style="font-size: 13px; font-weight: 700">{{s.name}}</span><span style="font-size: 12px; color: #6B6B6B"><strong style="font-size: 15px; color: #111111">{{s.n}}</strong> · {{s.sales}} en oct.</span></span>
+<span style="height: 8px; border-radius: 999px; background: #F1F1EE"><span style="display: block; width: {{s.w}}; height: 100%; border-radius: 999px; background: #E8701F"></span></span>
+</button>
+</sc-for>
+</div>
+
+<div style="flex: 1 1 320px; min-width: 0; border-radius: 30px; background: #111111; color: #FFFFFF; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 700">Cuentas por cobrar</span><span style="font-size: 12px; color: #BDBDBD">Crédito a empresas</span></span>
+<span style="font-size: 40px; font-weight: 800; letter-spacing: -0.02em"><span style="color: #FF914C">S/</span> 18,420</span>
+<sc-for list="{{aging}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: #1E1E1E"><span style="width: 30px; height: 30px; border-radius: 50%; background: {{a.bg}}; display: flex; align-items: center; justify-content: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{a.fg}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{a.icon}}"></path></svg></span><span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 700">{{a.name}}</span><span style="font-size: 11px; color: #BDBDBD">{{a.sub}}</span></span><span style="font-size: 15px; font-weight: 800">{{a.v}}</span></div>
+</sc-for>
+<a href="Pedidos.dc.html" style="margin-top: auto; height: 42px; border-radius: 999px; background: #FF914C; color: #111111; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 13px; font-weight: 800">Ver facturas por cobrar</a>
+</div>
+
+<div style="flex: 1 1 320px; min-width: 0; border-radius: 30px; background: #F4F4F2; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 700">Clientes nuevos por mes</span><span style="font-size: 12px; color: #6B6B6B">Mayo a octubre 2026</span></span>
+<div role="img" aria-label="{{newAria}}" style="flex: 1; min-height: 190px; display: flex; align-items: flex-end; gap: 10px; padding-top: 10px">
+<sc-for list="{{newMonths}}" as="m" hint-placeholder-count="6">
+<span style="flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px"><span style="font-size: 12px; font-weight: 800">{{m.n}}</span><span style="width: 100%; height: {{m.h}}; border-radius: 12px; background: {{m.c}}"></span><span style="font-size: 11px; color: #6B6B6B">{{m.t}}</span></span>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #6B6B6B">El 62 % de los clientes volvió a comprar dentro de los 90 días.</span>
+</div>
+</div>
+
+<!-- Fila 2: lista + ficha -->
+<div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start">
+
+<div style="flex: 2 1 640px; min-width: 0; border-radius: 30px; background: #F4F4F2; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="display: flex; flex-direction: column"><span style="font-size: 18px; font-weight: 700">Lista de clientes</span><span style="font-size: 12px; color: #6B6B6B">{{rowsCount}} mostrados de 414 · datos de ejemplo</span></span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap"><sc-for list="{{chips}}" as="c" hint-placeholder-count="5"><button onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid {{c.border}}; background: {{c.bg}}; color: {{c.fg}}; cursor: pointer; font-family: Manrope, sans-serif; font-size: 12px; font-weight: 700">{{c.name}}</button></sc-for></div>
+</div>
+<div class="noscroll" style="overflow-x: auto; background: #FFFFFF; border-radius: 24px">
+<div style="min-width: 860px; padding: 6px 10px">
+<div style="display: grid; grid-template-columns: 2.2fr 1.1fr 1fr 0.7fr 1.1fr 1.2fr 1.3fr; gap: 10px; padding: 12px 10px; font-size: 11px; font-weight: 700; color: #8C8C8C; text-transform: uppercase; letter-spacing: 0.04em"><span>Cliente</span><span>Tipo</span><span>Último pedido</span><span>Pedidos</span><span>Total comprado</span><span>Condición</span><span>Estado</span></div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+<button onClick="{{r.select}}" style="width: 100%; display: grid; grid-template-columns: 2.2fr 1.1fr 1fr 0.7fr 1.1fr 1.2fr 1.3fr; gap: 10px; align-items: center; padding: 10px; border: none; border-top: 1px solid #F1F1EE; border-radius: 16px; background: {{r.bg}}; cursor: pointer; text-align: left; font-family: Manrope, sans-serif; color: #111111">
+<span style="display: flex; align-items: center; gap: 10px; min-width: 0"><span style="width: 34px; height: 34px; border-radius: 50%; background: {{r.avBg}}; color: {{r.avFg}}; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex: none">{{r.ini}}</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span><span style="font-size: 11px; color: #6B6B6B">{{r.city}}</span></span></span>
+<span style="font-size: 12px; font-weight: 600">{{r.type}}</span>
+<span style="font-size: 12px; color: #444444">{{r.last}}</span>
+<span style="font-size: 13px; font-weight: 700">{{r.orders}}</span>
+<span style="font-size: 13px; font-weight: 800">{{r.total}}</span>
+<span style="font-size: 12px; color: #444444">{{r.cond}}</span>
+<span style="justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: {{r.stBg}}; color: {{r.stFg}}; font-size: 11px; font-weight: 700; white-space: nowrap"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.stIcon}}"></path></svg>{{r.status}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<!-- Ficha del cliente -->
+<div style="flex: 1 1 380px; min-width: 0; border-radius: 30px; background: #F4F4F2; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="width: 60px; height: 60px; border-radius: 50%; background: #111111; color: #FF914C; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; flex: none">{{sel.ini}}</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 12px; color: #6B6B6B">{{sel.type}} · {{sel.city}}</span><span style="font-size: 22px; font-weight: 800; line-height: 1.15">{{sel.name}}</span></span>
+</div>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: {{sel.stBg}}; color: {{sel.stFg}}; font-size: 12px; font-weight: 700"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{sel.stIcon}}"></path></svg>{{sel.status}}</span>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<span style="background: #FFFFFF; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #6B6B6B">Total comprado</span><span style="font-size: 17px; font-weight: 800">{{sel.total}}</span></span>
+<span style="background: #FFFFFF; border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; color: #6B6B6B">Ticket promedio</span><span style="font-size: 17px; font-weight: 800">{{sel.ticket}}</span></span>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 13px">
+<span style="display: flex; justify-content: space-between; gap: 10px"><span style="color: #6B6B6B">Contacto</span><span style="font-weight: 700; text-align: right">{{sel.contact}}</span></span>
+<span style="display: flex; justify-content: space-between; gap: 10px"><span style="color: #6B6B6B">Celular</span><span style="font-weight: 700">[CELULAR]</span></span>
+<span style="display: flex; justify-content: space-between; gap: 10px"><span style="color: #6B6B6B">RUC / DNI</span><span style="font-weight: 700">{{sel.doc}}</span></span>
+<span style="display: flex; justify-content: space-between; gap: 10px"><span style="color: #6B6B6B">Lista de precios</span><span style="font-weight: 700; color: #C2410C; text-align: right">{{sel.tier}}</span></span>
+<span style="display: flex; justify-content: space-between; gap: 10px"><span style="color: #6B6B6B">Condición de pago</span><span style="font-weight: 700">{{sel.cond}}</span></span>
+</div>
+
+<sc-if value="{{sel.hasCredit}}" hint-placeholder-val="{{ true }}">
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span style="display: flex; justify-content: space-between; font-size: 13px"><span style="font-weight: 700">Línea de crédito</span><span style="color: #6B6B6B">{{sel.creditTxt}}</span></span>
+<span style="height: 10px; border-radius: 999px; background: #F1F1EE"><span style="display: block; width: {{sel.creditW}}; height: 100%; border-radius: 999px; background: {{sel.creditC}}"></span></span>
+<span style="font-size: 12px; color: #6B6B6B">Disponible: <strong style="color: #111111">{{sel.creditFree}}</strong></span>
+</div>
+</sc-if>
+
+<div style="background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 13px; font-weight: 700">Compras por mes</span>
+<div role="img" aria-label="{{sel.monthsAria}}" style="height: 90px; display: flex; align-items: flex-end; gap: 8px">
+<sc-for list="{{sel.months}}" as="m" hint-placeholder-count="6">
+<span style="flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px"><span title="{{m.v}}" style="width: 100%; height: {{m.h}}; border-radius: 8px; background: {{m.c}}"></span><span style="font-size: 10px; color: #6B6B6B">{{m.t}}</span></span>
+</sc-for>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 22px; padding: 6px 16px">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0 4px"><span style="font-size: 13px; font-weight: 700">Últimos pedidos</span><a href="Pedidos.dc.html" style="font-size: 12px; font-weight: 700; color: #C2410C; text-decoration: none">Ver en pedidos →</a></div>
+<sc-for list="{{sel.hist}}" as="o" hint-placeholder-count="3">
+<a href="Pedidos.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #F1F1EE; text-decoration: none"><span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 700">{{o.id}}</span><span style="font-size: 11px; color: #6B6B6B">{{o.date}}</span></span><span style="padding: 3px 9px; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-size: 11px; font-weight: 700">{{o.status}}</span><span style="min-width: 86px; text-align: right; font-size: 13px; font-weight: 800">{{o.total}}</span></a>
+</sc-for>
+</div>
+
+<div style="background: #FFFFFF; border-radius: 22px; padding: 6px 16px">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0 4px"><span style="font-size: 13px; font-weight: 700">Cotizaciones</span><a href="Cotizaciones.dc.html" style="font-size: 12px; font-weight: 700; color: #C2410C; text-decoration: none">Ver todas →</a></div>
+<sc-for list="{{sel.quotes}}" as="q" hint-placeholder-count="1">
+<a href="Cotizaciones.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #F1F1EE; text-decoration: none"><span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 700">{{q.id}}</span><span style="font-size: 11px; color: #6B6B6B">{{q.sub}}</span></span><span style="padding: 3px 9px; border-radius: 999px; background: #FFF1E6; color: #8A3B0A; font-size: 11px; font-weight: 700">{{q.status}}</span><span style="min-width: 86px; text-align: right; font-size: 13px; font-weight: 800">{{q.total}}</span></a>
+</sc-for>
+<sc-if value="{{sel.noQuotes}}" hint-placeholder-val="{{ false }}"><span style="display: block; padding: 10px 0 12px; border-top: 1px solid #F1F1EE; font-size: 12px; color: #8C8C8C">Sin cotizaciones abiertas.</span></sc-if>
+</div>
+
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<a href="#whatsapp" style="flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; border-radius: 999px; background: #111111; color: #FFFFFF; text-decoration: none; font-size: 13px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"></path></svg>WhatsApp</a>
+<a href="Cotizaciones.dc.html" style="flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; height: 44px; border-radius: 999px; background: #FFFFFF; text-decoration: none; font-size: 13px; font-weight: 700">Nueva cotización</a>
+<a href="Pedidos.dc.html" style="flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; height: 44px; border-radius: 999px; background: #E8701F; color: #FFFFFF; text-decoration: none; font-size: 13px; font-weight: 700">Nuevo pedido</a>
+</div>
+</div>
+</div>
+
+<!-- Fila 3: ranking + reactivar -->
+<div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch">
+<div style="flex: 1.4 1 460px; min-width: 0; border-radius: 30px; background: #F4F4F2; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 15px; font-weight: 700">Mejores clientes de octubre</span><span style="font-size: 12px; color: #6B6B6B">Por monto comprado</span></span>
+<sc-for list="{{top}}" as="t" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 18px; background: #FFFFFF">
+<span style="width: 26px; font-size: 14px; font-weight: 800; color: #C2410C">{{t.rank}}</span>
+<span style="flex: 0 0 200px; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.name}}</span><span style="font-size: 11px; color: #6B6B6B">{{t.type}}</span></span>
+<span style="flex: 1; height: 8px; border-radius: 999px; background: #F1F1EE"><span style="display: block; width: {{t.w}}; height: 100%; border-radius: 999px; background: #E8701F"></span></span>
+<span style="min-width: 90px; text-align: right; font-size: 14px; font-weight: 800">{{t.v}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="flex: 1 1 360px; min-width: 0; border-radius: 30px; background: #F4F4F2; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 700">Para reactivar</span><span style="font-size: 12px; color: #6B6B6B">Clientes que no compran hace más de 60 días</span></span>
+<sc-for list="{{reactivate}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 18px; background: #FFFFFF"><span style="width: 36px; height: 36px; border-radius: 50%; background: #EFEFEC; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex: none">{{r.ini}}</span><span style="flex: 1; display: flex; flex-direction: column; min-width: 0"><span style="font-size: 13px; font-weight: 700">{{r.name}}</span><span style="font-size: 11px; color: #6B6B6B">{{r.sub}}</span></span><a href="#whatsapp" style="height: 34px; padding: 0 14px; border-radius: 999px; background: #111111; color: #FFFFFF; display: inline-flex; align-items: center; text-decoration: none; font-size: 12px; font-weight: 700">Escribir</a></div>
+</sc-for>
+<span style="margin-top: auto; font-size: 12px; color: #6B6B6B">Sugerencia: envíales la oferta de la semana desde Enlaces y QR.</span>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 20; background: rgba(17,17,17,0.3); padding: 96px 24px 24px; box-sizing: border-box">
+<div style="max-width: 1100px"><dc-import name="MenuPanel" mode="pop" active="Clientes" on-pin="{{togglePin}}" on-close="{{closeMenu}}" hint-size="100%,600px"></dc-import></div>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF914C","options":["#FF914C","#FF5F00","#F27420"]},"menuAbierto":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":2150}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), seg: 'Todos', sel: 'c1' };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#FF914C';
+    const st = this.state;
+    const money = (n) => 'S/ ' + Math.round(n).toLocaleString('es-PE');
+    const money2 = (n) => 'S/ ' + n.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const ini = (s) => s.replace(/\[|\]/g, '').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+    const ST = {
+      'Al día': ['#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'],
+      'Por cobrar': ['#FFF4D6', '#7A4A00', 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 7v5l3 2'],
+      'Pago vencido': ['#FDE4E2', '#8E1C14', 'M12 3l9 16H3zM12 10v4M12 17h.01'],
+      'Sin compras 60 d': ['#EFEFEC', '#4A4A4A', 'M6 12h12']
+    };
+    const TYPE = { Consumidor: 'Consumidores', Minorista: 'Minoristas y bodegas', Mayorista: 'Mayoristas', Empresa: 'Empresas' };
+    const TIER = { Consumidor: 'Precio de tienda', Minorista: 'Precio minorista', Mayorista: 'Precio mayorista', Empresa: 'Precio empresa por volumen' };
+    const C = (id, name, type, city, last, orders, total, cond, status, credit, contact) => ({ id, name, type, city, last, orders, total, cond, status, credit, contact });
+    const CL = [
+      C('c1', 'Constructora [Cliente]', 'Empresa', 'Arequipa', 'Ayer', 18, 42380, 'Factura a 30 días', 'Por cobrar', [15000, 8460], '[Nombre] · Logística'),
+      C('c2', 'Ferretería Cayma', 'Mayorista', 'Arequipa', 'Ayer', 26, 31940, 'Factura a 30 días', 'Al día', [10000, 6120], '[Nombre] · Dueño'),
+      C('c3', 'Minera [Cliente]', 'Empresa', 'Moquegua', '12 oct', 6, 21600, 'Factura a 45 días', 'Al día', [20000, 1600], '[Nombre] · Compras'),
+      C('c4', 'Distribuidora [Cliente]', 'Mayorista', 'Cusco', '08 oct', 11, 14230, 'Factura a 30 días', 'Al día', [8000, 0], '[Nombre] · Gerente'),
+      C('c5', 'Hotel [Cliente]', 'Empresa', 'Arequipa', 'Ayer', 9, 12860, 'Factura a 15 días', 'Pago vencido', [6000, 2240], '[Nombre] · Mantenimiento'),
+      C('c6', 'Bodega San Martín', 'Minorista', 'Arequipa', 'Hoy', 34, 9870, 'Contado · Yape', 'Al día', null, '[Nombre] · Dueña'),
+      C('c7', 'Minimarket Yanahuara', 'Minorista', 'Arequipa', 'Ayer', 22, 5410, 'Contado · Plin', 'Al día', null, '[Nombre] · Dueño'),
+      C('c8', 'Bazar [Cliente]', 'Minorista', 'Puno', '14 ago', 5, 2180, 'Contado', 'Sin compras 60 d', null, '[Nombre] · Dueña'),
+      C('c9', 'Luis R.', 'Consumidor', 'Arequipa', 'Hoy', 4, 1749, 'Contado · Tarjeta', 'Al día', null, 'Luis R.'),
+      C('c10', 'María Q.', 'Consumidor', 'Arequipa', 'Hoy', 7, 892, 'Contado · Yape', 'Al día', null, 'María Q.')
+    ];
+    const vis = CL.filter((c) => st.seg === 'Todos' || c.type === st.seg);
+    const S = CL.find((c) => c.id === st.sel) || CL[0];
+    const SEG = [['Consumidor', 214, 6900], ['Minorista', 142, 4980], ['Mayorista', 37, 3870], ['Empresa', 21, 2700]];
+    const MON = ['May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct'];
+    const NEW = [14, 17, 15, 19, 21, 23];
+    const W = [0.13, 0.15, 0.14, 0.17, 0.19, 0.22];
+    const sm = W.map((w) => Math.round(S.total * w * 0.45));
+    const smMax = Math.max(...sm);
+    const idx = CL.indexOf(S);
+    const OST = { Pagado: ['#E3F1FF', '#0B4A8A'], Enviado: ['#EDE7FF', '#4A2E9A'], Entregado: ['#E4F4E7', '#1B5E20'] };
+    const avg = S.total / S.orders;
+    const hist = [0, 1, 2].map((k) => {
+      const status = k === 0 && (S.last === 'Hoy' || S.last === 'Ayer') ? 'Pagado' : 'Entregado';
+      return { id: '#' + (1041 - idx * 2 - k * 9), date: [S.last, '02 oct', '18 set'][k], status, bg: OST[status][0], fg: OST[status][1], total: money2(avg * [1.1, 0.9, 1.05][k]) };
+    });
+    const corp = S.type === 'Empresa' || S.type === 'Mayorista';
+    const quotes = corp ? [{ id: 'COT-0' + (231 + idx), sub: 'Vence en ' + (3 + idx) + ' días · ' + TIER[S.type], status: idx % 2 ? 'Enviada' : 'En negociación', total: money(avg * 1.6) }] : [];
+    return {
+      accent,
+      menuOpen: st.menu || !!this.props.menuAbierto,
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      pinned: this.state.pinned,
+      menuBtnLabel: 'Abrir menú',
+      menuBtn: () => this.setState({ menu: true }),
+      togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
+      headStats: [
+        { v: '414', k1: 'Clientes', k2: 'registrados', bg: '#FFFFFF', fg: '#111111' },
+        { v: '62%', k1: 'Vuelven', k2: 'a comprar', bg: '#FFFFFF', fg: '#111111' },
+        { v: '3', k1: 'Pagos', k2: 'vencidos', bg: '#FDE4E2', fg: '#8E1C14' },
+        { v: 'S/ 18k', k1: 'Por', k2: 'cobrar', bg: '#111111', fg: '#FFFFFF' }
+      ],
+      segments: SEG.map((s) => ({
+        name: TYPE[s[0]], n: String(s[1]), sales: money(s[2]), w: Math.round((s[2] / SEG[0][2]) * 100) + '%',
+        pressed: st.seg === s[0] ? 'true' : 'false', border: st.seg === s[0] ? '#E8701F' : '#FFFFFF',
+        pick: () => this.setState({ seg: st.seg === s[0] ? 'Todos' : s[0] })
+      })),
+      aging: [
+        ['Al día', 'Dentro del plazo · 6 facturas', 'S/ 11,200', '#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'],
+        ['Vence esta semana', '3 facturas', 'S/ 4,980', '#FFF4D6', '#7A4A00', 'M12 7v5l3 2'],
+        ['Vencido', 'Más de 15 días · 3 facturas', 'S/ 2,240', '#FDE4E2', '#8E1C14', 'M12 4v10M12 18h.01']
+      ].map((a) => ({ name: a[0], sub: a[1], v: a[2], bg: a[3], fg: a[4], icon: a[5] })),
+      newMonths: NEW.map((n, i) => ({ t: MON[i], n: String(n), h: Math.round((n / 25) * 100) + '%', c: i === 5 ? '#E8701F' : '#F5C3A0' })),
+      newAria: 'Clientes nuevos por mes: ' + NEW.map((n, i) => MON[i] + ' ' + n).join(', '),
+      chips: ['Todos', 'Consumidor', 'Minorista', 'Mayorista', 'Empresa'].map((c) => ({
+        name: c === 'Todos' ? 'Todos' : TYPE[c], pressed: st.seg === c ? 'true' : 'false',
+        bg: st.seg === c ? '#111111' : '#FFFFFF', fg: st.seg === c ? '#FFFFFF' : '#111111', border: st.seg === c ? '#111111' : '#E4E4E0',
+        pick: () => this.setState({ seg: c })
+      })),
+      rowsCount: String(vis.length),
+      rows: vis.map((c) => {
+        const on = c.id === S.id;
+        return {
+          name: c.name, city: c.city, type: TYPE[c.type], last: c.last, orders: String(c.orders), total: money(c.total), cond: c.cond, ini: ini(c.name),
+          status: c.status, stBg: ST[c.status][0], stFg: ST[c.status][1], stIcon: ST[c.status][2],
+          bg: on ? '#FFF6EF' : '#FFFFFF', avBg: on ? '#E8701F' : '#F4F4F2', avFg: on ? '#FFFFFF' : '#111111',
+          select: () => this.setState({ sel: c.id })
+        };
+      }),
+      sel: {
+        name: S.name, type: TYPE[S.type], city: S.city, ini: ini(S.name), contact: S.contact,
+        doc: corp || S.type === 'Minorista' ? '[RUC]' : '[DNI]', tier: TIER[S.type], cond: S.cond,
+        status: S.status, stBg: ST[S.status][0], stFg: ST[S.status][1], stIcon: ST[S.status][2],
+        total: money(S.total), ticket: money2(avg),
+        hasCredit: !!S.credit,
+        creditTxt: S.credit ? money(S.credit[1]) + ' usados de ' + money(S.credit[0]) : '',
+        creditW: S.credit ? Math.round((S.credit[1] / S.credit[0]) * 100) + '%' : '0%',
+        creditC: S.status === 'Pago vencido' ? '#D93025' : '#E8701F',
+        creditFree: S.credit ? money(S.credit[0] - S.credit[1]) : '',
+        months: sm.map((v, i) => ({ t: MON[i], v: money(v), h: Math.max(6, Math.round((v / smMax) * 100)) + '%', c: i === 5 ? '#E8701F' : '#F5C3A0' })),
+        monthsAria: 'Compras por mes de ' + S.name + ': ' + sm.map((v, i) => MON[i] + ' ' + money(v)).join(', '),
+        hist,
+        quotes,
+        noQuotes: quotes.length === 0
+      },
+      top: [['Constructora [Cliente]', 'Empresa', 5120], ['Ferretería Cayma', 'Mayorista', 3460], ['Minera [Cliente]', 'Empresa', 2980], ['Bodega San Martín', 'Minorista', 1840], ['Hotel [Cliente]', 'Empresa', 1210]].map((t, i) => ({ rank: String(i + 1), name: t[0], type: TYPE[t[1]], v: money(t[2]), w: Math.round((t[2] / 5120) * 100) + '%' })),
+      reactivate: [['Bazar [Cliente]', 'Puno · 73 días sin comprar · 5 pedidos'], ['Hostal [Cliente]', 'Chivay · 65 días · 3 pedidos'], ['Ferretería [Cliente]', 'Mollendo · 61 días · 8 pedidos']].map((r) => ({ name: r[0], sub: r[1], ini: ini(r[0]) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

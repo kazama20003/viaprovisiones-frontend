@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panel móvil — VIA Provisiones</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9E9E7}
+a{color:inherit}
+.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; max-width: none; height: 100vh; height: 100dvh; margin: 0 auto; border-radius: 24px; overflow: hidden; background: #E9E9E7; font-family: Manrope, system-ui, sans-serif; color: #111111">
+
+<!-- Barra superior -->
+<div style="position: absolute; top: 0; left: 0; right: 0; z-index: 5; padding: 16px 16px 12px; display: flex; align-items: center; gap: 10px; background: #E9E9E7">
+<button onClick="{{openMenu}}" aria-label="Abrir menú" style="width: 46px; height: 46px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h10"></path></svg></button>
+<span style="width: 46px; height: 46px; border-radius: 50%; background: #111111; display: flex; align-items: center; justify-content: center; flex: none"><svg width="26" height="26" viewBox="136 205 86 86" aria-hidden="true"><circle cx="178.6" cy="247.5" r="39.4" fill="none" stroke="#FFFFFF" stroke-width="5"></circle><clipPath id="via-clip-movil"><circle cx="178.6" cy="247.5" r="40.5"></circle></clipPath><polygon points="178.6,222.5 208.5,261.5 178.6,251 149,261.5" fill="#FFFFFF"></polygon><path clip-path="url(#via-clip-movil)" d="M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z" fill="{{accent}}"></path></svg></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2"><span style="font-size: 15px; font-weight: 700">{{title}}</span><span style="font-size: 13px; font-weight: 500; color: #8C8C8C">{{subtitle}}</span></span>
+<span style="width: 46px; height: 46px; border-radius: 50%; background: {{accent}}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex: none">BC</span>
+</div>
+
+<!-- Contenido con scroll -->
+<div class="noscroll" style="position: absolute; inset: 0; overflow-y: auto; padding: 82px 14px 120px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 18px; background: #111111; color: #FFFFFF; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF914C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg><span style="flex: 1">{{toast}}</span><button onClick="{{closeToast}}" aria-label="Cerrar aviso" style="width: 28px; height: 28px; border: none; border-radius: 50%; background: #2A2A2A; color: #FFFFFF; cursor: pointer">×</button></div>
+</sc-if>
+
+<!-- ============ INICIO ============ -->
+<sc-if value="{{isInicio}}" hint-placeholder-val="{{ true }}">
+<span style="display: flex; flex-direction: column; line-height: 1.12; padding: 4px 4px 2px"><span style="font-size: 28px; font-weight: 600; letter-spacing: -0.02em">Hola, Beltran</span><span style="font-size: 28px; font-weight: 400; letter-spacing: -0.02em; color: #9A9A9A">8 pedidos por atender</span></span>
+<div style="border-radius: 28px; background: #111111; color: #FFFFFF; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 700">Caja de hoy</span><span style="font-size: 12px; color: #9A9A9A">26 oct · ejemplo</span></span>
+<span style="font-size: 38px; font-weight: 700; letter-spacing: -0.02em"><span style="color: #FF914C">S/</span> 2,460</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{cash}}" as="c" hint-placeholder-count="3">
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: 16px; background: #1E1E1E"><span style="font-size: 11px; color: #9A9A9A">{{c.k}}</span><span style="font-size: 15px; font-weight: 800">{{c.v}}</span></span>
+</sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="border-radius: 26px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #6B6B6B">Ventas de octubre</span><span style="font-size: 22px; font-weight: 800">S/ 18,450</span><span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #1B5E20"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>+6.7 % vs set</span></div>
+<div style="border-radius: 26px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; color: #6B6B6B">Ticket promedio</span><span style="font-size: 22px; font-weight: 800">S/ 146</span><span style="font-size: 12px; color: #8C8C8C">126 pedidos</span></div>
+</div>
+<div style="border-radius: 26px; background: #F4F4F2; padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 1px solid #DCDCD8">
+<span style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 14px; font-weight: 700">Últimos 7 días</span><span style="font-size: 12px; color: #6B6B6B">S/ 13,980</span></span>
+<div style="display: flex; align-items: flex-end; gap: 8px; height: 110px">
+<sc-for list="{{week}}" as="w" hint-placeholder-count="7">
+<span style="flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px"><span style="font-size: 10px; font-weight: 700; color: #6B6B6B">{{w.v}}</span><span style="width: 100%; height: {{w.h}}; border-radius: 10px; background: {{w.c}}"></span><span style="font-size: 11px; color: #6B6B6B">{{w.d}}</span></span>
+</sc-for>
+</div>
+</div>
+<div style="border-radius: 26px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 700">Alertas de stock</span><button onClick="{{goInventario}}" style="height: 32px; padding: 0 12px; border-radius: 999px; border: none; background: #F4F4F2; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer">Ver inventario</button></span>
+<sc-for list="{{alerts}}" as="a" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 34px; height: 34px; border-radius: 50%; background: {{a.bg}}; display: flex; align-items: center; justify-content: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{a.fg}}" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="{{a.icon}}"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 700">{{a.name}}</span><span style="font-size: 11px; color: #6B6B6B">{{a.sub}}</span></span><span style="font-size: 11px; font-weight: 700; color: {{a.fg}}">{{a.state}}</span></div>
+</sc-for>
+</div>
+</sc-if>
+
+<!-- ============ PEDIDOS ============ -->
+<sc-if value="{{isPedidos}}" hint-placeholder-val="{{ false }}">
+<div class="noscroll" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -14px; padding: 0 14px">
+<sc-for list="{{orderChips}}" as="c" hint-placeholder-count="5">
+<button onClick="{{c.pick}}" style="flex: none; height: 40px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{c.label}} · {{c.n}}</button>
+</sc-for>
+</div>
+<sc-for list="{{orders}}" as="o" hint-placeholder-count="3">
+<div style="border-radius: 26px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 40px; height: 40px; border-radius: 50%; background: #F4F4F2; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex: none">{{o.ini}}</span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">{{o.client}}</span><span style="font-size: 12px; color: #6B6B6B">{{o.id}} · {{o.channel}} · {{o.time}}</span></span><span style="font-size: 15px; font-weight: 800">{{o.total}}</span></span>
+<span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><span style="display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-size: 11px; font-weight: 700"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{o.icon}}"></path></svg>{{o.status}}</span><span style="font-size: 12px; color: #6B6B6B">{{o.lines}}</span></span>
+<sc-if value="{{o.canAdvance}}" hint-placeholder-val="{{ true }}"><button onClick="{{o.advance}}" style="height: 44px; border-radius: 999px; border: none; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Avanzar a {{o.next}}</button></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{noOrders}}" hint-placeholder-val="{{ false }}"><div style="padding: 24px; border-radius: 26px; background: #FFFFFF; text-align: center; font-size: 13px; color: #6B6B6B">No hay pedidos en este estado.</div></sc-if>
+</sc-if>
+
+<!-- ============ INVENTARIO ============ -->
+<sc-if value="{{isInventario}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{invStats}}" as="s" hint-placeholder-count="3">
+<span style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border-radius: 20px; background: #FFFFFF"><span style="font-size: 18px; font-weight: 800">{{s.v}}</span><span style="font-size: 11px; color: #6B6B6B">{{s.k}}</span></span>
+</sc-for>
+</div>
+<sc-for list="{{products}}" as="p" hint-placeholder-count="4">
+<div style="border-radius: 26px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<button onClick="{{p.toggle}}" aria-expanded="{{p.open}}" style="display: flex; align-items: center; gap: 10px; border: none; background: transparent; padding: 0; text-align: left; font-family: inherit; color: inherit; cursor: pointer">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">{{p.name}}</span><span style="font-size: 12px; color: #6B6B6B">{{p.cat}} · {{p.lots}}</span></span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px"><span style="font-size: 15px; font-weight: 800">{{p.units}} u</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: {{p.bg}}; color: {{p.fg}}; font-size: 10px; font-weight: 700"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="{{p.icon}}"></path></svg>{{p.state}}</span></span>
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #F4F4F2; display: flex; align-items: center; justify-content: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="{{p.chev}}"></path></svg></span>
+</button>
+<sc-if value="{{p.open}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px solid #EFEFEC">
+<span style="font-size: 11px; font-weight: 700; color: #8C8C8C; padding-top: 6px">LOTES · SALEN EN ORDEN DE INGRESO (PEPS)</span>
+<sc-for list="{{p.lotList}}" as="l" hint-placeholder-count="2">
+<div style="display: flex; gap: 10px; align-items: center; padding: 10px; border-radius: 18px; background: #F4F4F2">
+<span style="width: 28px; height: 28px; border-radius: 50%; background: {{l.numBg}}; color: {{l.numFg}}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex: none">{{l.n}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 700">{{l.code}} <span style="font-weight: 500; color: #6B6B6B">· {{l.sup}} · {{l.date}}</span></span><span style="height: 6px; border-radius: 999px; background: #DCDCD8"><span style="display: block; width: {{l.w}}; height: 100%; border-radius: 999px; background: #E8701F"></span></span><span style="font-size: 11px; color: #6B6B6B">Quedan {{l.left}} de {{l.qty}} · {{l.cost}} c/u · {{l.loc}}</span></span>
+<span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 999px; background: {{l.bg}}; color: {{l.fg}}; font-size: 10px; font-weight: 700; white-space: nowrap"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.icon}}"></path></svg>{{l.state}}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</sc-if>
+
+<!-- ============ CLIENTES ============ -->
+<sc-if value="{{isClientes}}" hint-placeholder-val="{{ false }}">
+<div class="noscroll" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -14px; padding: 0 14px">
+<sc-for list="{{segChips}}" as="c" hint-placeholder-count="5">
+<button onClick="{{c.pick}}" style="flex: none; height: 40px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{c.label}}</button>
+</sc-for>
+</div>
+<div style="border-radius: 26px; background: #111111; color: #FFFFFF; padding: 16px; display: flex; justify-content: space-between; align-items: center"><span style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #9A9A9A">Por cobrar a clientes</span><span style="font-size: 24px; font-weight: 800">S/ 18,420</span></span><span style="display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 999px; background: #FDE4E2; color: #8E1C14; font-size: 11px; font-weight: 700"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 7v6M12 17h.01"></path></svg>3 vencidos</span></div>
+<sc-for list="{{clients}}" as="c" hint-placeholder-count="4">
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; align-items: center; gap: 10px">
+<span style="width: 42px; height: 42px; border-radius: 50%; background: #F4F4F2; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex: none">{{c.ini}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 700">{{c.name}}</span><span style="font-size: 12px; color: #6B6B6B">{{c.type}} · {{c.city}} · {{c.orders}} pedidos</span><span style="display: inline-flex; align-self: flex-start; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: {{c.bg}}; color: {{c.fg}}; font-size: 10px; font-weight: 700"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{c.icon}}"></path></svg>{{c.state}}</span></span>
+<span style="font-size: 14px; font-weight: 800">{{c.total}}</span>
+</div>
+</sc-for>
+</sc-if>
+
+<!-- ============ COTIZACIONES ============ -->
+<sc-if value="{{isCotizaciones}}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{quotes}}" as="q" hint-placeholder-count="4">
+<button onClick="{{q.pick}}" style="border-radius: 24px; border: 2px solid {{q.border}}; background: #FFFFFF; padding: 14px; display: flex; align-items: center; gap: 10px; font-family: inherit; color: inherit; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 700">{{q.id}} · {{q.client}}</span><span style="font-size: 12px; color: #6B6B6B">{{q.type}} · vence en {{q.due}}</span><span style="display: inline-flex; align-self: flex-start; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; background: {{q.bg}}; color: {{q.fg}}; font-size: 10px; font-weight: 700"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{q.icon}}"></path></svg>{{q.state}}</span></span>
+<span style="font-size: 14px; font-weight: 800">{{q.amount}}</span>
+</button>
+</sc-for>
+<div style="border-radius: 28px; background: #111111; color: #FFFFFF; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 700">{{quote.id}}</span><span style="font-size: 12px; color: #9A9A9A">Válida 15 días</span></span>
+<span style="font-size: 13px; color: #CFCFCF">{{quote.client}} · RUC [RUC]</span>
+<sc-for list="{{quote.lines}}" as="l" hint-placeholder-count="3">
+<span style="display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid #2A2A2A; font-size: 13px"><span style="color: #E8E8E8">{{l.q}} × {{l.name}}</span><span style="font-weight: 700; white-space: nowrap">{{l.t}}</span></span>
+</sc-for>
+<span style="display: flex; justify-content: space-between; font-size: 12px; color: #9A9A9A"><span>Incluye IGV 18 %</span><span>{{quote.igv}}</span></span>
+<span style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 6px; border-top: 1px solid #2A2A2A"><span style="font-size: 14px; font-weight: 700">Total</span><span style="font-size: 24px; font-weight: 800; color: #FF914C">{{quote.total}}</span></span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-top: 4px"><button onClick="{{sendQuote}}" style="height: 44px; border-radius: 999px; border: 1px solid #3A3A3A; background: transparent; color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Enviar WhatsApp</button><button onClick="{{convertQuote}}" style="height: 44px; border-radius: 999px; border: none; background: #E8701F; color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">Pasar a pedido</button></div>
+</div>
+</sc-if>
+
+<!-- ============ COMPRAS ============ -->
+<sc-if value="{{isCompras}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="border-radius: 24px; background: #111111; color: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #9A9A9A">Compras del mes</span><span style="font-size: 20px; font-weight: 800">S/ 9,860</span></div>
+<div style="border-radius: 24px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B6B6B">Por pagar</span><span style="font-size: 20px; font-weight: 800">S/ 4,120</span></div>
+</div>
+<sc-for list="{{pos}}" as="p" hint-placeholder-count="4">
+<div style="border-radius: 24px; background: #FFFFFF; padding: 14px; display: flex; flex-direction: column; gap: 8px">
+<span style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px"><span style="font-size: 14px; font-weight: 700">{{p.id}} · {{p.sup}}</span><span style="font-size: 14px; font-weight: 800">{{p.total}}</span></span>
+<span style="font-size: 12px; color: #6B6B6B">{{p.what}} · llega {{p.eta}}</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="flex: 1; height: 6px; border-radius: 999px; background: #EFEFEC"><span style="display: block; width: {{p.w}}; height: 100%; border-radius: 999px; background: #E8701F"></span></span><span style="font-size: 11px; color: #6B6B6B">{{p.recv}}</span></span>
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 9px; border-radius: 999px; background: {{p.bg}}; color: {{p.fg}}; font-size: 11px; font-weight: 700"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{p.icon}}"></path></svg>{{p.state}}</span><span style="font-size: 11px; color: #8C8C8C">{{p.lot}}</span></span>
+</div>
+</sc-for>
+</sc-if>
+
+<!-- ============ REPORTES ============ -->
+<sc-if value="{{isReportes}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 4px; border-radius: 999px; background: #FFFFFF">
+<sc-for list="{{periods}}" as="p" hint-placeholder-count="3">
+<button onClick="{{p.pick}}" style="height: 38px; border-radius: 999px; border: none; background: {{p.bg}}; color: {{p.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer">{{p.label}}</button>
+</sc-for>
+</div>
+<div style="border-radius: 28px; background: #111111; color: #FFFFFF; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 13px; color: #9A9A9A">Ventas · {{rep.label}} · ejemplo</span>
+<span style="font-size: 34px; font-weight: 800; letter-spacing: -0.02em">{{rep.sales}}</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<span style="display: flex; flex-direction: column; padding: 10px; border-radius: 16px; background: #1E1E1E"><span style="font-size: 11px; color: #9A9A9A">Margen bruto</span><span style="font-size: 16px; font-weight: 800; color: #FF914C">{{rep.margin}}</span></span>
+<span style="display: flex; flex-direction: column; padding: 10px; border-radius: 16px; background: #1E1E1E"><span style="font-size: 11px; color: #9A9A9A">Utilidad estimada</span><span style="font-size: 16px; font-weight: 800">{{rep.profit}}</span></span>
+</div>
+</div>
+<div style="border-radius: 26px; background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 14px; font-weight: 700">Ventas por categoría</span>
+<sc-for list="{{repCats}}" as="c" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 5px"><span style="display: flex; justify-content: space-between; font-size: 13px"><span style="font-weight: 600">{{c.name}}</span><span style="font-weight: 800">{{c.v}}</span></span><span style="height: 8px; border-radius: 999px; background: #F4F4F2"><span style="display: block; width: {{c.w}}; height: 100%; border-radius: 999px; background: #E8701F"></span></span></div>
+</sc-for>
+</div>
+</sc-if>
+
+<!-- ============ AJUSTES ============ -->
+<sc-if value="{{isAjustes}}" hint-placeholder-val="{{ false }}">
+<div style="border-radius: 30px; background: #FFFFFF; padding: 10px; display: flex; flex-direction: column; gap: 2px">
+<sc-for list="{{settings}}" as="s" hint-placeholder-count="6">
+<button onClick="{{s.pick}}" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 8px; border-radius: 999px; border: none; background: transparent; color: #111111; font-family: inherit; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #F4F4F2; display: flex; align-items: center; justify-content: center; flex: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg></span><span style="flex: 1">{{s.label}}</span><span style="font-size: 12px; font-weight: 500; color: #8C8C8C">{{s.hint}}</span></button>
+</sc-for>
+</div>
+<div style="border-radius: 26px; background: #111111; color: #FFFFFF; padding: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.5"><span style="font-size: 15px; font-weight: 700">VIA Provisiones</span><span style="color: #CFCFCF">Dean Valdivia 533 - Cercado, Arequipa</span><span style="color: #CFCFCF">+51 954 802 744 · viaprovisionesperu@gmail.com</span><span style="color: #CFCFCF">RUC [RUC] · Horario [HORARIO]</span></div>
+</sc-if>
+</div>
+
+<!-- Botón de acción -->
+<button onClick="{{fabAct}}" aria-label="{{fabLabel}}" style="position: absolute; right: 18px; bottom: 100px; z-index: 6; width: 58px; height: 58px; border-radius: 50%; border: none; background: #E8701F; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px rgba(232,112,31,0.4)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+
+<!-- Barra inferior -->
+<nav aria-label="Navegación principal" style="position: absolute; left: 14px; right: 14px; bottom: 18px; z-index: 6; height: 66px; padding: 7px; box-sizing: border-box; border-radius: 999px; background: #111111; display: flex; gap: 4px">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button onClick="{{t.pick}}" aria-current="{{t.current}}" style="flex: {{t.flex}}; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; border: none; background: {{t.bg}}; color: {{t.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg><sc-if value="{{t.on}}" hint-placeholder-val="{{ false }}"><span>{{t.label}}</span></sc-if></button>
+</sc-for>
+</nav>
+
+<!-- ============ MENÚ (hoja inferior) ============ -->
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; z-index: 20; background: rgba(17,17,17,0.45); display: flex; flex-direction: column; justify-content: flex-end">
+<button onClick="{{closeMenu}}" aria-label="Cerrar menú" style="flex: 1; min-height: 40px; border: none; background: transparent; cursor: pointer"></button>
+<nav aria-label="Menú del panel" style="height: 92%; background: #FFFFFF; border-radius: 30px 30px 0 0; box-sizing: border-box; display: flex; flex-direction: column">
+
+<!-- Cabecera fija de la hoja -->
+<div style="padding: 10px 16px 12px; display: flex; flex-direction: column; gap: 12px; flex: none">
+<span style="align-self: center; width: 44px; height: 5px; border-radius: 999px; background: #DCDCD8"></span>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em">Menú</span><span style="font-size: 12px; font-weight: 500; color: #8C8C8C">¿A dónde vamos?</span></span>
+<button onClick="{{closeMenu}}" aria-label="Cerrar menú" style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<label style="display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 6px 0 16px; border-radius: 999px; background: #F4F4F2; box-sizing: border-box">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" aria-hidden="true" style="flex: none"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar en el menú</span>
+<input type="search" value="{{q}}" onInput="{{onSearch}}" onChange="{{onSearch}}" placeholder="Buscar módulo: pedidos, lotes, caja…" style="flex: 1; min-width: 0; border: none; background: transparent; font-family: inherit; font-size: 14px; outline: none">
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}"><button onClick="{{clearSearch}}" aria-label="Borrar búsqueda" style="width: 34px; height: 34px; border-radius: 50%; border: none; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+</label>
+<sc-if value="{{noQ}}" hint-placeholder-val="{{ true }}">
+<div class="noscroll" role="tablist" aria-label="Grupos del menú" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="7">
+<button role="tab" aria-selected="{{c.sel}}" onClick="{{c.pick}}" style="flex: none; display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px; border-radius: 999px; border: none; background: {{c.bg}}; color: {{c.fg}}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap">{{c.label}}<sc-if value="{{c.count}}" hint-placeholder-val="{{ false }}"><span style="min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: {{c.countBg}}; color: {{c.countFg}}; font-size: 11px; display: flex; align-items: center; justify-content: center">{{c.count}}</span></sc-if></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<!-- Contenido con scroll -->
+<div class="noscroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{noQ}}" hint-placeholder-val="{{ true }}">
+<span style="display: flex; flex-direction: column; line-height: 1.25; padding: 0 2px"><span style="font-size: 17px; font-weight: 700">{{grpTitle}}</span><span style="font-size: 12px; color: #8C8C8C">{{grpDesc}}</span></span>
+</sc-if>
+<sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 13px; font-weight: 600; color: #8C8C8C; padding: 0 2px">{{resultLabel}}</span>
+</sc-if>
+<sc-if value="{{noResults}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 34px 16px; border-radius: 22px; background: #F4F4F2; text-align: center"><span style="width: 48px; height: 48px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><span style="font-size: 15px; font-weight: 700">Sin resultados</span><span style="font-size: 12px; color: #6B6B6B">Prueba con otra palabra, por ejemplo "lote" o "cliente".</span></div>
+</sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{cards}}" as="i" hint-placeholder-count="4">
+<sc-if value="{{i.isScreen}}" hint-placeholder-val="{{ true }}">
+<button onClick="{{i.pick}}" aria-current="{{i.current}}" style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-height: 112px; padding: 12px; border-radius: 22px; border: none; background: {{i.bg}}; color: {{i.fg}}; font-family: inherit; text-align: left; cursor: pointer"><span style="display: flex; align-items: center; justify-content: space-between; gap: 6px"><span style="width: 38px; height: 38px; border-radius: 50%; background: {{i.iconBg}}; display: flex; align-items: center; justify-content: center; flex: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{i.iconFg}}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span><sc-if value="{{i.badge}}" hint-placeholder-val="{{ false }}"><span style="height: 22px; padding: 0 8px; border-radius: 999px; background: {{i.badgeBg}}; color: {{i.badgeFg}}; font-size: 10px; font-weight: 700; display: flex; align-items: center; white-space: nowrap">{{i.badge}}</span></sc-if></span><span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">{{i.label}}</span><span style="font-size: 12px; color: {{i.subFg}}">{{i.sub}}</span><sc-if value="{{i.group}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 600; color: {{i.subFg}}; margin-top: 2px">{{i.group}}</span></sc-if></span></button>
+</sc-if>
+<sc-if value="{{i.isLink}}" hint-placeholder-val="{{ false }}">
+<a href="{{i.href}}" style="display: flex; flex-direction: column; gap: 10px; min-height: 112px; padding: 12px; border-radius: 22px; background: #F4F4F2; color: #111111; text-decoration: none; box-sizing: border-box"><span style="display: flex; align-items: center; justify-content: space-between"><span style="width: 38px; height: 38px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C8C8C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span><span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">{{i.label}}</span><span style="font-size: 12px; color: #8C8C8C">{{i.sub}}</span><sc-if value="{{i.group}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 600; color: #8C8C8C; margin-top: 2px">{{i.group}}</span></sc-if></span></a>
+</sc-if>
+<sc-if value="{{i.isSoon}}" hint-placeholder-val="{{ false }}">
+<div aria-disabled="true" style="display: flex; flex-direction: column; gap: 10px; min-height: 112px; padding: 12px; border-radius: 22px; border: 1px dashed #DCDCD8; background: #FFFFFF; color: #9A9A9A; box-sizing: border-box"><span style="display: flex; align-items: center; justify-content: space-between"><span style="width: 38px; height: 38px; border-radius: 50%; background: #F4F4F2; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span><span style="height: 22px; padding: 0 8px; border-radius: 999px; background: #F4F4F2; color: #6B6B6B; font-size: 10px; font-weight: 700; display: flex; align-items: center">Pronto</span></span><span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">{{i.label}}</span><span style="font-size: 12px">{{i.sub}}</span><sc-if value="{{i.group}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 600; margin-top: 2px">{{i.group}}</span></sc-if></span></div>
+</sc-if>
+</sc-for>
+</div>
+</div>
+
+<!-- Pie fijo: acciones y cuenta -->
+<div style="flex: none; padding: 12px 16px 22px; border-top: 1px solid #EFEFEC; display: flex; flex-direction: column; gap: 10px; background: #FFFFFF; border-radius: 0">
+<div class="noscroll" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+<sc-for list="{{quick}}" as="a" hint-placeholder-count="4">
+<button onClick="{{a.pick}}" style="flex: none; display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px 0 11px; border-radius: 999px; border: none; background: {{a.bg}}; color: {{a.fg}}; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{a.icon}}"></path></svg>{{a.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 40px; height: 40px; border-radius: 50%; background: {{accent}}; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex: none">BC</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 700">Beltran Carlos Ccapa</span><span style="font-size: 12px; color: #8C8C8C">Administrador</span></span>
+<a href="AdminLogin.dc.html" style="display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 14px; border-radius: 999px; background: #111111; color: #FFFFFF; text-decoration: none; font-size: 12px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"></path></svg>Cerrar sesión</a>
+</div>
+</div>
+</nav>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FF914C","options":["#FF914C","#FF5F00","#F27420"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { screen: 'inicio', menu: false, grp: 'fav', q: '', toast: '', ostatus: 'Pagado', moved: {}, open: 'p1', seg: 'Todos', quote: 'COT-0218', period: 0 };
+  }
+  renderVals() {
+    const st = this.state;
+    const go = (s) => () => this.setState({ screen: s, menu: false, toast: '' });
+    const IC = {
+      inicio: 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z',
+      pedidos: 'M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0',
+      cotiz: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h4',
+      clientes: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6',
+      inv: 'M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10',
+      compras: 'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a2 2 0 1 0 0-.1M17 19a2 2 0 1 0 0-.1',
+      reportes: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+      tienda: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18',
+      qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2z',
+      ajustes: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1',
+      mas: 'M5 12h.01M12 12h.01M19 12h.01',
+      ok: 'M5 12l5 5 9-10', warn: 'M12 7v6M12 17h.01', x: 'M6 6l12 12M18 6L6 18', clock: 'M12 7v5l3 2', truck: 'M3 7h11v9H3zM14 10h4l3 3v3h-7', box: 'M3 7l9-4 9 4v10l-9 4-9-4z', draft: 'M4 20h4L19 9l-4-4L4 16z', send: 'M4 12l16-8-6 16-2-6z'
+    };
+    const T = {
+      green: ['#E4F4E7', '#1B5E20'], amber: ['#FFF4D6', '#7A4A00'], red: ['#FDE4E2', '#8E1C14'], blue: ['#E3F1FF', '#0B4A8A'], violet: ['#EDE7FF', '#4A2E9A'], orange: ['#FFF1E6', '#8A3B0A'], gray: ['#EFEFEC', '#444444']
+    };
+    const money = (n, d) => 'S/ ' + n.toLocaleString('es-PE', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+    const META = {
+      inicio: ['Panel', 'Inicio · 26 oct', 'Nuevo pedido'],
+      pedidos: ['Pedidos', 'Tablero por estado', 'Nuevo pedido'],
+      inventario: ['Inventario y lotes', '724 unidades · 12 lotes', 'Ingresar lote'],
+      clientes: ['Clientes', '414 registrados', 'Nuevo cliente'],
+      cotizaciones: ['Cotizaciones', '5 por responder', 'Nueva cotización'],
+      compras: ['Compras y proveedores', '3 órdenes en camino', 'Nueva orden de compra'],
+      reportes: ['Reportes', 'Ventas y márgenes', 'Exportar reporte'],
+      ajustes: ['Ajustes', 'Configuración de la tienda', 'Agregar usuario']
+    };
+    const m = META[st.screen];
+
+    // Pedidos
+    const FLOW = ['Por pagar', 'Pagado', 'Preparando', 'Enviado', 'Entregado'];
+    const OST = { 'Por pagar': [T.amber, IC.clock], 'Pagado': [T.blue, IC.ok], 'Preparando': [T.orange, IC.box], 'Enviado': [T.violet, IC.truck], 'Entregado': [T.green, IC.ok] };
+    const ORD = [
+      ['#1042', 'María Q.', 'Web', '10:24', 'Por pagar', 159.7, '3 productos'],
+      ['#1041', 'Bodega San Martín', 'WhatsApp', '09:51', 'Pagado', 842, '6 productos · sale de L-1008'],
+      ['#1044', 'Minimarket El Sol', 'WhatsApp', '11:02', 'Pagado', 318.5, '4 productos'],
+      ['#1040', 'Ferretería Cayma', 'Empresas', 'Ayer', 'Preparando', 3460, '12 productos'],
+      ['#1038', 'Constructora [Cliente]', 'Empresas', 'Ayer', 'Enviado', 5120, '8 productos · agencia'],
+      ['#1039', 'Luis R.', 'Web', 'Ayer', 'Entregado', 459, '2 productos']
+    ].map((o) => ({ id: o[0], client: o[1], channel: o[2], time: o[3], status: st.moved[o[0]] || o[4], total: money(o[5], 2), lines: o[6] }));
+    const orders = ORD.filter((o) => o.status === st.ostatus).map((o) => {
+      const i = FLOW.indexOf(o.status);
+      const s = OST[o.status];
+      return { ...o, ini: o.client.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(), bg: s[0][0], fg: s[0][1], icon: s[1], canAdvance: i < FLOW.length - 1, next: FLOW[i + 1] || '', advance: () => this.setState({ moved: { ...st.moved, [o.id]: FLOW[i + 1] }, toast: 'Pedido ' + o.id + ' pasó a ' + FLOW[i + 1] + '.' }) };
+    });
+
+    // Inventario
+    const LS = { 'Se vende primero': [T.orange, IC.clock], 'Activo': [T.green, IC.ok], 'En tránsito': [T.violet, IC.truck], 'Agotado': [T.gray, IC.x] };
+    const PROD = [
+      ['p1', 'Foco LED 9 W luz cálida', 'Focos', 'Disponible', [['L-0921', '[Proveedor A]', '21 set', 300, 40, 3.9, 'Tienda · A3'], ['L-1008', '[Proveedor A]', '08 oct', 200, 200, 4.1, 'Almacén · B1']]],
+      ['p2', 'Panel solar monocristalino 100 W', 'Solar', 'Stock bajo', [['L-0930', '[Proveedor C]', '30 set', 10, 3, 248, 'Almacén · C2'], ['L-1102', '[Proveedor C]', '28 oct', 20, 20, 242, 'En camino']]],
+      ['p3', 'Cable USB-C carga rápida 1 m', 'Cables', 'Disponible', [['L-0915', '[Proveedor B]', '15 set', 150, 62, 6.2, 'Tienda · A1'], ['L-0918', '[Proveedor B]', '18 set', 100, 100, 6.0, 'Almacén · B2']]],
+      ['p4', 'Gancho multiuso acero x10', 'Ganchos', 'Agotado', [['L-0822', '[Proveedor D]', '22 ago', 80, 0, 2.4, '—']]]
+    ];
+    const PS = { 'Disponible': [T.green, IC.ok], 'Stock bajo': [T.amber, IC.warn], 'Agotado': [T.red, IC.x] };
+    const products = PROD.map((p) => {
+      let firstDone = false;
+      const lotList = p[4].map((l, i) => {
+        let state = 'Activo';
+        if (l[6] === 'En camino') state = 'En tránsito';
+        else if (l[4] === 0) state = 'Agotado';
+        else if (!firstDone) { state = 'Se vende primero'; firstDone = true; }
+        const s = LS[state];
+        return { n: String(i + 1), code: l[0], sup: l[1], date: l[2], qty: String(l[3]), left: String(l[4]), cost: money(l[5], 2), loc: l[6], w: Math.round((l[4] / l[3]) * 100) + '%', state, bg: s[0][0], fg: s[0][1], icon: s[1], numBg: state === 'Se vende primero' ? '#E8701F' : '#FFFFFF', numFg: state === 'Se vende primero' ? '#FFFFFF' : '#111111' };
+      });
+      const units = p[4].filter((l) => l[6] !== 'En camino').reduce((a, l) => a + l[4], 0);
+      const ps = PS[p[3]];
+      const open = st.open === p[0];
+      return { name: p[1], cat: p[2], lots: p[4].length + (p[4].length === 1 ? ' lote' : ' lotes'), units: String(units), state: p[3], bg: ps[0][0], fg: ps[0][1], icon: ps[1], open, chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6', lotList, toggle: () => this.setState({ open: open ? '' : p[0] }) };
+    });
+
+    // Clientes
+    const CS = { 'Al día': [T.green, IC.ok], 'Por cobrar': [T.amber, IC.clock], 'Pago vencido': [T.red, IC.warn], 'Sin compras 60 d': [T.gray, IC.clock] };
+    const CLI = [
+      ['Bodega San Martín', 'Minoristas', 'Arequipa', 38, 'Por cobrar', 9840],
+      ['Ferretería Cayma', 'Mayoristas', 'Arequipa', 24, 'Al día', 21460],
+      ['Constructora [Cliente]', 'Empresas', 'Cusco', 9, 'Pago vencido', 34200],
+      ['María Q.', 'Consumidores', 'Arequipa', 6, 'Al día', 812],
+      ['Minimarket El Sol', 'Minoristas', 'Puno', 11, 'Sin compras 60 d', 2930]
+    ];
+    const SEGS = ['Todos', 'Consumidores', 'Minoristas', 'Mayoristas', 'Empresas'];
+    const clients = CLI.filter((c) => st.seg === 'Todos' || c[1] === st.seg).map((c) => { const s = CS[c[4]]; return { name: c[0], type: c[1], city: c[2], orders: String(c[3]), state: c[4], total: money(c[5]), bg: s[0][0], fg: s[0][1], icon: s[1], ini: c[0].split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase() }; });
+
+    // Cotizaciones
+    const QS = { 'Enviada': [T.blue, IC.send], 'En negociación': [T.orange, IC.clock], 'Aceptada': [T.green, IC.ok], 'Borrador': [T.gray, IC.draft] };
+    const QUO = [
+      ['COT-0218', 'Minera [Cliente]', 'Minería', '9 días', 'En negociación', [[60, 'Linterna de cabeza recargable', 38.9], [40, 'Extensión de uso rudo 10 m', 64.0], [24, 'Reflector LED 100 W', 119.0]]],
+      ['COT-0217', '[Cliente]', 'Constructora', '4 días', 'Enviada', [[30, 'Extensión de uso rudo 5 m', 45.0], [100, 'Foco LED 12 W', 7.9]]],
+      ['COT-0216', 'Ferretería Cayma', 'Mayorista', '12 días', 'Aceptada', [[200, 'Foco LED 9 W luz cálida', 7.5], [50, 'Cable USB-C 1 m', 11.5]]],
+      ['COT-0215', 'Bodega San Martín', 'Minorista', '15 días', 'Borrador', [[24, 'Llavero linterna', 9.9]]]
+    ];
+    const tot = (lines) => lines.reduce((a, l) => a + l[0] * l[2], 0);
+    const quotes = QUO.map((q) => { const s = QS[q[4]]; return { id: q[0], client: q[1], type: q[2], due: q[3], state: q[4], amount: money(tot(q[5])), bg: s[0][0], fg: s[0][1], icon: s[1], border: st.quote === q[0] ? '#111111' : '#FFFFFF', pick: () => this.setState({ quote: q[0] }) }; });
+    const qs = QUO.find((q) => q[0] === st.quote) || QUO[0];
+    const qt = tot(qs[5]);
+    const quote = { id: qs[0], client: qs[1], lines: qs[5].map((l) => ({ q: String(l[0]), name: l[1], t: money(l[0] * l[2], 2) })), igv: money(qt - qt / 1.18, 2), total: money(qt, 2) };
+
+    // Compras
+    const POS = { 'En tránsito': [T.violet, IC.truck], 'Enviada': [T.blue, IC.send], 'Recepción parcial': [T.amber, IC.clock], 'Recibida': [T.green, IC.ok] };
+    const pos = [
+      ['OC-0417', '[Proveedor C]', 'Panel solar 100 W × 20', '28 oct', 0, 20, 'En tránsito', 5710, 'Creará el lote L-1102'],
+      ['OC-0416', '[Proveedor A]', 'Focos LED surtidos × 600', '30 oct', 0, 600, 'Enviada', 2480, 'Creará el lote L-1103'],
+      ['OC-0415', '[Proveedor B]', 'Cables y cargadores × 300', '24 oct', 180, 300, 'Recepción parcial', 1890, 'Lote L-1009 creado'],
+      ['OC-0413', '[Proveedor D]', 'Ganchos y llaveros × 400', '18 oct', 400, 400, 'Recibida', 1060, 'Lote L-1001 creado']
+    ].map((p) => { const s = POS[p[6]]; return { id: p[0], sup: p[1], what: p[2], eta: p[3], recv: 'Recibido ' + p[4] + ' de ' + p[5], w: Math.round((p[4] / p[5]) * 100) + '%', state: p[6], total: money(p[7]), lot: p[8], bg: s[0][0], fg: s[0][1], icon: s[1] }; });
+
+    // Reportes
+    const PER = [['Este mes', 18450, 0.36, 3920], ['Trimestre', 52650, 0.35, 10840], ['Año', 186940, 0.34, 37120]];
+    const pr = PER[st.period];
+    const CATS = [['Focos', 0.27], ['Cables', 0.21], ['Camping', 0.19], ['Solar', 0.17], ['Extensiones', 0.10], ['Otros', 0.06]];
+
+    const curTab = ['inicio', 'pedidos', 'inventario'].indexOf(st.screen) >= 0 ? st.screen : 'mas';
+    // Menú: grupos con chips y búsqueda; los módulos de otras pantallas móviles van como enlace
+    const MX = {
+      devol: 'M3 12a9 9 0 1 0 3-6.7M3 4v5h5',
+      prov: 'M3 21V9l9-6 9 6v12M9 21v-6h6v6',
+      tras: 'M4 8h13l-3-3M20 16H7l3 3',
+      caja: 'M3 7h18v12H3zM3 11h18M7 15h3',
+      cobro: 'M12 3v18M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6',
+      gasto: 'M4 4h16v16H4zM8 9h8M8 13h8M8 17h5',
+      sunat: 'M7 3h10v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5zM10 8h4M10 12h4',
+      oferta: 'M3 12l9-9h9v9l-9 9zM16 8h.01',
+      banner: 'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6',
+      users: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1',
+      pos: 'M3 4h18v10H3zM8 20h8M12 14v6M7 9h4',
+      kardex: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+      notif: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4'
+    };
+    const N = (label, sub, icon, o) => Object.assign({ label, sub, icon }, o || {});
+    const GROUPS = [
+      ['fav', 'Favoritos', 'Lo que más usas', [
+        N('Punto de venta', 'Vender en el mostrador', MX.pos, { href: 'MovilFinanzas.dc.html' }),
+        N('Pedidos', 'Tablero por estado', IC.pedidos, { screen: 'pedidos', badge: '8 por atender' }),
+        N('Inventario y lotes', 'Stock por lote', IC.inv, { screen: 'inventario', badge: '6 bajos' }),
+        N('Cotizaciones', 'Empresas y mayoristas', IC.cotiz, { screen: 'cotizaciones', badge: '5 nuevas' }),
+        N('Panel de inicio', 'Resumen del día', IC.inicio, { screen: 'inicio' })]],
+      ['ventas', 'Ventas', 'Pedidos, cotizaciones y clientes', [
+        N('Punto de venta', 'Vender en el mostrador', MX.pos, { href: 'MovilFinanzas.dc.html' }),
+        N('Pedidos', 'Tablero por estado', IC.pedidos, { screen: 'pedidos', badge: '8 por atender' }),
+        N('Cotizaciones', 'Empresas y mayoristas', IC.cotiz, { screen: 'cotizaciones', badge: '5 nuevas' }),
+        N('Clientes', 'Fichas y cobranzas', IC.clientes, { screen: 'clientes', badge: '414', plain: true }),
+        N('Devoluciones', 'Cambios y garantías', MX.devol, { href: 'MovilAlmacen.dc.html', badge: '2 abiertas' })]],
+      ['almacen', 'Almacén', 'Stock, lotes y compras', [
+        N('Inventario y lotes', 'Stock por lote', IC.inv, { screen: 'inventario', badge: '6 bajos' }),
+        N('Kardex', 'Historial por lote', MX.kardex, { href: 'MovilAlmacen.dc.html' }),
+        N('Compras', 'Órdenes de compra', IC.compras, { screen: 'compras', badge: '3 en camino', plain: true }),
+        N('Proveedores', 'Datos y deudas', MX.prov, { screen: 'compras', alt: true }),
+        N('Traslados', 'Entre tienda y almacén', MX.tras, { href: 'MovilAlmacen.dc.html' })]],
+      ['finanzas', 'Finanzas', 'Caja, cobros y gastos', [
+        N('Caja del día', 'Apertura y cierre', MX.caja, { href: 'MovilFinanzas.dc.html', badge: 'Abierta', plain: true }),
+        N('Cobranzas', 'Cuentas por cobrar', MX.cobro, { screen: 'clientes', alt: true }),
+        N('Gastos', 'Luz, alquiler, sueldos', MX.gasto, { href: 'MovilFinanzas.dc.html', badge: '2 por pagar' }),
+        N('Comprobantes SUNAT', 'Boletas y facturas', MX.sunat, { href: 'MovilFinanzas.dc.html', badge: '3 por emitir' })]],
+      ['tienda', 'Tienda y marketing', 'Canales de venta', [
+        N('Tienda web', 'viaprovisiones.com', IC.tienda, { href: 'Main.dc.html' }),
+        N('Enlaces y QR', 'Página del QR', IC.qr, { href: 'Enlaces.dc.html' }),
+        N('Ofertas y cupones', 'Descuentos y packs', MX.oferta, { href: 'MovilMarketing.dc.html', badge: '3 activas', plain: true }),
+        N('Banners de la tienda', 'Portada y avisos', MX.banner, { href: 'MovilMarketing.dc.html' })]],
+      ['analisis', 'Análisis', 'Cómo va el negocio', [
+        N('Panel de inicio', 'Resumen del día', IC.inicio, { screen: 'inicio' }),
+        N('Reportes', 'Ventas y márgenes', IC.reportes, { screen: 'reportes' })]],
+      ['cuenta', 'Cuenta', 'Configuración', [
+        N('Notificaciones y perfil', 'Avisos y tu cuenta', MX.notif, { href: 'MovilMarketing.dc.html', badge: '5 sin leer' }),
+        N('Ajustes', 'Negocio, pagos, envíos', IC.ajustes, { screen: 'ajustes' }),
+        N('Usuarios y roles', '3 usuarios', MX.users, { screen: 'ajustes', alt: true })]]
+    ];
+    // alt: abre la misma pantalla que otro módulo, sin marcarse como actual
+    const card = (it, groupName) => {
+      const on = !!it.screen && !it.alt && st.screen === it.screen;
+      return {
+        label: it.label, sub: it.sub, icon: it.icon, group: groupName || '',
+        isScreen: !!it.screen, isLink: !!it.href, isSoon: !!it.soon, href: it.href || '',
+        current: on ? 'page' : 'false',
+        bg: on ? '#111111' : '#F4F4F2', fg: on ? '#FFFFFF' : '#111111', subFg: on ? '#BDBDBD' : '#8C8C8C',
+        iconBg: on ? '#E8701F' : '#FFFFFF', iconFg: on ? '#FFFFFF' : '#111111',
+        badge: it.badge || '',
+        badgeBg: on ? '#2A2A2A' : (it.plain ? '#FFFFFF' : '#FFF1E6'), badgeFg: on ? '#FFFFFF' : (it.plain ? '#6B6B6B' : '#8A3B0A'),
+        pick: it.screen ? go(it.screen) : () => {}
+      };
+    };
+    const norm = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const q = norm((st.q || '').trim());
+    const seen = {};
+    const hits = [];
+    if (q) GROUPS.slice(1).forEach((g) => g[3].forEach((it) => {
+      if (seen[it.label]) return;
+      if (norm(it.label + ' ' + it.sub + ' ' + g[1]).indexOf(q) >= 0) { seen[it.label] = 1; hits.push(card(it, g[1])); }
+    }));
+    const G = GROUPS.find((g) => g[0] === st.grp) || GROUPS[0];
+    const pending = (g) => g[3].filter((it) => it.badge && !it.plain).length;
+
+    return {
+      accent: this.props.accent ?? '#FF914C',
+      title: m[0], subtitle: m[1], fabLabel: m[2],
+      fabAct: () => this.setState({ toast: m[2] + ': se abriría el formulario (ejemplo).' }),
+      toast: st.toast,
+      closeToast: () => this.setState({ toast: '' }),
+      menuOpen: st.menu,
+      openMenu: () => this.setState({ menu: true, q: '' }),
+      closeMenu: () => this.setState({ menu: false }),
+      isInicio: st.screen === 'inicio', isPedidos: st.screen === 'pedidos', isInventario: st.screen === 'inventario', isClientes: st.screen === 'clientes',
+      isCotizaciones: st.screen === 'cotizaciones', isCompras: st.screen === 'compras', isReportes: st.screen === 'reportes', isAjustes: st.screen === 'ajustes',
+      goInventario: go('inventario'),
+      cash: [['Efectivo', 'S/ 980'], ['Yape / Plin', 'S/ 1,120'], ['Transfer.', 'S/ 360']].map((c) => ({ k: c[0], v: c[1] })),
+      week: [['Lun', 1720], ['Mar', 1890], ['Mié', 1640], ['Jue', 2010], ['Vie', 2240], ['Sáb', 2460], ['Dom', 2020]].map((w, i) => ({ d: w[0], v: (w[1] / 1000).toFixed(1) + 'k', h: Math.round((w[1] / 2460) * 78) + '%', c: i === 5 ? '#E8701F' : '#F5C3A0' })),
+      alerts: [
+        ['Panel solar monocristalino 100 W', 'Quedan 3 · llega L-1102 el 28 oct', 'Stock bajo', T.amber, IC.warn],
+        ['Gancho multiuso acero x10', 'Sin stock desde el 20 oct', 'Agotado', T.red, IC.x],
+        ['Foco LED 9 W luz cálida', 'Lote L-0921 casi vacío: pasa a L-1008', 'Cambio de lote', T.orange, IC.clock]
+      ].map((a) => ({ name: a[0], sub: a[1], state: a[2], bg: a[3][0], fg: a[3][1], icon: a[4] })),
+      orderChips: FLOW.map((f) => { const on = st.ostatus === f; return { label: f, n: String(ORD.filter((o) => o.status === f).length), bg: on ? '#111111' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ ostatus: f }) }; }),
+      orders, noOrders: orders.length === 0,
+      invStats: [['724', 'unidades'], ['12', 'lotes'], ['6', 'stock bajo']].map((s) => ({ v: s[0], k: s[1] })),
+      products,
+      segChips: SEGS.map((s) => { const on = st.seg === s; return { label: s, bg: on ? '#111111' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ seg: s }) }; }),
+      clients,
+      quotes, quote,
+      sendQuote: () => this.setState({ toast: qs[0] + ' enviada por WhatsApp (ejemplo).' }),
+      convertQuote: () => this.setState({ screen: 'pedidos', ostatus: 'Por pagar', toast: qs[0] + ' se convirtió en pedido (ejemplo).' }),
+      pos,
+      periods: PER.map((p, i) => { const on = st.period === i; return { label: p[0], bg: on ? '#111111' : 'transparent', fg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ period: i }) }; }),
+      rep: { label: pr[0].toLowerCase(), sales: money(pr[1]), margin: Math.round(pr[2] * 100) + ' %', profit: money(pr[3]) },
+      repCats: CATS.map((c) => ({ name: c[0], v: money(Math.round(pr[1] * c[1])), w: Math.round((c[1] / 0.27) * 100) + '%' })),
+      settings: [
+        ['Negocio', 'Datos y logo', IC.tienda], ['Usuarios y roles', '3 usuarios', IC.clientes], ['Pagos', 'Yape, Plin…', IC.ok],
+        ['Envíos', '3 formas', IC.truck], ['Precios y listas', 'PEPS', IC.box], ['Notificaciones', '5 activas', IC.clock]
+      ].map((s) => ({ label: s[0], hint: s[1], icon: s[2], pick: () => this.setState({ toast: s[0] + ': se edita en la versión de escritorio (ejemplo).' }) })),
+      tabs: [['inicio', 'Inicio', IC.inicio], ['pedidos', 'Pedidos', IC.pedidos], ['inventario', 'Inventario', IC.inv], ['mas', 'Más', IC.mas]].map((t) => {
+        const on = curTab === t[0];
+        return { label: t[1], icon: t[2], on, current: on ? 'page' : 'false', flex: on ? '1.8 1 0' : '1 1 0', bg: on ? '#E8701F' : 'transparent', fg: on ? '#FFFFFF' : '#BDBDBD', pick: t[0] === 'mas' ? () => this.setState({ menu: true, q: '' }) : go(t[0]) };
+      }),
+      q: st.q || '',
+      hasQ: !!q, noQ: !q,
+      onSearch: (e) => this.setState({ q: e && e.target ? e.target.value : '' }),
+      clearSearch: () => this.setState({ q: '' }),
+      chips: GROUPS.map((g) => {
+        const on = g[0] === G[0];
+        const n = pending(g);
+        return { label: g[1], sel: on ? 'true' : 'false', count: n ? String(n) : '', bg: on ? '#111111' : '#F4F4F2', fg: on ? '#FFFFFF' : '#111111', countBg: on ? '#E8701F' : '#FFFFFF', countFg: on ? '#FFFFFF' : '#111111', pick: () => this.setState({ grp: g[0] }) };
+      }),
+      grpTitle: G[1], grpDesc: G[2],
+      cards: q ? hits : G[3].map((it) => card(it)),
+      resultLabel: hits.length + (hits.length === 1 ? ' resultado' : ' resultados'),
+      noResults: !!q && hits.length === 0,
+      quick: [['Nuevo pedido', 'M12 5v14M5 12h14', true], ['Cotización', IC.cotiz], ['Ingresar lote', IC.inv], ['Orden de compra', IC.compras]].map((a) => ({
+        label: a[0], icon: a[1], bg: a[2] ? '#E8701F' : '#F4F4F2', fg: a[2] ? '#FFFFFF' : '#111111',
+        pick: () => this.setState({ menu: false, toast: a[0] + ': se abriría el formulario (ejemplo).' })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
