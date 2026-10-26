@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import ViewFrame from "../../view-frame";
+import NativeView from "../../native-view";
 import { viewForPath } from "../../view-map";
 
 type Props = { params: Promise<{ section: string[] }> };
@@ -9,7 +9,7 @@ async function DashboardSection({ params }: Props) {
   const { section } = await params;
   const view = viewForPath(`/dashboard/${section.join("/")}`);
   if (!view) notFound();
-  return <ViewFrame file={view.file} />;
+  return <NativeView name={view.name} />;
 }
 
 export default function DashboardSectionPage({ params }: Props) {

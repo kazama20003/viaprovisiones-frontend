@@ -8,6 +8,8 @@ type LenisConstructor = new (options: {
   anchors: boolean;
   allowNestedScroll: boolean;
   stopInertiaOnNavigate: boolean;
+  wrapper?: HTMLElement;
+  content?: HTMLElement;
 }) => LenisInstance;
 
 declare global {
@@ -21,6 +23,7 @@ export default function LenisScroll() {
     const start = () => {
       if (!disposed && window.Lenis && !instance) {
         instance = new window.Lenis({ autoRaf: true, anchors: true, allowNestedScroll: true, stopInertiaOnNavigate: true });
+        window.dispatchEvent(new Event("via-lenis-ready"));
       }
     };
     const existing = document.querySelector<HTMLScriptElement>("script[data-lenis-loader]");
@@ -37,3 +40,4 @@ export default function LenisScroll() {
   }, []);
   return null;
 }
+
