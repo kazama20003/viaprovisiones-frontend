@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VIA Provisiones — Frontend
 
-## Getting Started
+Aplicación de tienda y panel de administración creada con Next.js y React. Las vistas del diseño están implementadas como componentes JSX; las imágenes se sirven desde `public/storefront/img` y el logo está integrado en los componentes.
 
-First, run the development server:
+## Ejecutar el proyecto
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre `http://localhost:3000` o el puerto que indique Next.js. Para verificar la compilación de producción, ejecuta `pnpm build`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estructura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/design-views/`: componentes React de las vistas de tienda, administración y móvil.
+- `app/native-view.jsx`: registro y carga de componentes compartidos.
+- `app/design-runtime.jsx`: estado e interacciones conservados del diseño de referencia.
+- `app/view-map.ts`: relación entre rutas y vistas.
+- `app/enlaces/`: página de enlaces responsive.
+- `public/storefront/img/`: imágenes y recursos gráficos.
 
-## Learn More
+La portada está en `/tienda`, el panel en `/dashboard` y la página de enlaces en `/enlaces`. Las rutas de inventario, pedidos, caja y las demás secciones se encuentran en `app/view-map.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+Los productos, pedidos, importes y usuarios incluidos son datos de ejemplo del diseño. Para operar con datos reales es necesario conectar las vistas a un backend y configurar autenticación, pagos y persistencia.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
