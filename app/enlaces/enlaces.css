@@ -1,0 +1,26 @@
+.via-links-page a{color:#111111}.via-links-page a:hover{color:#111111}
+
+.via-links-page{width:100%;min-height:100vh;box-sizing:border-box;font-family:Roboto,system-ui,sans-serif;font-size:16px;color:#111;background:#fff;padding-bottom:28px}
+.via-links-hero{padding:36px 24px 84px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.via-links-quick{position:relative;margin:-56px 16px 0;background:#fff;border:2px solid #111;border-radius:22px;padding:18px 10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.via-links-primary{padding:22px 16px 0}
+.via-links-social{padding:28px 16px 0}
+.via-links-social-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.via-links-services{padding:28px 16px 0;display:flex;flex-direction:column;gap:10px}
+.via-links-contact{margin:28px 16px 0;border:2px solid #111;border-radius:22px;overflow:hidden}
+.via-links-share{margin:20px 16px 0;border-radius:22px;padding:18px;display:flex;gap:16px;align-items:center}
+.via-links-footer{padding:24px 16px 0;text-align:center;font-family:'Roboto Mono',monospace;font-size:12px;font-weight:700;text-transform:uppercase}
+.via-links-contact a,.via-links-share span{overflow-wrap:anywhere}
+@media(max-width:359px){.via-links-social-grid{grid-template-columns:1fr}.via-links-hero>span:first-of-type{font-size:10px!important;letter-spacing:.18em!important}}
+@media(min-width:900px){
+ .via-links-page{display:grid;grid-template-columns:minmax(28px,1fr) minmax(0,560px) minmax(0,560px) minmax(28px,1fr);column-gap:24px;row-gap:24px;align-content:start;padding-bottom:36px}
+ .via-links-hero{grid-column:1/-1;padding:48px 24px 88px}
+ .via-links-quick{grid-column:2/4;width:min(100%,720px);box-sizing:border-box;justify-self:center;margin:-56px 0 0;padding:22px 18px}
+ .via-links-primary{grid-column:2/4;padding:0}
+ .via-links-social{grid-column:2/3;padding:0}
+ .via-links-services{grid-column:3/4;padding:0}
+ .via-links-contact{grid-column:2/3;margin:0;align-self:start}
+ .via-links-share{grid-column:3/4;margin:0;padding:32px;gap:24px;align-self:stretch;justify-content:center;min-height:220px}
+ .via-links-share img{width:140px!important;height:140px!important}
+ .via-links-footer{grid-column:1/-1;padding:8px 24px 0}
+}

@@ -1,5 +1,5 @@
-import ViewFrame from "../view-frame";
+import NativeView from "../native-view";
 
 export default function DashboardPage() {
-  return <ViewFrame file="Dashboard.dc.html" />;
+  return <NativeView name="Dashboard" />;
 }
