@@ -129,13 +129,6 @@ export default function Dashboard(props) {
     <div style={{ "minHeight": "100vh", "background": "#E9E9E7", "padding": "0", "boxSizing": "border-box", "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       <div style={{ "position": "relative", "width": "100%", "maxWidth": "none", "minHeight": "100vh", "margin": "0 auto", "background": "#F4F4F2", "borderRadius": "40px", "overflow": "hidden" }}>
         <div>
-          <div className={`db-pinned-menu ${lookup(v, "pinned") ? "is-open" : ""}`} inert={!lookup(v, "pinned")}>
-            <div className="db-pinned-menu-inner">
-              <div className="db-pinned-menu-content">
-                <DesignImport name={"MenuPanel"} mode={"bar"} active={"Panel"} onPin={lookup(v, "togglePin")} />
-              </div>
-            </div>
-          </div>
           <div>
             <div style={{ "background": "#F4F4F2", "padding": "28px 32px 30px", "display": "flex", "flexDirection": "column", "gap": "30px" }}>
               <div style={{ "display": "flex", "alignItems": "center", "gap": "14px", "flexWrap": "wrap" }}>
