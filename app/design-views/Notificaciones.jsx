@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -138,7 +139,7 @@ export default function Notificaciones(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-not"}>
@@ -147,7 +148,7 @@ export default function Notificaciones(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-not)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Notificaciones"}
@@ -249,7 +250,7 @@ export default function Notificaciones(props) {
                                 <path d={lookup(n, "icon")}></path>
                               </svg>
                             </span>
-                            <a href={lookup(n, "href")} style={{ "flex": "1", "minWidth": "0", "display": "flex", "flexDirection": "column", "gap": "2px", "textDecoration": "none", "lineHeight": "1.3" }}>
+                            <DesignLink href={lookup(n, "href")} style={{ "flex": "1", "minWidth": "0", "display": "flex", "flexDirection": "column", "gap": "2px", "textDecoration": "none", "lineHeight": "1.3" }}>
                               <span style={{ "display": "flex", "alignItems": "center", "gap": "8px", "flexWrap": "wrap" }}>
                                 <span style={{ "fontSize": "14px", "fontWeight": lookup(n, "weight") }}>
                                   {lookup(n, "title")}
@@ -265,7 +266,7 @@ export default function Notificaciones(props) {
                                 {lookup(n, "cta")}
                                 {" →"}
                               </span>
-                            </a>
+                            </DesignLink>
                             <span style={{ "display": "flex", "flexDirection": "column", "alignItems": "flex-end", "gap": "8px", "flex": "none" }}>
                               <span style={{ "fontSize": "12px", "color": "#8C8C8C", "whiteSpace": "nowrap" }}>
                                 {lookup(n, "time")}
@@ -347,9 +348,9 @@ export default function Notificaciones(props) {
                     <button style={{ "flex": "1", "height": "44px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Cambiar foto"}
                     </button>
-                    <a href={"/ajustes"} style={{ "flex": "1", "height": "44px", "borderRadius": "999px", "background": "#2A2A2A", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                    <DesignLink href={"/ajustes"} style={{ "flex": "1", "height": "44px", "borderRadius": "999px", "background": "#2A2A2A", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Editar datos"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </div>
                 <div style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -170,7 +171,7 @@ export default function Reportes(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-rep"}>
@@ -179,7 +180,7 @@ export default function Reportes(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-rep)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Reportes"}
@@ -642,7 +643,7 @@ export default function Reportes(props) {
                     </span>
                     {(lookup(v, "stuck") || []).map((l, index14) => (
                       <Fragment key={index14}>
-                        <a href={"/inventario"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "8px 0", "borderTop": "1px solid #F1F1EE", "textDecoration": "none" }}>
+                        <DesignLink href={"/inventario"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "8px 0", "borderTop": "1px solid #F1F1EE", "textDecoration": "none" }}>
                           <span style={{ "padding": "3px 8px", "borderRadius": "8px", "background": "#FFF1E6", "color": "#8A3B0A", "fontSize": "11px", "fontWeight": "800", "flex": "none" }}>
                             {lookup(l, "lot")}
                           </span>
@@ -660,7 +661,7 @@ export default function Reportes(props) {
                           <span style={{ "fontSize": "13px", "fontWeight": "800" }}>
                             {lookup(l, "v")}
                           </span>
-                        </a>
+                        </DesignLink>
                       </Fragment>
                     ))}
                     <span style={{ "fontSize": "11px", "color": "#6B6B6B", "lineHeight": "1.4" }}>
@@ -718,9 +719,9 @@ export default function Reportes(props) {
                       <Fragment key={index17}>
                         <div style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "8px 0", "borderTop": "1px solid #F1F1EE" }}>
                           <span style={{ "flex": "1", "minWidth": "0", "display": "flex", "flexDirection": "column" }}>
-                            <a href={"/clientes"} style={{ "fontSize": "13px", "fontWeight": "700", "textDecoration": "none" }}>
+                            <DesignLink href={"/clientes"} style={{ "fontSize": "13px", "fontWeight": "700", "textDecoration": "none" }}>
                               {lookup(d, "name")}
-                            </a>
+                            </DesignLink>
                             <span style={{ "fontSize": "11px", "color": "#8C8C8C" }}>
                               {lookup(d, "sub")}
                             </span>

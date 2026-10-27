@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -71,11 +72,11 @@ export default function Footer(props) {
           <div style={{ "display": "flex", "gap": "10px", "flexWrap": "wrap" }}>
             {(lookup(v, "socials") || []).map((s, index1) => (
               <Fragment key={index1}>
-                <a href={lookup(s, "href")} aria-label={lookup(s, "name")} style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+                <DesignLink href={lookup(s, "href")} aria-label={lookup(s, "name")} style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                   <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={lookup(s, "icon")}></path>
                   </svg>
-                </a>
+                </DesignLink>
               </Fragment>
             ))}
           </div>
@@ -84,7 +85,7 @@ export default function Footer(props) {
           <span style={{ "fontFamily": "Archivo, sans-serif", "fontSize": "18px", "fontWeight": "900", "textTransform": "uppercase", "marginBottom": "8px" }}>
             {"Contáctanos"}
           </span>
-          <a href={"https://wa.me/51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px", "textDecoration": "none", "color": "#111111" }}>
+          <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px", "textDecoration": "none", "color": "#111111" }}>
             <span style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "background": "#25D366", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
               <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} aria-hidden={"true"}>
                 <path d={"M12 3a9 9 0 0 0-7.8 13.4L3 21l4.7-1.2A9 9 0 1 0 12 3z"} fill={"#FFFFFF"}></path>
@@ -98,8 +99,8 @@ export default function Footer(props) {
                 {"WhatsApp y llamadas"}
               </span>
             </span>
-          </a>
-          <a href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px", "textDecoration": "none", "color": "#111111" }}>
+          </DesignLink>
+          <DesignLink href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px", "textDecoration": "none", "color": "#111111" }}>
             <span style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinejoin={"round"} aria-hidden={"true"}>
                 <path d={"M3 6h18v12H3zM3 7l9 6 9-6"}></path>
@@ -108,8 +109,8 @@ export default function Footer(props) {
             <span style={{ "fontSize": "15px", "fontWeight": "500" }}>
               {"viaprovisionesperu@gmail.com"}
             </span>
-          </a>
-          <a href={"https://www.google.com/maps/search/?api=1&query=Dean+Valdivia+533+Cercado+Arequipa"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px", "textDecoration": "none", "color": "#111111" }}>
+          </DesignLink>
+          <DesignLink href={"https://www.google.com/maps/search/?api=1&query=Dean+Valdivia+533+Cercado+Arequipa"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px", "textDecoration": "none", "color": "#111111" }}>
             <span style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} aria-hidden={"true"}>
                 <path d={"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"}></path>
@@ -119,7 +120,7 @@ export default function Footer(props) {
             <span style={{ "fontSize": "15px", "fontWeight": "500" }}>
               {"Dean Valdivia 533 - Cercado, Arequipa"}
             </span>
-          </a>
+          </DesignLink>
           <span style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "44px" }}>
             <span style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} aria-hidden={"true"}>
@@ -142,9 +143,9 @@ export default function Footer(props) {
               </span>
               {(lookup(c, "links") || []).map((k, index3) => (
                 <Fragment key={index3}>
-                  <a href={lookup(k, "href")} style={{ "color": "#111111", "textDecoration": "none", "fontSize": "15px", "minHeight": "28px", "display": "inline-flex", "alignItems": "center" }}>
+                  <DesignLink href={lookup(k, "href")} style={{ "color": "#111111", "textDecoration": "none", "fontSize": "15px", "minHeight": "28px", "display": "inline-flex", "alignItems": "center" }}>
                     {lookup(k, "label")}
-                  </a>
+                  </DesignLink>
                 </Fragment>
               ))}
             </nav>
@@ -165,12 +166,12 @@ export default function Footer(props) {
               </Fragment>
             ))}
           </div>
-          <a href={"#reclamaciones"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "minHeight": "44px", "padding": "0 16px", "borderRadius": "10px", "border": "2px solid #FFFFFF", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "boxSizing": "border-box" }}>
+          <DesignLink href={"#reclamaciones"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "minHeight": "44px", "padding": "0 16px", "borderRadius": "10px", "border": "2px solid #FFFFFF", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "boxSizing": "border-box" }}>
             <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
               <path d={"M5 4h11l3 3v13H5zM9 9h6M9 13h6M9 17h4"}></path>
             </svg>
             {"Libro de Reclamaciones"}
-          </a>
+          </DesignLink>
         </div>
       </div>
     </footer>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -61,9 +62,9 @@ export default function Categoria(props) {
       <DesignImport name={"Header"} accent={lookup(v, "accent")} cart={lookup(v, "cart")} active={""} />
       <main style={{ "maxWidth": "1520px", "margin": "0 auto", "padding": "0 40px 80px" }}>
         <nav aria-label={"Ruta"} style={{ "padding": "24px 0", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "display": "flex", "gap": "10px" }}>
-          <a href={"/tienda"} style={{ "textDecoration": "none" }}>
+          <DesignLink href={"/tienda"} style={{ "textDecoration": "none" }}>
             {"Inicio"}
-          </a>
+          </DesignLink>
           <span aria-hidden={"true"}>
             {"/"}
           </span>
@@ -161,7 +162,7 @@ export default function Categoria(props) {
               {(lookup(v, "items") || []).map((p, index2) => (
                 <Fragment key={index2}>
                   <article style={{ "display": "flex", "flexDirection": "column" }}>
-                    <a href={"/producto"} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
+                    <DesignLink href={"/producto"} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
                       <img src={assetSrc(lookup(p, "img"))} alt={lookup(p, "name")} style={{ "position": "absolute", "inset": "0", "width": "100%", "height": "100%", "objectFit": "cover" }} />
                       {Boolean(lookup(p, "badge")) && (
                         <Fragment>
@@ -170,15 +171,15 @@ export default function Categoria(props) {
                           </span>
                         </Fragment>
                       )}
-                    </a>
+                    </DesignLink>
                     <span style={{ "marginTop": "14px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                       {"Camping · "}
                       {lookup(p, "sub")}
                     </span>
                     <h3 style={{ "margin": "6px 0 0", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "lineHeight": "1.3", "minHeight": "44px" }}>
-                      <a href={"/producto"} style={{ "textDecoration": "none" }}>
+                      <DesignLink href={"/producto"} style={{ "textDecoration": "none" }}>
                         {lookup(p, "name")}
-                      </a>
+                      </DesignLink>
                     </h3>
                     <div style={{ "marginTop": "10px", "display": "flex", "gap": "8px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700" }}>
                       <span>
@@ -203,12 +204,12 @@ export default function Categoria(props) {
               <span style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontFamily": "'Roboto Mono', monospace", "fontWeight": "700" }}>
                 {"1"}
               </span>
-              <a href={"/categoria"} style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "border": "2px solid #111111", "boxSizing": "border-box", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontFamily": "'Roboto Mono', monospace", "fontWeight": "700", "textDecoration": "none" }}>
+              <DesignLink href={"/categoria"} style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "border": "2px solid #111111", "boxSizing": "border-box", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontFamily": "'Roboto Mono', monospace", "fontWeight": "700", "textDecoration": "none" }}>
                 {"2"}
-              </a>
-              <a href={"/categoria"} style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "border": "2px solid #111111", "boxSizing": "border-box", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontFamily": "'Roboto Mono', monospace", "fontWeight": "700", "textDecoration": "none" }}>
+              </DesignLink>
+              <DesignLink href={"/categoria"} style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "border": "2px solid #111111", "boxSizing": "border-box", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontFamily": "'Roboto Mono', monospace", "fontWeight": "700", "textDecoration": "none" }}>
                 {"3"}
-              </a>
+              </DesignLink>
             </nav>
           </section>
         </div>

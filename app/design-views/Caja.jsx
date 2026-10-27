@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -138,7 +139,7 @@ export default function Caja(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-caja"}>
@@ -147,7 +148,7 @@ export default function Caja(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-caja)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Caja del día"}
@@ -337,9 +338,9 @@ export default function Caja(props) {
                       {"4 facturas"}
                     </strong>
                     {". "}
-                    <a href={"/comprobantes"} style={{ "fontWeight": "700", "color": "#C2410C", "textUnderlineOffset": "3px" }}>
+                    <DesignLink href={"/comprobantes"} style={{ "fontWeight": "700", "color": "#C2410C", "textUnderlineOffset": "3px" }}>
                       {"Ver comprobantes"}
-                    </a>
+                    </DesignLink>
                   </span>
                 </div>
               </div>
@@ -382,9 +383,9 @@ export default function Caja(props) {
                       </span>
                       {Boolean(lookup(m, "link")) && (
                         <Fragment>
-                          <a href={lookup(m, "link")} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textUnderlineOffset": "3px" }}>
+                          <DesignLink href={lookup(m, "link")} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textUnderlineOffset": "3px" }}>
                             {lookup(m, "linkText")}
-                          </a>
+                          </DesignLink>
                         </Fragment>
                       )}
                       <span style={{ "fontSize": "14px", "fontWeight": "800", "color": lookup(m, "amtFg"), "minWidth": "96px", "textAlign": "right" }}>
@@ -394,12 +395,12 @@ export default function Caja(props) {
                   </Fragment>
                 ))}
                 <div style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap", "paddingTop": "4px" }}>
-                  <a href={"/gastos"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 16px", "borderRadius": "999px", "background": "#F4F4F2", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                  <DesignLink href={"/gastos"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 16px", "borderRadius": "999px", "background": "#F4F4F2", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                     <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.2"} strokeLinecap={"round"} aria-hidden={"true"}>
                       <path d={"M5 12h14"}></path>
                     </svg>
                     {"Registrar egreso"}
-                  </a>
+                  </DesignLink>
                   <button style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 16px", "borderRadius": "999px", "border": "none", "background": "#F4F4F2", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700" }}>
                     <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.2"} strokeLinecap={"round"} aria-hidden={"true"}>
                       <path d={"M12 5v14M5 12h14"}></path>
@@ -463,9 +464,9 @@ export default function Caja(props) {
                   <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
                     {"Cierres de los últimos 7 días"}
                   </span>
-                  <a href={"/reportes"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textUnderlineOffset": "3px" }}>
+                  <DesignLink href={"/reportes"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textUnderlineOffset": "3px" }}>
                     {"Ver en reportes"}
-                  </a>
+                  </DesignLink>
                 </div>
                 <div className={"noscroll"} style={{ "overflowX": "auto" }}>
                   <div style={{ "minWidth": "760px", "display": "flex", "flexDirection": "column" }}>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -402,7 +403,7 @@ export default function MovilFinanzas(props) {
             <path d={"M4 8h16M4 16h10"}></path>
           </svg>
         </button>
-        <a href={"/admin/movil"} aria-label={"Ir al inicio del panel"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+        <DesignLink href={"/admin/movil"} aria-label={"Ir al inicio del panel"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
           <svg width={"26"} height={"26"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
             <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
             <clipPath id={"via-clip-movfin"}>
@@ -411,7 +412,7 @@ export default function MovilFinanzas(props) {
             <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
             <path clipPath={"url(#via-clip-movfin)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={lookup(v, "accent")}></path>
           </svg>
-        </a>
+        </DesignLink>
         <span style={{ "flex": "1", "minWidth": "0", "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
           <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
             {lookup(v, "title")}
@@ -1369,7 +1370,7 @@ export default function MovilFinanzas(props) {
                       )}
                       {Boolean(lookup(i, "isLink")) && (
                         <Fragment>
-                          <a href={lookup(i, "href")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "minHeight": "112px", "padding": "12px", "borderRadius": "22px", "background": "#F4F4F2", "color": "#111111", "textDecoration": "none", "boxSizing": "border-box" }}>
+                          <DesignLink href={lookup(i, "href")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "minHeight": "112px", "padding": "12px", "borderRadius": "22px", "background": "#F4F4F2", "color": "#111111", "textDecoration": "none", "boxSizing": "border-box" }}>
                             <span style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "gap": "6px" }}>
                               <span style={{ "width": "38px", "height": "38px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                                 <svg width={"17"} height={"17"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
@@ -1399,7 +1400,7 @@ export default function MovilFinanzas(props) {
                                 </Fragment>
                               )}
                             </span>
-                          </a>
+                          </DesignLink>
                         </Fragment>
                       )}
                     </Fragment>
@@ -1431,12 +1432,12 @@ export default function MovilFinanzas(props) {
                       {"Administrador"}
                     </span>
                   </span>
-                  <a href={"/admin/login"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "7px", "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                  <DesignLink href={"/admin/login"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "7px", "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                     <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"}></path>
                     </svg>
                     {"Cerrar sesión"}
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
             </nav>

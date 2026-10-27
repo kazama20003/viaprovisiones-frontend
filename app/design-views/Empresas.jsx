@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -141,15 +142,15 @@ export default function Empresas(props) {
               {"Bodegas, minoristas, mayoristas, ferreterías, constructoras, mineras, hoteles y oficinas. Precios según tu volumen, factura electrónica y despacho a todo el Perú desde Arequipa."}
             </p>
             <div style={{ "display": "flex", "gap": "12px", "flexWrap": "wrap", "marginTop": "4px" }}>
-              <a href={"#cotizar"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              <DesignLink href={"#cotizar"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {"Solicitar cotización"}
-              </a>
-              <a href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "54px", "padding": "0 24px", "borderRadius": "999px", "border": "2px solid #111111", "boxSizing": "border-box", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              </DesignLink>
+              <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "54px", "padding": "0 24px", "borderRadius": "999px", "border": "2px solid #111111", "boxSizing": "border-box", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                 </svg>
                 {"Hablar con un asesor"}
-              </a>
+              </DesignLink>
             </div>
           </div>
         </div>
@@ -213,21 +214,21 @@ export default function Empresas(props) {
                 <div style={{ "display": "flex", "flexWrap": "wrap", "gap": "8px" }}>
                   {(lookup(v, "seg.items") || []).map((i, index3) => (
                     <Fragment key={index3}>
-                      <a href={"/categoria"} style={{ "display": "inline-flex", "alignItems": "center", "minHeight": "38px", "padding": "0 14px", "borderRadius": "999px", "border": "1px solid #111111", "textDecoration": "none", "fontSize": "14px", "fontWeight": "500" }}>
+                      <DesignLink href={"/categoria"} style={{ "display": "inline-flex", "alignItems": "center", "minHeight": "38px", "padding": "0 14px", "borderRadius": "999px", "border": "1px solid #111111", "textDecoration": "none", "fontSize": "14px", "fontWeight": "500" }}>
                         {lookup(i, "t")}
-                      </a>
+                      </DesignLink>
                     </Fragment>
                   ))}
                 </div>
               </div>
-              <a href={"#cotizar"} onClick={lookup(v, "seg.quote")} style={{ "alignSelf": "flex-start", "marginTop": "6px", "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              <DesignLink href={"#cotizar"} onClick={lookup(v, "seg.quote")} style={{ "alignSelf": "flex-start", "marginTop": "6px", "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {"Cotizar para "}
                 {lookup(v, "seg.short")}
                 {" "}
                 <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                   <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                 </svg>
-              </a>
+              </DesignLink>
             </div>
           </div>
         </section>
@@ -280,9 +281,9 @@ export default function Empresas(props) {
                       </Fragment>
                     ))}
                   </ul>
-                  <a href={"#cotizar"} onClick={lookup(t, "pick")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "52px", "borderRadius": "999px", "background": lookup(t, "btnBg"), "color": lookup(t, "btnFg"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"#cotizar"} onClick={lookup(t, "pick")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "52px", "borderRadius": "999px", "background": lookup(t, "btnBg"), "color": lookup(t, "btnFg"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Quiero este precio"}
-                  </a>
+                  </DesignLink>
                 </article>
               </Fragment>
             ))}
@@ -363,18 +364,18 @@ export default function Empresas(props) {
                   {"Gerente Comercial"}
                 </span>
               </span>
-              <a href={"https://wa.me/51954802744"} style={{ "display": "flex", "gap": "10px", "alignItems": "center", "textDecoration": "none" }}>
+              <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "flex", "gap": "10px", "alignItems": "center", "textDecoration": "none" }}>
                 <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                 </svg>
                 {"WhatsApp: +51 954 802 744"}
-              </a>
-              <a href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "gap": "10px", "alignItems": "center", "textDecoration": "none" }}>
+              </DesignLink>
+              <DesignLink href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "gap": "10px", "alignItems": "center", "textDecoration": "none" }}>
                 <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M4 6h16v12H4zM4 7l8 6 8-6"}></path>
                 </svg>
                 {"viaprovisionesperu@gmail.com"}
-              </a>
+              </DesignLink>
               <span style={{ "display": "flex", "gap": "10px", "alignItems": "center" }}>
                 <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"}></path>

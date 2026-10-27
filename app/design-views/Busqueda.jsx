@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -92,9 +93,9 @@ export default function Busqueda(props) {
       <DesignImport name={"Header"} accent={lookup(v, "accent")} cart={lookup(v, "cart")} active={""} />
       <main style={{ "maxWidth": "1520px", "margin": "0 auto", "padding": "0 40px 80px" }}>
         <nav aria-label={"Ruta"} style={{ "padding": "24px 0", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "display": "flex", "gap": "10px" }}>
-          <a href={"/tienda"} style={{ "textDecoration": "none" }}>
+          <DesignLink href={"/tienda"} style={{ "textDecoration": "none" }}>
             {"Inicio"}
-          </a>
+          </DesignLink>
           <span aria-hidden={"true"}>
             {"/"}
           </span>
@@ -224,7 +225,7 @@ export default function Busqueda(props) {
                   {(lookup(v, "items") || []).map((p, index4) => (
                     <Fragment key={index4}>
                       <article style={{ "display": "flex", "flexDirection": "column" }}>
-                        <a href={"/producto"} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
+                        <DesignLink href={"/producto"} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
                           <img src={assetSrc(lookup(p, "img"))} alt={lookup(p, "name")} style={{ "position": "absolute", "inset": "0", "width": "100%", "height": "100%", "objectFit": "cover" }} />
                           {Boolean(lookup(p, "badge")) && (
                             <Fragment>
@@ -233,14 +234,14 @@ export default function Busqueda(props) {
                               </span>
                             </Fragment>
                           )}
-                        </a>
+                        </DesignLink>
                         <span style={{ "marginTop": "14px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                           {lookup(p, "cat")}
                         </span>
                         <h3 style={{ "margin": "6px 0 0", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "lineHeight": "1.3", "minHeight": "44px" }}>
-                          <a href={"/producto"} style={{ "textDecoration": "none" }}>
+                          <DesignLink href={"/producto"} style={{ "textDecoration": "none" }}>
                             {lookup(p, "name")}
-                          </a>
+                          </DesignLink>
                         </h3>
                         <div style={{ "marginTop": "10px", "display": "flex", "gap": "8px", "alignItems": "baseline", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700" }}>
                           <span>
@@ -291,19 +292,19 @@ export default function Busqueda(props) {
                     {"¿No lo tenemos? Te lo conseguimos: escríbenos por WhatsApp."}
                   </li>
                 </ul>
-                <a href={"https://wa.me/51954802744"} style={{ "alignSelf": "flex-start", "height": "56px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                <DesignLink href={"https://wa.me/51954802744"} style={{ "alignSelf": "flex-start", "height": "56px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
                   {"Pedir por WhatsApp"}
-                </a>
+                </DesignLink>
               </div>
               <div style={{ "flex": "1 1 520px", "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "16px" }}>
                 {(lookup(v, "popular") || []).map((c, index5) => (
                   <Fragment key={index5}>
-                    <a href={"/categoria"} style={{ "position": "relative", "height": "200px", "borderRadius": "19px", "overflow": "hidden", "textDecoration": "none", "background": "#111111" }}>
+                    <DesignLink href={"/categoria"} style={{ "position": "relative", "height": "200px", "borderRadius": "19px", "overflow": "hidden", "textDecoration": "none", "background": "#111111" }}>
                       <img src={assetSrc(lookup(c, "img"))} alt={""} style={{ "position": "absolute", "inset": "0", "width": "100%", "height": "100%", "objectFit": "cover", "opacity": "0.8" }} />
                       <span style={{ "position": "absolute", "left": "14px", "bottom": "14px", "background": "#FFFFFF", "padding": "8px 14px", "borderRadius": "999px", "fontFamily": "Archivo, sans-serif", "fontSize": "16px", "fontWeight": "800", "textTransform": "uppercase" }}>
                         {lookup(c, "name")}
                       </span>
-                    </a>
+                    </DesignLink>
                   </Fragment>
                 ))}
               </div>

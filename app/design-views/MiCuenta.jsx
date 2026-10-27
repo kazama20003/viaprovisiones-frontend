@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -150,9 +151,9 @@ export default function MiCuenta(props) {
                     </Fragment>
                   ))}
                 </ul>
-                <a href={"/empresas"} style={{ "color": "#FFFFFF", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
+                <DesignLink href={"/empresas"} style={{ "color": "#FFFFFF", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
                   {"¿Compras para tu negocio? Precios para empresas →"}
-                </a>
+                </DesignLink>
               </div>
             </div>
           </Fragment>
@@ -241,12 +242,12 @@ export default function MiCuenta(props) {
                             {lookup(o, "total")}
                           </span>
                           <span style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap" }}>
-                            <a href={"/seguimiento"} style={{ "display": "inline-flex", "alignItems": "center", "height": "44px", "padding": "0 18px", "borderRadius": "999px", "border": "2px solid #111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                            <DesignLink href={"/seguimiento"} style={{ "display": "inline-flex", "alignItems": "center", "height": "44px", "padding": "0 18px", "borderRadius": "999px", "border": "2px solid #111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                               {"Ver seguimiento"}
-                            </a>
-                            <a href={"/carrito"} style={{ "display": "inline-flex", "alignItems": "center", "height": "44px", "padding": "0 18px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                            </DesignLink>
+                            <DesignLink href={"/carrito"} style={{ "display": "inline-flex", "alignItems": "center", "height": "44px", "padding": "0 18px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                               {"Volver a comprar"}
-                            </a>
+                            </DesignLink>
                           </span>
                         </div>
                       </Fragment>
@@ -278,9 +279,9 @@ export default function MiCuenta(props) {
                               {lookup(a, "ref")}
                             </span>
                             <span style={{ "display": "flex", "gap": "14px", "fontSize": "14px", "fontWeight": "700" }}>
-                              <a href={"#editar"}>
+                              <DesignLink href={"#editar"}>
                                 {"Editar"}
-                              </a>
+                              </DesignLink>
                               <button onClick={lookup(a, "makeMain")} style={{ "border": "none", "background": "transparent", "padding": "0", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700", "textDecoration": "underline" }}>
                                 {"Usar como principal"}
                               </button>
@@ -377,9 +378,9 @@ export default function MiCuenta(props) {
                                   </svg>
                                 </button>
                               </span>
-                              <a href={"/producto"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                              <DesignLink href={"/producto"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                                 {"Ver producto"}
-                              </a>
+                              </DesignLink>
                             </div>
                           </div>
                         </Fragment>
@@ -389,9 +390,9 @@ export default function MiCuenta(props) {
                       <Fragment>
                         <p style={{ "margin": "0", "fontSize": "16px" }}>
                           {"Tu lista está vacía. "}
-                          <a href={"/tienda"}>
+                          <DesignLink href={"/tienda"}>
                             {"Ver productos"}
-                          </a>
+                          </DesignLink>
                         </p>
                       </Fragment>
                     )}
@@ -416,9 +417,9 @@ export default function MiCuenta(props) {
                       {"Bodegas, ferreterías, mayoristas y empresas tienen precios por volumen y crédito."}
                     </span>
                   </span>
-                  <a href={"/empresas"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"/empresas"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Ver precios para empresas"}
-                  </a>
+                  </DesignLink>
                 </div>
               </section>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -87,9 +88,9 @@ export default function Carrito(props) {
                   <p style={{ "margin": "0", "fontSize": "20px" }}>
                     {"Tu carrito está vacío."}
                   </p>
-                  <a href={"/tienda"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"/tienda"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Ver productos"}
-                  </a>
+                  </DesignLink>
                 </div>
               </Fragment>
             )}
@@ -101,9 +102,9 @@ export default function Carrito(props) {
                     <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                       {lookup(l, "cat")}
                     </span>
-                    <a href={"/producto"} style={{ "fontFamily": "Archivo, sans-serif", "fontSize": "19px", "fontWeight": "800", "textTransform": "uppercase", "textDecoration": "none", "lineHeight": "1.25" }}>
+                    <DesignLink href={"/producto"} style={{ "fontFamily": "Archivo, sans-serif", "fontSize": "19px", "fontWeight": "800", "textTransform": "uppercase", "textDecoration": "none", "lineHeight": "1.25" }}>
                       {lookup(l, "name")}
-                    </a>
+                    </DesignLink>
                     <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px" }}>
                       {lookup(l, "unit")}
                       {" c/u"}
@@ -138,9 +139,9 @@ export default function Carrito(props) {
                 </strong>
                 {" Pide precios por volumen y entrega programada."}
               </span>
-              <a href={"/empresas"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
+              <DesignLink href={"/empresas"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
                 {"Solicitar cotización →"}
-              </a>
+              </DesignLink>
             </div>
           </section>
           <aside aria-label={"Resumen del pedido"} style={{ "flex": "1 1 380px", "maxWidth": "460px", "border": "2px solid #111111", "borderRadius": "20px", "padding": "28px", "boxSizing": "border-box", "display": "flex", "flexDirection": "column", "gap": "22px" }}>
@@ -218,15 +219,15 @@ export default function Carrito(props) {
                 </span>
               </div>
             </div>
-            <a href={"/checkout"} style={{ "height": "58px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
+            <DesignLink href={"/checkout"} style={{ "height": "58px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
               {"Ir a pagar"}
-            </a>
-            <a href={"/enlaces"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "boxSizing": "border-box", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+            </DesignLink>
+            <DesignLink href={"/enlaces"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "boxSizing": "border-box", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
               <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                 <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
               </svg>
               {"Enviar pedido por WhatsApp"}
-            </a>
+            </DesignLink>
           </aside>
         </div>
       </main>

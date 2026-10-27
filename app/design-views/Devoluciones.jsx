@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -138,7 +139,7 @@ export default function Devoluciones(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-dev"}>
@@ -147,7 +148,7 @@ export default function Devoluciones(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-dev)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Devoluciones"}
@@ -479,13 +480,13 @@ export default function Devoluciones(props) {
                     </span>
                   </span>
                   <span style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "flex": "none" }}>
-                    <a href={"/pedido/detalle"} style={{ "height": "34px", "padding": "0 12px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "6px", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                    <DesignLink href={"/pedido/detalle"} style={{ "height": "34px", "padding": "0 12px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "6px", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Pedido "}
                       {lookup(v, "d.order")}
-                    </a>
-                    <a href={"/kardex"} style={{ "height": "34px", "padding": "0 12px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "6px", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                    </DesignLink>
+                    <DesignLink href={"/kardex"} style={{ "height": "34px", "padding": "0 12px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "6px", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Ver lote"}
-                    </a>
+                    </DesignLink>
                   </span>
                 </div>
                 <div style={{ "display": "flex", "flexDirection": "column", "gap": "8px" }}>
@@ -557,7 +558,7 @@ export default function Devoluciones(props) {
                 </div>
                 {Boolean(lookup(v, "d.showNC")) && (
                   <Fragment>
-                    <a href={"/comprobantes"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "14px", "borderRadius": "20px", "background": "#FFF1E6", "color": "#8A3B0A", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
+                    <DesignLink href={"/comprobantes"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "14px", "borderRadius": "20px", "background": "#FFF1E6", "color": "#8A3B0A", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
                       <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                         <path d={"M7 3h7l5 5v13H7zM14 3v5h5M10 14l2 2 4-4"}></path>
                       </svg>
@@ -567,7 +568,7 @@ export default function Devoluciones(props) {
                       <span style={{ "fontWeight": "800" }}>
                         {"Ver comprobante →"}
                       </span>
-                    </a>
+                    </DesignLink>
                   </Fragment>
                 )}
               </div>

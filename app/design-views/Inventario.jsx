@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -175,7 +176,7 @@ export default function Inventario(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-inv"}>
@@ -184,7 +185,7 @@ export default function Inventario(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-inv)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Inventario"}
@@ -596,9 +597,9 @@ export default function Inventario(props) {
                                     <button style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Trasladar"}
                                     </button>
-                                    <a href={"/kardex"} style={{ "display": "inline-flex", "alignItems": "center", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                                    <DesignLink href={"/kardex"} style={{ "display": "inline-flex", "alignItems": "center", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Ver kardex"}
-                                    </a>
+                                    </DesignLink>
                                   </div>
                                 </div>
                               </Fragment>
