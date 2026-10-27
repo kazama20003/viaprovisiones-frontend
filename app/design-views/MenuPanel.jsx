@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import Link from "next/link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -268,7 +269,7 @@ export default function MenuPanel(props) {
                 <div style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "10px" }}>
                   {(lookup(v, "shown") || []).map((i, index2) => (
                     <Fragment key={index2}>
-                      <a href={lookup(i, "href")} className={lookup(i, "cls")} aria-current={lookup(i, "current")} aria-disabled={lookup(i, "disabled")} style={{ "display": "flex", "flexDirection": "column", "gap": "12px", "minHeight": "112px", "padding": "14px", "borderRadius": "24px", "textDecoration": "none", "background": lookup(i, "bg"), "color": lookup(i, "fg"), "opacity": lookup(i, "o"), "boxSizing": "border-box" }}>
+                      <Link href={lookup(i, "href")} className={lookup(i, "cls")} aria-current={lookup(i, "current")} aria-disabled={lookup(i, "disabled")} style={{ "display": "flex", "flexDirection": "column", "gap": "12px", "minHeight": "112px", "padding": "14px", "borderRadius": "24px", "textDecoration": "none", "background": lookup(i, "bg"), "color": lookup(i, "fg"), "opacity": lookup(i, "o"), "boxSizing": "border-box" }}>
                         <span style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "gap": "8px" }}>
                           <span style={{ "width": "40px", "height": "40px", "borderRadius": "50%", "background": lookup(i, "iconBg"), "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                             <svg width={"17"} height={"17"} viewBox={"0 0 24 24"} fill={"none"} stroke={lookup(i, "iconFg")} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
@@ -291,7 +292,7 @@ export default function MenuPanel(props) {
                             {lookup(i, "sub")}
                           </span>
                         </span>
-                      </a>
+                      </Link>
                     </Fragment>
                   ))}
                 </div>
@@ -303,12 +304,12 @@ export default function MenuPanel(props) {
               </span>
               {(lookup(v, "actions") || []).map((a, index3) => (
                 <Fragment key={index3}>
-                  <a href={lookup(a, "href")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 16px 0 12px", "borderRadius": "999px", "background": lookup(a, "bg"), "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                  <Link href={lookup(a, "href")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 16px 0 12px", "borderRadius": "999px", "background": lookup(a, "bg"), "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                     <svg width={"15"} height={"15"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={lookup(a, "icon")}></path>
                     </svg>
                     {lookup(a, "label")}
-                  </a>
+                  </Link>
                 </Fragment>
               ))}
               <span style={{ "flex": "1" }}></span>
@@ -325,11 +326,11 @@ export default function MenuPanel(props) {
                   </span>
                 </span>
               </span>
-              <a href={"/admin/login"} aria-label={"Cerrar sesión"} title={"Cerrar sesión"} style={{ "width": "42px", "height": "42px", "borderRadius": "50%", "background": "#2A2A2A", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+              <Link href={"/admin/login"} aria-label={"Cerrar sesión"} title={"Cerrar sesión"} style={{ "width": "42px", "height": "42px", "borderRadius": "50%", "background": "#2A2A2A", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                 <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                   <path d={"M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"}></path>
                 </svg>
-              </a>
+              </Link>
             </div>
           </nav>
         </Fragment>
@@ -382,7 +383,7 @@ export default function MenuPanel(props) {
                   <div style={{ "display": "grid", "gridTemplateColumns": "repeat(4, minmax(0, 1fr))", "gap": "8px" }}>
                     {(lookup(v, "barItems") || []).map((i, index5) => (
                       <Fragment key={index5}>
-                        <a href={lookup(i, "href")} className={lookup(i, "cls")} aria-current={lookup(i, "current")} aria-disabled={lookup(i, "disabled")} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "12px", "borderRadius": "22px", "textDecoration": "none", "background": lookup(i, "bg"), "color": lookup(i, "fg"), "opacity": lookup(i, "o") }}>
+                        <Link href={lookup(i, "href")} className={lookup(i, "cls")} aria-current={lookup(i, "current")} aria-disabled={lookup(i, "disabled")} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "12px", "borderRadius": "22px", "textDecoration": "none", "background": lookup(i, "bg"), "color": lookup(i, "fg"), "opacity": lookup(i, "o") }}>
                           <span style={{ "width": "38px", "height": "38px", "borderRadius": "50%", "background": lookup(i, "iconBg"), "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                             <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={lookup(i, "iconFg")} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                               <path d={lookup(i, "icon")}></path>
@@ -396,7 +397,7 @@ export default function MenuPanel(props) {
                               {lookup(i, "hintOrSub")}
                             </span>
                           </span>
-                        </a>
+                        </Link>
                       </Fragment>
                     ))}
                   </div>
