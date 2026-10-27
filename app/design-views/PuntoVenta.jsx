@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -226,7 +227,7 @@ export default function PuntoVenta(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-pv"}>
@@ -235,15 +236,15 @@ export default function PuntoVenta(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-pv)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Punto de venta"}
                   </span>
-                  <a href={"/caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontSize": "14px", "fontWeight": "600", "color": "#1B5E20", "textDecoration": "none" }}>
+                  <DesignLink href={"/caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontSize": "14px", "fontWeight": "600", "color": "#1B5E20", "textDecoration": "none" }}>
                     <span style={{ "width": "8px", "height": "8px", "borderRadius": "50%", "background": "#34C759" }}></span>
                     {"Caja abierta · Beltran C."}
-                  </a>
+                  </DesignLink>
                 </span>
                 <span style={{ "flex": "1" }}></span>
                 {(lookup(v, "headStats") || []).map((h, index1) => (
@@ -263,12 +264,12 @@ export default function PuntoVenta(props) {
                     </span>
                   </Fragment>
                 ))}
-                <a href={"/caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 20px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
+                <DesignLink href={"/caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 20px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M3 6h18v12H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"}></path>
                   </svg>
                   {"Ver caja"}
-                </a>
+                </DesignLink>
                 <span style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontWeight": "800" }}>
                   {"BC"}
                 </span>
@@ -425,9 +426,9 @@ export default function PuntoVenta(props) {
                         <button style={{ "height": "50px", "borderRadius": "999px", "border": "none", "background": "#F4F4F2", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700" }}>
                           {"Imprimir"}
                         </button>
-                        <a href={"#whatsapp"} style={{ "height": "50px", "borderRadius": "999px", "background": "#F4F4F2", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
+                        <DesignLink href={"#whatsapp"} style={{ "height": "50px", "borderRadius": "999px", "background": "#F4F4F2", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
                           {"Enviar por WhatsApp"}
-                        </a>
+                        </DesignLink>
                       </div>
                       <button onClick={lookup(v, "newSale")} style={{ "width": "100%", "height": "60px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "17px", "fontWeight": "800" }}>
                         {"Nueva venta"}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -75,15 +76,15 @@ export default function Producto(props) {
       <DesignImport name={"Header"} accent={lookup(v, "accent")} cart={lookup(v, "cart")} active={""} />
       <main style={{ "maxWidth": "1520px", "margin": "0 auto", "padding": "0 40px 80px" }}>
         <nav aria-label={"Ruta"} style={{ "padding": "24px 0", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "display": "flex", "gap": "10px", "flexWrap": "wrap" }}>
-          <a href={"/tienda"} style={{ "textDecoration": "none" }}>
+          <DesignLink href={"/tienda"} style={{ "textDecoration": "none" }}>
             {"Inicio"}
-          </a>
+          </DesignLink>
           <span aria-hidden={"true"}>
             {"/"}
           </span>
-          <a href={"/categoria"} style={{ "textDecoration": "none" }}>
+          <DesignLink href={"/categoria"} style={{ "textDecoration": "none" }}>
             {"Camping"}
-          </a>
+          </DesignLink>
           <span aria-hidden={"true"}>
             {"/"}
           </span>
@@ -159,12 +160,12 @@ export default function Producto(props) {
                 {lookup(v, "addLabel")}
               </button>
             </div>
-            <a href={"/enlaces"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "56px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
+            <DesignLink href={"/enlaces"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "56px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
               <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                 <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
               </svg>
               {"Pedir por WhatsApp"}
-            </a>
+            </DesignLink>
             <ul style={{ "listStyle": "none", "margin": "0", "padding": "18px 0 0", "borderTop": "1px solid #111111", "display": "flex", "flexDirection": "column", "gap": "12px", "fontSize": "16px" }}>
               <li style={{ "display": "flex", "gap": "12px", "alignItems": "center" }}>
                 <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
@@ -185,9 +186,9 @@ export default function Producto(props) {
                 {"Boleta o factura electrónica"}
               </li>
             </ul>
-            <a href={"/empresas"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
+            <DesignLink href={"/empresas"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
               {"¿Compras por volumen? Cotiza para tu empresa →"}
-            </a>
+            </DesignLink>
           </div>
         </div>
         <section style={{ "marginTop": "72px" }}>
@@ -253,7 +254,7 @@ export default function Producto(props) {
           <div style={{ "display": "grid", "gridTemplateColumns": "repeat(auto-fill, minmax(240px, 1fr))", "gap": "32px 20px" }}>
             {(lookup(v, "related") || []).map((p, index5) => (
               <Fragment key={index5}>
-                <a href={"/producto"} style={{ "display": "flex", "flexDirection": "column", "textDecoration": "none" }}>
+                <DesignLink href={"/producto"} style={{ "display": "flex", "flexDirection": "column", "textDecoration": "none" }}>
                   <img src={assetSrc(lookup(p, "img"))} alt={""} style={{ "width": "100%", "aspectRatio": "1 / 1", "objectFit": "cover", "borderRadius": "19px", "display": "block" }} />
                   <span style={{ "marginTop": "14px", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "lineHeight": "1.3" }}>
                     {lookup(p, "name")}
@@ -261,7 +262,7 @@ export default function Producto(props) {
                   <span style={{ "marginTop": "8px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700" }}>
                     {lookup(p, "price")}
                   </span>
-                </a>
+                </DesignLink>
               </Fragment>
             ))}
           </div>

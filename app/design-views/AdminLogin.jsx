@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -103,16 +104,16 @@ export default function AdminLogin(props) {
                 <input type={"checkbox"} defaultChecked style={{ "width": "18px", "height": "18px", "accentColor": "#111111" }} />
                 {"Mantener sesión iniciada"}
               </label>
-              <a href={"#recuperar"} style={{ "fontWeight": "500", "textUnderlineOffset": "3px" }}>
+              <DesignLink href={"#recuperar"} style={{ "fontWeight": "500", "textUnderlineOffset": "3px" }}>
                 {"¿Olvidaste tu contraseña?"}
-              </a>
+              </DesignLink>
             </div>
-            <a href={"/dashboard"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "56px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
+            <DesignLink href={"/dashboard"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "56px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
               {"Ingresar al panel "}
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                 <path d={"M5 12h14M13 6l6 6-6 6"}></path>
               </svg>
-            </a>
+            </DesignLink>
             <button type={"button"} onClick={lookup(v, "showError")} style={{ "height": "44px", "border": "none", "background": "transparent", "cursor": "pointer", "fontSize": "13px", "color": "#444444", "textDecoration": "underline", "textUnderlineOffset": "3px" }}>
               {"Ver cómo se muestra un error"}
             </button>
@@ -137,9 +138,9 @@ export default function AdminLogin(props) {
               {". Se configuran en Configuración › Usuarios y roles."}
             </span>
           </div>
-          <a href={"/tienda"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px", "alignSelf": "flex-start" }}>
+          <DesignLink href={"/tienda"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px", "alignSelf": "flex-start" }}>
             {"← Volver a la tienda"}
-          </a>
+          </DesignLink>
         </div>
       </div>
     </div>

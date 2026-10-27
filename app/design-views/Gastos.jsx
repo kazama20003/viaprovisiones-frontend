@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -156,7 +157,7 @@ export default function Gastos(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-gas"}>
@@ -165,7 +166,7 @@ export default function Gastos(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-gas)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Gastos"}
@@ -175,12 +176,12 @@ export default function Gastos(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
-                <a href={"#registrar-gasto"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "background": "#E8701F", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
+                <DesignLink href={"#registrar-gasto"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "background": "#E8701F", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
                   </svg>
                   {"Registrar gasto"}
-                </a>
+                </DesignLink>
                 <span style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontWeight": "800" }}>
                   {"BC"}
                 </span>
@@ -354,12 +355,12 @@ export default function Gastos(props) {
                     {lookup(v, "vsSalesShort")}
                     {" se fueron en gastos del negocio."}
                   </span>
-                  <a href={"/reportes"} style={{ "alignSelf": "flex-start", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "8px", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                  <DesignLink href={"/reportes"} style={{ "alignSelf": "flex-start", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "8px", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                     {"Ver margen en reportes "}
                     <svg width={"13"} height={"13"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                       <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                     </svg>
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
             </div>
@@ -604,9 +605,9 @@ export default function Gastos(props) {
                       </span>
                       <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
                         {"Se descuenta del efectivo en "}
-                        <a href={"/caja"} style={{ "color": "#C2410C", "fontWeight": "700", "textUnderlineOffset": "3px" }}>
+                        <DesignLink href={"/caja"} style={{ "color": "#C2410C", "fontWeight": "700", "textUnderlineOffset": "3px" }}>
                           {"Caja del día"}
-                        </a>
+                        </DesignLink>
                       </span>
                     </span>
                     <button onClick={lookup(v, "toggleCash")} role={"switch"} aria-checked={lookup(v, "cashChecked")} aria-label={"Sale de la caja del día"} style={{ "width": "52px", "height": "30px", "borderRadius": "999px", "border": "none", "background": lookup(v, "cashBg"), "cursor": "pointer", "padding": "3px", "display": "flex", "justifyContent": lookup(v, "cashJustify"), "boxSizing": "border-box", "flex": "none" }}>

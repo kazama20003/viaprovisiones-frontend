@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -102,7 +103,7 @@ export default function PedidoDetalle(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-pdet"}>
@@ -111,12 +112,12 @@ export default function PedidoDetalle(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-pdet)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
-                    <a href={"/pedidos"} style={{ "color": "#111111", "textDecoration": "none" }}>
+                    <DesignLink href={"/pedidos"} style={{ "color": "#111111", "textDecoration": "none" }}>
                       {"Pedidos"}
-                    </a>
+                    </DesignLink>
                     <span style={{ "color": "#BDBDBD" }}>
                       {"›"}
                     </span>
@@ -181,9 +182,9 @@ export default function PedidoDetalle(props) {
                     <button onClick={lookup(v, "toggleCancel")} style={{ "height": "40px", "padding": "0 16px", "borderRadius": "999px", "border": "none", "background": "#FFFFFF", "color": "#111111", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700" }}>
                       {"No, mantener"}
                     </button>
-                    <a href={"/devoluciones"} style={{ "height": "40px", "padding": "0 16px", "borderRadius": "999px", "background": "#8E1C14", "color": "#FFFFFF", "textDecoration": "none", "display": "inline-flex", "alignItems": "center", "fontSize": "13px", "fontWeight": "700" }}>
+                    <DesignLink href={"/devoluciones"} style={{ "height": "40px", "padding": "0 16px", "borderRadius": "999px", "background": "#8E1C14", "color": "#FFFFFF", "textDecoration": "none", "display": "inline-flex", "alignItems": "center", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Sí, cancelar y devolver"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </Fragment>
               )}
@@ -223,9 +224,9 @@ export default function PedidoDetalle(props) {
                       {lookup(v, "units")}
                       {" unidades"}
                     </span>
-                    <a href={"/inventario"} style={{ "height": "36px", "padding": "0 14px", "borderRadius": "999px", "background": "#F4F4F2", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                    <DesignLink href={"/inventario"} style={{ "height": "36px", "padding": "0 14px", "borderRadius": "999px", "background": "#F4F4F2", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Ver lotes en inventario"}
-                    </a>
+                    </DesignLink>
                   </div>
                   {(lookup(v, "lines") || []).map((l, index2) => (
                     <Fragment key={index2}>
@@ -457,9 +458,9 @@ export default function PedidoDetalle(props) {
                         {"Minorista · Arequipa"}
                       </span>
                     </span>
-                    <a href={"/clientes"} style={{ "height": "36px", "padding": "0 14px", "borderRadius": "999px", "background": "#F4F4F2", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                    <DesignLink href={"/clientes"} style={{ "height": "36px", "padding": "0 14px", "borderRadius": "999px", "background": "#F4F4F2", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Ver ficha"}
-                    </a>
+                    </DesignLink>
                   </div>
                   <span style={{ "display": "flex", "flexDirection": "column", "gap": "8px", "fontSize": "13px" }}>
                     <span style={{ "display": "flex", "justifyContent": "space-between" }}>
@@ -516,9 +517,9 @@ export default function PedidoDetalle(props) {
                             {"Aceptada por SUNAT · ejemplo"}
                           </span>
                         </span>
-                        <a href={"/comprobantes"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C" }}>
+                        <DesignLink href={"/comprobantes"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C" }}>
                           {"Ver"}
-                        </a>
+                        </DesignLink>
                       </div>
                     </Fragment>
                   )}
@@ -571,18 +572,18 @@ export default function PedidoDetalle(props) {
                     </svg>
                     {"Imprimir guía"}
                   </button>
-                  <a href={"https://wa.me/51954802744"} style={{ "height": "46px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "8px" }}>
+                  <DesignLink href={"https://wa.me/51954802744"} style={{ "height": "46px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "8px" }}>
                     <svg width={"15"} height={"15"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M4 20l1.5-4.5A8 8 0 1 1 9 19z"}></path>
                     </svg>
                     {"Enviar resumen por WhatsApp"}
-                  </a>
-                  <a href={"/devoluciones"} style={{ "height": "46px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "8px" }}>
+                  </DesignLink>
+                  <DesignLink href={"/devoluciones"} style={{ "height": "46px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "8px" }}>
                     <svg width={"15"} height={"15"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M4 9h11a5 5 0 0 1 0 10H9M4 9l4-4M4 9l4 4"}></path>
                     </svg>
                     {"Registrar devolución"}
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -158,7 +159,7 @@ export default function Compras(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-com"}>
@@ -167,7 +168,7 @@ export default function Compras(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-com)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Compras"}
@@ -596,7 +597,7 @@ export default function Compras(props) {
                       </span>
                     </div>
                   </div>
-                  <a href={"/inventario"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "14px 16px", "borderRadius": "20px", "background": "#FFF1E6", "color": "#8A3B0A", "textDecoration": "none" }}>
+                  <DesignLink href={"/inventario"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "14px 16px", "borderRadius": "20px", "background": "#FFF1E6", "color": "#8A3B0A", "textDecoration": "none" }}>
                     <span style={{ "width": "36px", "height": "36px", "borderRadius": "12px", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                       <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#8A3B0A"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                         <path d={"M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"}></path>
@@ -615,14 +616,14 @@ export default function Compras(props) {
                     <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.2"} aria-hidden={"true"}>
                       <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                     </svg>
-                  </a>
+                  </DesignLink>
                   <div style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap" }}>
-                    <a href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 18px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                    <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 18px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#25A244"} strokeWidth={"2"} aria-hidden={"true"}>
                         <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                       </svg>
                       {"Enviar al proveedor"}
-                    </a>
+                    </DesignLink>
                     <button style={{ "height": "42px", "padding": "0 18px", "borderRadius": "999px", "border": "none", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Descargar PDF"}
                     </button>
@@ -702,9 +703,9 @@ export default function Compras(props) {
                               <span>
                                 {lookup(v, "doneText")}
                               </span>
-                              <a href={"/inventario"} style={{ "color": "#FFB27A", "fontWeight": "700" }}>
+                              <DesignLink href={"/inventario"} style={{ "color": "#FFB27A", "fontWeight": "700" }}>
                                 {"Ver el lote en inventario →"}
-                              </a>
+                              </DesignLink>
                             </div>
                           </Fragment>
                         )}

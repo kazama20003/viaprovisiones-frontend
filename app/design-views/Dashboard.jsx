@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -162,11 +163,11 @@ export default function Dashboard(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
-                <a href={"/producto/editar"} aria-label={"Nuevo producto"} title={"Nuevo producto"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
+                <DesignLink href={"/producto/editar"} aria-label={"Nuevo producto"} title={"Nuevo producto"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
                   <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "alignItems": "center", "gap": "12px", "paddingRight": "10px" }}>
                   <span style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "16px", "fontWeight": "800" }}>
                     {"BC"}
@@ -229,31 +230,31 @@ export default function Dashboard(props) {
                     {" pendientes hoy"}
                   </span>
                 </span>
-                <a href={"https://wa.me/51954802744"} aria-label={"Abrir WhatsApp"} style={{ "width": "92px", "height": "92px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"https://wa.me/51954802744"} aria-label={"Abrir WhatsApp"} style={{ "width": "92px", "height": "92px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"26"} height={"26"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.8"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                   </svg>
-                </a>
+                </DesignLink>
               </div>
             </div>
             <div style={{ "background": "#FFFFFF", "padding": "18px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>
               <div style={{ "display": "flex", "flexWrap": "wrap", "gap": "14px", "alignItems": "stretch" }}>
                 <div style={{ "flex": "0 0 62px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
                   <div style={{ "flex": "1", "minHeight": "200px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "flex-end", "paddingBottom": "14px" }}>
-                    <a href={"/producto/editar"} aria-label={"Nuevo producto"} style={{ "width": "40px", "height": "40px", "borderRadius": "50%", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+                    <DesignLink href={"/producto/editar"} aria-label={"Nuevo producto"} style={{ "width": "40px", "height": "40px", "borderRadius": "50%", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                       <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} strokeLinecap={"round"} aria-hidden={"true"}>
                         <path d={"M12 5v14M5 12h14"}></path>
                       </svg>
-                    </a>
+                    </DesignLink>
                   </div>
-                  <a href={"/enlaces"} aria-label={"Compartir enlaces y QR"} style={{ "width": "62px", "height": "62px", "borderRadius": "50%", "border": "1px solid #E4E4E0", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+                  <DesignLink href={"/enlaces"} aria-label={"Compartir enlaces y QR"} style={{ "width": "62px", "height": "62px", "borderRadius": "50%", "border": "1px solid #E4E4E0", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                     <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} aria-hidden={"true"}>
                       <circle cx={"18"} cy={"5"} r={"2.5"}></circle>
                       <circle cx={"6"} cy={"12"} r={"2.5"}></circle>
                       <circle cx={"18"} cy={"19"} r={"2.5"}></circle>
                       <path d={"M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"}></path>
                     </svg>
-                  </a>
+                  </DesignLink>
                 </div>
                 <div style={{ "flex": "1 1 280px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "display": "flex", "flexDirection": "column" }}>
                   <div style={{ "background": "#FFFFFF", "borderRadius": "30px", "margin": "0", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "16px", "boxShadow": "0 1px 0 #EDEDEA" }}>
@@ -280,12 +281,12 @@ export default function Dashboard(props) {
                       </span>
                     </span>
                     <div style={{ "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "8px" }}>
-                      <a href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
+                      <DesignLink href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
                         {"Registrar venta"}
-                      </a>
-                      <a href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#F4F4F2", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
+                      </DesignLink>
+                      <DesignLink href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#F4F4F2", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
                         {"Cerrar caja"}
-                      </a>
+                      </DesignLink>
                     </div>
                   </div>
                   <div style={{ "padding": "16px 22px 20px", "display": "flex", "justifyContent": "space-between", "alignItems": "flex-end", "gap": "10px" }}>
@@ -300,7 +301,7 @@ export default function Dashboard(props) {
                         {" 159.70"}
                       </span>
                     </span>
-                    <a href={"/pedidos"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontSize": "12px", "fontWeight": "600", "color": "#C2410C", "textDecoration": "none" }}>
+                    <DesignLink href={"/pedidos"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontSize": "12px", "fontWeight": "600", "color": "#C2410C", "textDecoration": "none" }}>
                       <span style={{ "width": "22px", "height": "22px", "borderRadius": "50%", "background": "#E8701F", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                         <svg width={"11"} height={"11"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"3"} strokeLinecap={"round"} aria-hidden={"true"}>
                           <path d={"M5 12l5 5 9-10"}></path>
@@ -309,7 +310,7 @@ export default function Dashboard(props) {
                       {"Confirmar"}
                       <br />
                       {"pagos"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </div>
                 <div style={{ "flex": "1 1 260px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "display": "flex", "flexDirection": "column" }}>
@@ -368,7 +369,7 @@ export default function Dashboard(props) {
                           {lookup(v, "ticket")}
                         </span>
                       </span>
-                      <a href={"/reportes"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontSize": "12px", "fontWeight": "600", "color": "#C2410C", "textDecoration": "none" }}>
+                      <DesignLink href={"/reportes"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontSize": "12px", "fontWeight": "600", "color": "#C2410C", "textDecoration": "none" }}>
                         <span style={{ "width": "22px", "height": "22px", "borderRadius": "50%", "background": "#E8701F", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                           <svg width={"11"} height={"11"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"3"} strokeLinecap={"round"} aria-hidden={"true"}>
                             <path d={"M4 16l5-5 4 4 7-7"}></path>
@@ -377,12 +378,12 @@ export default function Dashboard(props) {
                         {"Ver en"}
                         <br />
                         {"reportes"}
-                      </a>
+                      </DesignLink>
                     </div>
                   </div>
                 </div>
                 <div style={{ "flex": "0 0 150px", "display": "flex", "flexDirection": "column", "gap": "14px", "alignItems": "center" }}>
-                  <a href={"/tienda"} style={{ "width": "140px", "height": "140px", "borderRadius": "50%", "background": "#F4F4F2", "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "center", "gap": "8px", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
+                  <DesignLink href={"/tienda"} style={{ "width": "140px", "height": "140px", "borderRadius": "50%", "background": "#F4F4F2", "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "center", "gap": "8px", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
                     <span style={{ "position": "relative", "display": "flex" }}>
                       <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} aria-hidden={"true"}>
                         <circle cx={"12"} cy={"12"} r={"9"}></circle>
@@ -391,7 +392,7 @@ export default function Dashboard(props) {
                       <span style={{ "position": "absolute", "right": "-4px", "top": "-2px", "width": "8px", "height": "8px", "borderRadius": "50%", "background": "#2E9E4F", "border": "2px solid #F4F4F2" }}></span>
                     </span>
                     {"Tienda en línea"}
-                  </a>
+                  </DesignLink>
                   <div style={{ "width": "150px", "height": "150px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "position": "relative" }}>
                     <svg width={"150"} height={"150"} viewBox={"0 0 150 150"} role={"img"} aria-label={"Meta del mes al 74%"}>
                       <circle cx={"75"} cy={"75"} r={"52"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"7"} strokeLinecap={"round"} strokeDasharray={"80 400"} transform={"rotate(120 75 75)"}></circle>
@@ -525,12 +526,12 @@ export default function Dashboard(props) {
                     <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
                       {"Centro de actividad"}
                     </span>
-                    <a href={"/pedidos"} style={{ "height": "34px", "padding": "0 14px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "8px", "textDecoration": "none", "fontSize": "12px", "fontWeight": "600" }}>
+                    <DesignLink href={"/pedidos"} style={{ "height": "34px", "padding": "0 14px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "gap": "8px", "textDecoration": "none", "fontSize": "12px", "fontWeight": "600" }}>
                       <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} strokeLinecap={"round"} aria-hidden={"true"}>
                         <path d={"M4 6h16M7 12h10M10 18h4"}></path>
                       </svg>
                       {"Ver todo"}
-                    </a>
+                    </DesignLink>
                   </div>
                   <div style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center", "gap": "10px", "flexWrap": "wrap" }}>
                     <label style={{ "display": "flex", "alignItems": "center", "gap": "10px", "color": "#8C8C8C", "fontSize": "13px" }}>
@@ -926,9 +927,9 @@ export default function Dashboard(props) {
                       </div>
                     </Fragment>
                   ))}
-                  <a href={"/inventario"} style={{ "marginTop": "auto", "height": "40px", "borderRadius": "999px", "background": "#E8701F", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                  <DesignLink href={"/inventario"} style={{ "marginTop": "auto", "height": "40px", "borderRadius": "999px", "background": "#E8701F", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                     {"Revisar inventario"}
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
               <div style={{ "display": "flex", "flexWrap": "wrap", "gap": "14px", "alignItems": "stretch" }}>
@@ -1000,9 +1001,9 @@ export default function Dashboard(props) {
                     <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
                       {"Pedidos recientes"}
                     </span>
-                    <a href={"/pedidos"} style={{ "height": "32px", "padding": "0 12px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "600" }}>
+                    <DesignLink href={"/pedidos"} style={{ "height": "32px", "padding": "0 12px", "borderRadius": "999px", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "600" }}>
                       {"Ver todos →"}
-                    </a>
+                    </DesignLink>
                   </div>
                   <div style={{ "background": "#FFFFFF", "borderRadius": "24px", "padding": "6px 14px" }}>
                     {(lookup(v, "recent") || []).map((o, index19) => (

@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import "./enlaces.css";
 
 const accent = "#FF914C";
@@ -42,7 +43,7 @@ export default function EnlacesPage() {
         </span>
       </div>
       <div className={"via-links-quick"}>
-        <a href={"tel:+51954802744"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
+        <DesignLink href={"tel:+51954802744"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
           <span style={{ "width": "54px", "height": "54px", "borderRadius": "50%", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
             <svg width={"24"} height={"24"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
               <path d={"M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"}></path>
@@ -51,8 +52,8 @@ export default function EnlacesPage() {
           <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase" }}>
             {"Llamar"}
           </span>
-        </a>
-        <a href={"https://wa.me/51954802744"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
+        </DesignLink>
+        <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
           <span style={{ "width": "54px", "height": "54px", "borderRadius": "50%", "background": "#25D366", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
             <svg width={"28"} height={"28"} viewBox={"0 0 24 24"} aria-hidden={"true"}>
               <path d={"M12 3a9 9 0 0 0-7.8 13.4L3 21l4.7-1.2A9 9 0 1 0 12 3z"} fill={"#FFFFFF"}></path>
@@ -62,8 +63,8 @@ export default function EnlacesPage() {
           <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase" }}>
             {"WhatsApp"}
           </span>
-        </a>
-        <a href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
+        </DesignLink>
+        <DesignLink href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
           <span style={{ "width": "54px", "height": "54px", "borderRadius": "50%", "background": "#EA4335", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
             <svg width={"24"} height={"24"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} strokeLinejoin={"round"} aria-hidden={"true"}>
               <path d={"M3 6h18v12H3zM3 7l9 6 9-6"}></path>
@@ -72,8 +73,8 @@ export default function EnlacesPage() {
           <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase" }}>
             {"Correo"}
           </span>
-        </a>
-        <a href={"https://www.google.com/maps/search/?api=1&query=Dean+Valdivia+533+Cercado+Arequipa"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
+        </DesignLink>
+        <DesignLink href={"https://www.google.com/maps/search/?api=1&query=Dean+Valdivia+533+Cercado+Arequipa"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "8px", "textDecoration": "none" }}>
           <span style={{ "width": "54px", "height": "54px", "borderRadius": "50%", "background": "#1A73E8", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
             <svg width={"24"} height={"24"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
               <path d={"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"}></path>
@@ -83,10 +84,10 @@ export default function EnlacesPage() {
           <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase" }}>
             {"Mapa"}
           </span>
-        </a>
+        </DesignLink>
       </div>
       <div className={"via-links-primary"}>
-        <a href={"https://wa.me/51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "14px", "minHeight": "68px", "padding": "0 20px", "borderRadius": "18px", "background": "#25D366", "textDecoration": "none", "color": "#111111" }}>
+        <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "14px", "minHeight": "68px", "padding": "0 20px", "borderRadius": "18px", "background": "#25D366", "textDecoration": "none", "color": "#111111" }}>
           <svg width={"30"} height={"30"} viewBox={"0 0 24 24"} aria-hidden={"true"}>
             <path d={"M12 3a9 9 0 0 0-7.8 13.4L3 21l4.7-1.2A9 9 0 1 0 12 3z"} fill={"#FFFFFF"}></path>
             <path d={"M9.2 7.8c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.9 4.5 3.9 2.2.9 2.7.7 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3l-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.9z"} fill={"#25D366"}></path>
@@ -102,14 +103,14 @@ export default function EnlacesPage() {
           <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
             <path d={"M5 12h14M13 6l6 6-6 6"}></path>
           </svg>
-        </a>
+        </DesignLink>
       </div>
       <section className={"via-links-social"}>
         <h2 style={{ "margin": "0 0 12px", "fontFamily": "Archivo, sans-serif", "fontSize": "15px", "fontWeight": "900", "textTransform": "uppercase" }}>
           {"Síguenos en redes"}
         </h2>
         <div className={"via-links-social-grid"}>
-          <a href={"#instagram"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
+          <DesignLink href={"#instagram"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
             <svg width={"40"} height={"40"} viewBox={"0 0 40 40"} aria-hidden={"true"} style={{ "flex": "none" }}>
               <defs>
                 <linearGradient id={"ig-grad"} x1={"0"} y1={"1"} x2={"1"} y2={"0"}>
@@ -133,8 +134,8 @@ export default function EnlacesPage() {
                 {"Fotos y novedades"}
               </span>
             </span>
-          </a>
-          <a href={"#facebook"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
+          </DesignLink>
+          <DesignLink href={"#facebook"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
             <svg width={"40"} height={"40"} viewBox={"0 0 40 40"} aria-hidden={"true"} style={{ "flex": "none" }}>
               <circle cx={"20"} cy={"20"} r={"20"} fill={"#1877F2"}></circle>
               <path d={"M22.2 40V25.6h4.6l.7-5.4h-5.3v-3.4c0-1.6.4-2.6 2.7-2.6h2.8V9.4c-.5-.1-2.2-.2-4.1-.2-4 0-6.8 2.5-6.8 7v3.9H12.2v5.4h4.6V40z"} fill={"#FFFFFF"}></path>
@@ -147,8 +148,8 @@ export default function EnlacesPage() {
                 {"Ofertas y catálogo"}
               </span>
             </span>
-          </a>
-          <a href={"#tiktok"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
+          </DesignLink>
+          <DesignLink href={"#tiktok"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
             <svg width={"40"} height={"40"} viewBox={"0 0 40 40"} aria-hidden={"true"} style={{ "flex": "none" }}>
               <rect width={"40"} height={"40"} rx={"11"} fill={"#111111"}></rect>
               <path d={"M23.4 9.5c.6 2.7 2.6 4.7 5.3 5v4c-2 0-3.8-.6-5.3-1.7v8.8a7.7 7.7 0 1 1-7.7-7.7h.7v4.2a3.5 3.5 0 1 0 2.8 3.5V9.5z"} fill={"#25F4EE"} transform={"translate(-1 -1)"}></path>
@@ -163,8 +164,8 @@ export default function EnlacesPage() {
                 {"Videos de productos"}
               </span>
             </span>
-          </a>
-          <a href={"#youtube"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
+          </DesignLink>
+          <DesignLink href={"#youtube"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
             <svg width={"40"} height={"40"} viewBox={"0 0 40 40"} aria-hidden={"true"} style={{ "flex": "none" }}>
               <rect x={"1"} y={"7"} width={"38"} height={"26"} rx={"8"} fill={"#FF0000"}></rect>
               <path d={"M16 14v12l10.5-6z"} fill={"#FFFFFF"}></path>
@@ -177,8 +178,8 @@ export default function EnlacesPage() {
                 {"Tutoriales y guías"}
               </span>
             </span>
-          </a>
-          <a href={"#linkedin"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
+          </DesignLink>
+          <DesignLink href={"#linkedin"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
             <svg width={"40"} height={"40"} viewBox={"0 0 40 40"} aria-hidden={"true"} style={{ "flex": "none" }}>
               <rect width={"40"} height={"40"} rx={"8"} fill={"#0A66C2"}></rect>
               <rect x={"9"} y={"16"} width={"5"} height={"15"} fill={"#FFFFFF"}></rect>
@@ -193,8 +194,8 @@ export default function EnlacesPage() {
                 {"Ventas a empresas"}
               </span>
             </span>
-          </a>
-          <a href={"https://wa.me/51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
+          </DesignLink>
+          <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "12px", "border": "2px solid #111111", "borderRadius": "16px", "textDecoration": "none" }}>
             <svg width={"40"} height={"40"} viewBox={"0 0 40 40"} aria-hidden={"true"} style={{ "flex": "none" }}>
               <circle cx={"20"} cy={"20"} r={"20"} fill={"#25D366"}></circle>
               <g transform={"translate(8 8)"}>
@@ -210,7 +211,7 @@ export default function EnlacesPage() {
                 {"Atención directa"}
               </span>
             </span>
-          </a>
+          </DesignLink>
         </div>
       </section>
       <section className={"via-links-services"}>
@@ -219,7 +220,7 @@ export default function EnlacesPage() {
         </h2>
         {links.map((l) => (
           <Fragment key={l.title}>
-            <a href={l.href} style={{ "display": "flex", "alignItems": "center", "gap": "14px", "minHeight": "64px", "padding": "0 18px", "borderRadius": "18px", "border": "2px solid #111111", "boxSizing": "border-box", "background": l.bg, "color": l.fg, "textDecoration": "none" }}>
+            <DesignLink href={l.href} style={{ "display": "flex", "alignItems": "center", "gap": "14px", "minHeight": "64px", "padding": "0 18px", "borderRadius": "18px", "border": "2px solid #111111", "boxSizing": "border-box", "background": l.bg, "color": l.fg, "textDecoration": "none" }}>
               <span style={{ "width": "40px", "height": "40px", "borderRadius": "12px", "background": l.iconBg, "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                 <svg width={"22"} height={"22"} viewBox={"0 0 24 24"} fill={"none"} stroke={l.iconFg} strokeWidth={"1.8"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                   <path d={l.icon}></path>
@@ -236,7 +237,7 @@ export default function EnlacesPage() {
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                 <path d={"M5 12h14M13 6l6 6-6 6"}></path>
               </svg>
-            </a>
+            </DesignLink>
           </Fragment>
         ))}
       </section>
@@ -256,27 +257,27 @@ export default function EnlacesPage() {
         </div>
         <ul style={{ "listStyle": "none", "margin": "0", "padding": "6px 20px", "display": "flex", "flexDirection": "column" }}>
           <li style={{ "borderBottom": "1px solid #DDDDDD" }}>
-            <a href={"tel:+51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
+            <DesignLink href={"tel:+51954802744"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
               <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#E8701F"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                 <path d={"M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"}></path>
               </svg>
               <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700" }}>
                 {"+51 954 802 744"}
               </span>
-            </a>
+            </DesignLink>
           </li>
           <li style={{ "borderBottom": "1px solid #DDDDDD" }}>
-            <a href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
+            <DesignLink href={"mailto:viaprovisionesperu@gmail.com"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
               <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#E8701F"} strokeWidth={"1.9"} strokeLinejoin={"round"} aria-hidden={"true"}>
                 <path d={"M3 6h18v12H3zM3 7l9 6 9-6"}></path>
               </svg>
               <span style={{ "fontSize": "15px", "fontWeight": "500" }}>
                 {"viaprovisionesperu@gmail.com"}
               </span>
-            </a>
+            </DesignLink>
           </li>
           <li style={{ "borderBottom": "1px solid #DDDDDD" }}>
-            <a href={"https://www.google.com/maps/search/?api=1&query=Dean+Valdivia+533+Cercado+Arequipa"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
+            <DesignLink href={"https://www.google.com/maps/search/?api=1&query=Dean+Valdivia+533+Cercado+Arequipa"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
               <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#E8701F"} strokeWidth={"1.9"} aria-hidden={"true"}>
                 <path d={"M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"}></path>
                 <circle cx={"12"} cy={"10"} r={"2.5"}></circle>
@@ -284,10 +285,10 @@ export default function EnlacesPage() {
               <span style={{ "fontSize": "15px", "fontWeight": "500" }}>
                 {"Dean Valdivia 533 - Cercado, Arequipa"}
               </span>
-            </a>
+            </DesignLink>
           </li>
           <li>
-            <a href={"https://www.viaprovisiones.com"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
+            <DesignLink href={"https://www.viaprovisiones.com"} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "minHeight": "52px", "textDecoration": "none" }}>
               <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#E8701F"} strokeWidth={"1.9"} aria-hidden={"true"}>
                 <circle cx={"12"} cy={"12"} r={"9"}></circle>
                 <path d={"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"}></path>
@@ -295,7 +296,7 @@ export default function EnlacesPage() {
               <span style={{ "fontSize": "15px", "fontWeight": "500" }}>
                 {"www.viaprovisiones.com"}
               </span>
-            </a>
+            </DesignLink>
           </li>
         </ul>
         <div style={{ "padding": "4px 20px 20px" }}>
