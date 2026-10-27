@@ -158,6 +158,24 @@ export default function MenuPanel(props) {
   return <DesignHost Logic={Component} defaults={defaults} componentProps={props} render={(v) => (
     <Fragment>
       <style>{"\nbody{margin:0;background:#E9E9E7}\na{color:inherit}\n.mp-card:hover{background:#ECECE9}\n.mp-grp:hover{background:#F4F4F2}\n.mp-pill:hover{background:#F4F4F2}\n.mp-noscroll{scrollbar-width:none;-ms-overflow-style:none}.mp-noscroll::-webkit-scrollbar{display:none}\n"}</style>
+      <style>{`
+        .mp-bar-item { position: relative; isolation: isolate; transition: transform 420ms cubic-bezier(.22, 1, .36, 1), box-shadow 420ms cubic-bezier(.22, 1, .36, 1); }
+        .mp-bar-item::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: #ecece9; opacity: 0; transform: scale(.88); transition: opacity 300ms ease, transform 440ms cubic-bezier(.22, 1, .36, 1); }
+        .mp-bar-item > span:first-child { transition: transform 480ms cubic-bezier(.22, 1.4, .36, 1), background-color 300ms ease; }
+        .mp-bar-item > span:first-child svg, .mp-bar-item > svg:last-child { transition: transform 480ms cubic-bezier(.22, 1.4, .36, 1); }
+        .mp-bar-item:focus-visible, .mp-pin:focus-visible { outline: 2px solid #e8701f; outline-offset: 2px; }
+        @media (hover: hover) {
+          .mp-bar-item:hover { transform: translateY(-2px); }
+          .mp-bar-item.mp-pill:hover::before { opacity: 1; transform: scale(1); }
+          .mp-bar-item:hover > span:first-child { transform: scale(1.09); }
+          .mp-bar-item:hover > span:first-child svg { transform: rotate(-8deg); }
+          .mp-bar-item:hover > svg:last-child { transform: translateY(2px); }
+          .mp-pin:hover { transform: rotate(-12deg) scale(1.08); }
+        }
+        .mp-bar-item:active { transform: scale(.97); }
+        .mp-pin { transition: transform 480ms cubic-bezier(.22, 1.4, .36, 1); }
+        @media (prefers-reduced-motion: reduce) { .mp-bar-item, .mp-bar-item::before, .mp-bar-item > span:first-child, .mp-bar-item svg, .mp-pin { transition-duration: .01ms !important; } .mp-bar-item:hover, .mp-bar-item:active, .mp-pin:hover, .mp-bar-item:hover > span:first-child, .mp-bar-item:hover svg { transform: none; } }
+      `}</style>
     <div style={{ "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       {Boolean(lookup(v, "isPop")) && (
         <Fragment>
@@ -323,7 +341,7 @@ export default function MenuPanel(props) {
               <div className={"mp-noscroll"} style={{ "flex": "1", "minWidth": "0", "display": "flex", "gap": "4px", "overflowX": "auto" }}>
                 {(lookup(v, "barGroups") || []).map((g, index4) => (
                   <Fragment key={index4}>
-                    <button onClick={lookup(g, "toggle")} className={lookup(g, "pillCls")} aria-expanded={lookup(g, "expanded")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "46px", "padding": "0 14px 0 5px", "borderRadius": "999px", "border": "none", "background": lookup(g, "barBg"), "color": lookup(g, "barFg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700", "whiteSpace": "nowrap", "flex": "none" }}>
+                    <button onClick={lookup(g, "toggle")} className={`mp-bar-item ${lookup(g, "pillCls")}`} aria-expanded={lookup(g, "expanded")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "46px", "padding": "0 14px 0 5px", "borderRadius": "999px", "border": "none", "background": lookup(g, "barBg"), "color": lookup(g, "barFg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700", "whiteSpace": "nowrap", "flex": "none" }}>
                       <span style={{ "width": "36px", "height": "36px", "borderRadius": "50%", "background": lookup(g, "barIconBg"), "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                         <svg width={"15"} height={"15"} viewBox={"0 0 24 24"} fill={"none"} stroke={lookup(g, "barIconFg")} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                           <path d={lookup(g, "icon")}></path>
@@ -344,7 +362,7 @@ export default function MenuPanel(props) {
                   </Fragment>
                 ))}
               </div>
-              <button onClick={lookup(v, "pin")} aria-label={"Soltar el menú"} title={"Soltar el menú"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "border": "none", "background": "#111111", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+              <button className="mp-pin" onClick={lookup(v, "pin")} aria-label={"Soltar el menú"} title={"Soltar el menú"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "border": "none", "background": "#111111", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                 <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"#E8701F"} stroke={"#FFFFFF"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                   <path d={"M9 3h6l-1 6 4 4H6l4-4zM12 13v8"}></path>
                 </svg>
