@@ -127,13 +127,6 @@ export default function Clientes(props) {
     <div style={{ "minHeight": "100vh", "background": "#E9E9E7", "padding": "0", "boxSizing": "border-box", "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       <div style={{ "position": "relative", "width": "100%", "maxWidth": "none", "minHeight": "100vh", "margin": "0 auto", "background": "#F4F4F2", "borderRadius": "40px", "overflow": "hidden" }}>
         <div>
-          {Boolean(lookup(v, "pinned")) && (
-            <Fragment>
-              <div style={{ "padding": "20px 20px 0" }}>
-                <DesignImport name={"MenuPanel"} mode={"bar"} active={"Clientes"} onPin={lookup(v, "togglePin")} />
-              </div>
-            </Fragment>
-          )}
           <div>
             <div style={{ "padding": "28px 32px 30px", "display": "flex", "flexDirection": "column", "gap": "28px" }}>
               <div style={{ "display": "flex", "alignItems": "center", "gap": "14px", "flexWrap": "wrap" }}>

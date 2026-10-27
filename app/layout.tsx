@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import LenisScroll from "./lenis-scroll";
+import PersistentPanelMenu from "./persistent-panel-menu";
 import "./globals.css";
 import "./design-frame.css";
 
@@ -18,7 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Montserrat:wght@500&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet" />
         <link href="https://unpkg.com/lenis@1.3.27/dist/lenis.css" rel="stylesheet" />
       </head>
-      <body><LenisScroll />{children}</body>
+      <body><LenisScroll /><Suspense fallback={null}><PersistentPanelMenu /></Suspense>{children}</body>
     </html>
   );
 }

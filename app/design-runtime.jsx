@@ -8,6 +8,9 @@ export class DesignLogic {
     const patch = typeof update === "function" ? update(this.state, this.props) : update;
     this.state = { ...this.state, ...patch };
     if (this.notify) this.notify();
+    if (Object.prototype.hasOwnProperty.call(patch, "pinned") && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("via-menu-pin-change", { detail: patch.pinned }));
+    }
   }
 }
 
@@ -19,9 +22,17 @@ export class DesignHost extends Component {
   }
   componentDidMount() {
     this.logic.notify = () => this.forceUpdate();
+    this.syncPin = (event) => {
+      if (Object.prototype.hasOwnProperty.call(this.logic.state, "pinned") && this.logic.state.pinned !== event.detail) {
+        this.logic.state = { ...this.logic.state, pinned: event.detail };
+        this.forceUpdate();
+      }
+    };
+    window.addEventListener("via-menu-pin-change", this.syncPin);
     if (this.logic.componentDidMount) this.logic.componentDidMount();
   }
   componentWillUnmount() {
+    window.removeEventListener("via-menu-pin-change", this.syncPin);
     if (this.logic.componentWillUnmount) this.logic.componentWillUnmount();
     this.logic.notify = null;
     if (this.logic.closeTimer) clearTimeout(this.logic.closeTimer);

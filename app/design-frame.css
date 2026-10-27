@@ -1,5 +1,11 @@
 .design-frame-shell { width: 100%; height: 100vh; height: 100dvh; overflow: hidden; margin: 0; padding: 0; }
-.native-panel-shell { width: 100%; height: 100vh; height: 100dvh; overflow: auto; border-radius: 40px; background: #E9E9E7; }
+.native-panel-shell { width: 100%; height: 100vh; height: 100dvh; overflow: auto; border-radius: 40px; background: #F4F4F2; }
 .native-mobile-shell { width: 100%; height: 100vh; height: 100dvh; overflow: hidden; border-radius: 24px; }
 .native-store-shell { min-height: 100vh; width: 100%; }
 .native-content { min-height: 100%; }
+.native-panel-shell > .native-content { padding-top: 0; transition: padding-top 560ms cubic-bezier(.22,1,.36,1); }
+body.via-pinned-panel .native-panel-shell > .native-content { padding-top: 78px; }
+body.via-pinned-panel .native-panel-shell > .native-content > div > div { border-top-left-radius: 0 !important; border-top-right-radius: 0 !important; }
+.via-persistent-menu { position: fixed; z-index: 100; top: 20px; left: 20px; right: 20px; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0,-16px,0) scale(.98); transform-origin: center top; transition: opacity 300ms ease, transform 560ms cubic-bezier(.22,1,.36,1), visibility 0s linear 560ms; }
+.via-persistent-menu.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translate3d(0,0,0) scale(1); transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) { .native-panel-shell > .native-content, .via-persistent-menu { transition-duration: .01ms; } }

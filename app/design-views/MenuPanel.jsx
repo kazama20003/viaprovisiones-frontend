@@ -8,8 +8,18 @@ import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-run
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { grp: '', q: '', barOpen: '' };
+    this.state = { grp: '', q: '', barOpen: '', barClosing: false };
   }
+  cancelBarClose() { clearTimeout(this.barCloseDelay); clearTimeout(this.barCloseTimer); this.barCloseDelay = null; this.barCloseTimer = null; }
+  openBar(id) { this.cancelBarClose(); if (this.state.barOpen !== id || this.state.barClosing) this.setState({ barOpen: id, barClosing: false }); }
+  closeBar() {
+    this.cancelBarClose();
+    if (!this.state.barOpen) return;
+    this.setState({ barClosing: true });
+    this.barCloseTimer = setTimeout(() => { this.barCloseTimer = null; this.setState({ barOpen: '', barClosing: false }); }, 240);
+  }
+  scheduleBarClose() { this.cancelBarClose(); this.barCloseDelay = setTimeout(() => this.closeBar(), 350); }
+  componentWillUnmount() { this.cancelBarClose(); }
   renderVals() {
     const st = this.state;
     const active = this.props.active ?? 'Pedidos';
@@ -108,7 +118,8 @@ class Component extends DesignLogic {
         pressed: on ? 'true' : 'false', cls: on ? '' : 'mp-grp',
         bg: on ? '#FFFFFF' : 'transparent', fg: '#111111', countFg: '#8C8C8C',
         iconBg: on ? '#111111' : '#FFFFFF', iconFg: on ? '#FFFFFF' : '#111111',
-        toggle: () => this.setState({ barOpen: open ? '' : g[0] }),
+        toggle: (event) => { if (event.detail && window.matchMedia('(hover: hover)').matches) this.openBar(g[0]); else if (open && !st.barClosing) this.closeBar(); else this.openBar(g[0]); },
+        hover: (event) => { if (event.pointerType === 'mouse') this.openBar(g[0]); },
         expanded: open ? 'true' : 'false', pillCls: here || open ? '' : 'mp-pill',
         barBg: here ? '#111111' : (open ? '#F4F4F2' : 'transparent'), barFg: here ? '#FFFFFF' : '#111111',
         barIconBg: here ? '#E8701F' : '#F4F4F2', barIconFg: here ? '#FFFFFF' : '#111111',
@@ -139,6 +150,10 @@ class Component extends DesignLogic {
       shown: q ? results : cur.items,
       barGroups: groups.filter((g) => g.id !== 'fav'),
       barOpen: !!bg,
+      barClosing: st.barClosing,
+      barEnter: () => { if (this.state.barClosing && this.state.barOpen) this.openBar(this.state.barOpen); else this.cancelBarClose(); },
+      barLeave: (event) => { if (event.pointerType === 'mouse') this.scheduleBarClose(); },
+      barKeyDown: (event) => { if (event.key === 'Escape') this.closeBar(); },
       barTitle: bg ? bg.title : '',
       barDesc: bg ? bg.desc : '',
       barItems: bg ? bg.items : [],
@@ -175,7 +190,17 @@ export default function MenuPanel(props) {
         }
         .mp-bar-item:active { transform: scale(.97); }
         .mp-pin { transition: transform 480ms cubic-bezier(.22, 1.4, .36, 1); }
-        @media (prefers-reduced-motion: reduce) { .mp-bar-item, .mp-bar-item::before, .mp-bar-item > span:first-child, .mp-bar-item svg, .mp-pin { transition-duration: .01ms !important; } .mp-bar-item:hover, .mp-bar-item:active, .mp-pin:hover, .mp-bar-item:hover > span:first-child, .mp-bar-item:hover svg { transform: none; } }
+        @keyframes mp-dropdown-in { from { opacity: 0; transform: translate3d(0,-10px,0) scale(.985); } to { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
+        @keyframes mp-dropdown-out { from { opacity: 1; transform: translate3d(0,0,0) scale(1); } to { opacity: 0; transform: translate3d(0,-8px,0) scale(.985); } }
+        .mp-dropdown { transform-origin: center top; animation: mp-dropdown-in 380ms cubic-bezier(.22,1,.36,1) both; }
+        .mp-dropdown::before { content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px; }
+        .mp-dropdown.is-closing { pointer-events: none; animation: mp-dropdown-out 240ms cubic-bezier(.4,0,1,1) both; }
+        .mp-dropdown a { transition: transform 350ms cubic-bezier(.22,1,.36,1), background-color 250ms ease; }
+        .mp-dropdown-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+        @media (max-width: 800px) { .mp-dropdown-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .mp-dropdown { max-height: calc(100dvh - 120px); overflow-y: auto; } }
+        @media (max-width: 440px) { .mp-dropdown-grid { grid-template-columns: 1fr; } }
+        @media (hover: hover) { .mp-dropdown a:hover { transform: translateY(-2px); } }
+        @media (prefers-reduced-motion: reduce) { .mp-bar-item, .mp-bar-item::before, .mp-bar-item > span:first-child, .mp-bar-item svg, .mp-pin, .mp-dropdown a { transition-duration: .01ms !important; } .mp-dropdown, .mp-dropdown.is-closing { animation-duration: .01ms; } .mp-bar-item:hover, .mp-bar-item:active, .mp-pin:hover, .mp-bar-item:hover > span:first-child, .mp-bar-item:hover svg, .mp-dropdown a:hover { transform: none; } }
       `}</style>
     <div style={{ "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       {Boolean(lookup(v, "isPop")) && (
@@ -337,12 +362,12 @@ export default function MenuPanel(props) {
       )}
       {Boolean(lookup(v, "isBar")) && (
         <Fragment>
-          <div style={{ "position": "relative" }}>
+          <div onPointerEnter={lookup(v, "barEnter")} onPointerLeave={lookup(v, "barLeave")} onKeyDown={lookup(v, "barKeyDown")} style={{ "position": "relative" }}>
             <nav aria-label={"Menú del panel"} style={{ "display": "flex", "alignItems": "center", "gap": "6px", "padding": "6px", "borderRadius": "999px", "background": "#FFFFFF" }}>
               <div className={"mp-noscroll"} style={{ "flex": "1", "minWidth": "0", "display": "flex", "gap": "4px", "overflowX": "auto" }}>
                 {(lookup(v, "barGroups") || []).map((g, index4) => (
                   <Fragment key={index4}>
-                    <button onClick={lookup(g, "toggle")} className={`mp-bar-item ${lookup(g, "pillCls")}`} aria-expanded={lookup(g, "expanded")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "46px", "padding": "0 14px 0 5px", "borderRadius": "999px", "border": "none", "background": lookup(g, "barBg"), "color": lookup(g, "barFg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700", "whiteSpace": "nowrap", "flex": "none" }}>
+                    <button onClick={lookup(g, "toggle")} onPointerEnter={lookup(g, "hover")} className={`mp-bar-item ${lookup(g, "pillCls")}`} aria-expanded={lookup(g, "expanded")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "46px", "padding": "0 14px 0 5px", "borderRadius": "999px", "border": "none", "background": lookup(g, "barBg"), "color": lookup(g, "barFg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700", "whiteSpace": "nowrap", "flex": "none" }}>
                       <span style={{ "width": "36px", "height": "36px", "borderRadius": "50%", "background": lookup(g, "barIconBg"), "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                         <svg width={"15"} height={"15"} viewBox={"0 0 24 24"} fill={"none"} stroke={lookup(g, "barIconFg")} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                           <path d={lookup(g, "icon")}></path>
@@ -371,7 +396,7 @@ export default function MenuPanel(props) {
             </nav>
             {Boolean(lookup(v, "barOpen")) && (
               <Fragment>
-                <div style={{ "position": "absolute", "top": "66px", "left": "0", "right": "0", "zIndex": "15", "borderRadius": "28px", "background": "#FFFFFF", "padding": "14px", "boxShadow": "0 24px 60px rgba(17,17,17,0.22)", "display": "flex", "flexDirection": "column", "gap": "10px" }}>
+                <div className={`mp-dropdown ${lookup(v, "barClosing") ? "is-closing" : ""}`} style={{ "position": "absolute", "top": "66px", "left": "0", "right": "0", "zIndex": "15", "borderRadius": "28px", "background": "#FFFFFF", "padding": "14px", "boxShadow": "0 24px 60px rgba(17,17,17,0.22)", "display": "flex", "flexDirection": "column", "gap": "10px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "gap": "12px", "padding": "4px 6px 0" }}>
                     <span style={{ "fontSize": "18px", "fontWeight": "700" }}>
                       {lookup(v, "barTitle")}
@@ -380,7 +405,7 @@ export default function MenuPanel(props) {
                       {lookup(v, "barDesc")}
                     </span>
                   </span>
-                  <div style={{ "display": "grid", "gridTemplateColumns": "repeat(4, minmax(0, 1fr))", "gap": "8px" }}>
+                  <div className="mp-dropdown-grid">
                     {(lookup(v, "barItems") || []).map((i, index5) => (
                       <Fragment key={index5}>
                         <Link href={lookup(i, "href")} className={lookup(i, "cls")} aria-current={lookup(i, "current")} aria-disabled={lookup(i, "disabled")} style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "12px", "borderRadius": "22px", "textDecoration": "none", "background": lookup(i, "bg"), "color": lookup(i, "fg"), "opacity": lookup(i, "o") }}>
