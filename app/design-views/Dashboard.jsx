@@ -51,7 +51,7 @@ class Component extends DesignLogic {
       pinned: this.state.pinned,
       menuBtnLabel: 'Abrir menú',
       menuBtn: openMenu,
-      togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p }); closeMenu(); },
+      togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p }); if (this.state.menu) closeMenu(); },
       showTasks: () => this.setState({ chip: 'Todo' }),
       ranges: ['Mes', 'Semana'].map((n, i) => ({ name: n, pressed: i === st.range ? 'true' : 'false', bg: i === st.range ? '#111111' : '#FFFFFF', fg: i === st.range ? '#FFFFFF' : '#111111', border: i === st.range ? '#111111' : '#E4E4E0', pick: () => this.setState({ range: i }) })),
       rangeWord: R[1], sales: R[2], ticket: R[3], rangeLabel: R[4],
@@ -116,16 +116,25 @@ export default function Dashboard(props) {
   return <DesignHost Logic={Component} defaults={defaults} componentProps={props} render={(v) => (
     <Fragment>
       <style>{"\nbody{margin:0;background:#E9E9E7}\na{color:#111111}\n.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}\n@keyframes via-menu-backdrop-in{from{opacity:0;backdrop-filter:blur(0)}to{opacity:1;backdrop-filter:blur(5px)}}\n@keyframes via-menu-backdrop-out{from{opacity:1;backdrop-filter:blur(5px)}to{opacity:0;backdrop-filter:blur(0)}}\n@keyframes via-menu-panel-in{0%{opacity:0;transform:translate3d(0,-30px,0) scale(.94);filter:blur(8px)}58%{opacity:1;transform:translate3d(0,5px,0) scale(1.012);filter:blur(0)}78%{transform:translate3d(0,-2px,0) scale(.999)}100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}\n@keyframes via-menu-panel-out{from{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}to{opacity:0;transform:translate3d(0,-18px,0) scale(.975);filter:blur(5px)}}\n@keyframes via-menu-content-in{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:translate3d(0,0,0)}}\n@keyframes via-menu-sidebar-in{from{opacity:0;transform:translate3d(-14px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}\n@keyframes via-menu-option-in{from{opacity:0;transform:translate3d(0,10px,0) scale(.98)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}\n.db-menu-backdrop{will-change:opacity,backdrop-filter}\n.db-menu-panel{width:100%;transform-origin:50% 0;will-change:opacity,transform,filter}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(1){animation:via-menu-content-in 460ms cubic-bezier(.16,1,.3,1) 70ms both}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(1){animation:via-menu-sidebar-in 500ms cubic-bezier(.16,1,.3,1) 110ms both}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2){animation:via-menu-content-in 500ms cubic-bezier(.16,1,.3,1) 150ms both}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a{animation:via-menu-option-in 420ms cubic-bezier(.16,1,.3,1) both}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(1){animation-delay:190ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(2){animation-delay:225ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(3){animation-delay:260ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(4){animation-delay:295ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(5){animation-delay:330ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(6){animation-delay:365ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(7){animation-delay:400ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(8){animation-delay:435ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(9){animation-delay:470ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(10){animation-delay:505ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(11){animation-delay:540ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(2)>div:nth-child(2)>div:nth-child(2)>a:nth-child(12){animation-delay:575ms}\n.db-menu-panel nav[aria-label=\"Menú del panel\"]>div:nth-child(3){animation:via-menu-content-in 460ms cubic-bezier(.16,1,.3,1) 220ms both}\n@media(prefers-reduced-motion:reduce){.db-menu-backdrop,.db-menu-panel,.db-menu-panel nav[aria-label=\"Menú del panel\"]>div,.db-menu-panel nav[aria-label=\"Menú del panel\"] a{animation-duration:.01ms!important;animation-delay:0ms!important}}\n"}</style>
+      <style>{`
+        .db-pinned-menu { position: relative; z-index: 20; display: grid; grid-template-rows: 0fr; transition: grid-template-rows 560ms cubic-bezier(.22, 1, .36, 1); }
+        .db-pinned-menu.is-open { grid-template-rows: 1fr; }
+        .db-pinned-menu-inner { min-height: 0; overflow: hidden; }
+        .db-pinned-menu.is-open .db-pinned-menu-inner { overflow: visible; }
+        .db-pinned-menu-content { padding: 20px 20px 0; opacity: 0; transform: translate3d(0, -16px, 0) scale(.98); transform-origin: center top; transition: opacity 300ms ease, transform 560ms cubic-bezier(.22, 1, .36, 1); }
+        .db-pinned-menu.is-open .db-pinned-menu-content { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        @media (prefers-reduced-motion: reduce) { .db-pinned-menu, .db-pinned-menu-content { transition-duration: 0.01ms; } }
+      `}</style>
     <div style={{ "minHeight": "100vh", "background": "#E9E9E7", "padding": "0", "boxSizing": "border-box", "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       <div style={{ "position": "relative", "width": "100%", "maxWidth": "none", "minHeight": "100vh", "margin": "0 auto", "background": "#F4F4F2", "borderRadius": "40px", "overflow": "hidden" }}>
         <div>
-          {Boolean(lookup(v, "pinned")) && (
-            <Fragment>
-              <div style={{ "padding": "20px 20px 0" }}>
+          <div className={`db-pinned-menu ${lookup(v, "pinned") ? "is-open" : ""}`} inert={!lookup(v, "pinned")}>
+            <div className="db-pinned-menu-inner">
+              <div className="db-pinned-menu-content">
                 <DesignImport name={"MenuPanel"} mode={"bar"} active={"Panel"} onPin={lookup(v, "togglePin")} />
               </div>
-            </Fragment>
-          )}
+            </div>
+          </div>
           <div>
             <div style={{ "background": "#F4F4F2", "padding": "28px 32px 30px", "display": "flex", "flexDirection": "column", "gap": "30px" }}>
               <div style={{ "display": "flex", "alignItems": "center", "gap": "14px", "flexWrap": "wrap" }}>
