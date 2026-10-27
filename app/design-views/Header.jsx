@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -73,7 +74,7 @@ export default function Header(props) {
       <header style={{ "background": "#FFFFFF", "borderBottom": "1px solid #111111" }}>
         <div style={{ "maxWidth": "1520px", "margin": "0 auto", "padding": "0 40px", "position": "relative" }}>
           <div style={{ "minHeight": "88px", "display": "flex", "alignItems": "center", "gap": "24px", "justifyContent": "space-between", "flexWrap": "wrap" }}>
-            <a href={"/tienda"} aria-label={"VIA Provisiones, inicio"} style={{ "display": "flex", "alignItems": "center", "textDecoration": "none" }}>
+            <DesignLink href={"/tienda"} aria-label={"VIA Provisiones, inicio"} style={{ "display": "flex", "alignItems": "center", "textDecoration": "none" }}>
               <svg width={"176"} height={"58"} viewBox={"134 205 278 92"} role={"img"} aria-label={"VIA Provisiones"}>
                 <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={lookup(v, "accent")} strokeWidth={"3"}></circle>
                 <clipPath id={"via-clip-hdr"}>
@@ -90,43 +91,43 @@ export default function Header(props) {
                   {"PROVISIONES"}
                 </text>
               </svg>
-            </a>
+            </DesignLink>
             <div style={{ "display": "flex", "alignItems": "center", "gap": "22px", "flexWrap": "wrap", "justifyContent": "flex-end" }}>
               <label style={{ "position": "relative", "display": "flex", "alignItems": "center", "width": "440px", "maxWidth": "80vw", "height": "46px", "border": "1px solid #111111", "borderRadius": "999px", "padding": "0 6px 0 18px", "boxSizing": "border-box" }}>
                 <span style={{ "position": "absolute", "width": "1px", "height": "1px", "overflow": "hidden", "clip": "rect(0 0 0 0)" }}>
                   {"Buscar productos"}
                 </span>
                 <input type={"search"} placeholder={"Buscar focos, paneles solares, camping…"} style={{ "flex": "1", "minWidth": "0", "border": "none", "background": "transparent", "fontFamily": "inherit", "fontSize": "16px", "color": "#111111", "outline": "none" }} />
-                <a href={"/busqueda"} aria-label={"Buscar"} style={{ "width": "34px", "height": "34px", "borderRadius": "50%", "background": lookup(v, "accent"), "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+                <DesignLink href={"/busqueda"} aria-label={"Buscar"} style={{ "width": "34px", "height": "34px", "borderRadius": "50%", "background": lookup(v, "accent"), "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} aria-hidden={"true"}>
                     <circle cx={"11"} cy={"11"} r={"6.5"}></circle>
                     <path d={"M16 16l4 4"}></path>
                   </svg>
-                </a>
+                </DesignLink>
               </label>
               {(lookup(v, "topLinks") || []).map((l, index2) => (
                 <Fragment key={index2}>
-                  <a href={lookup(l, "href")} style={{ "textDecoration": "none", "fontSize": "16px", "fontWeight": "700", "display": "inline-flex", "alignItems": "center", "gap": "6px", "minHeight": "44px", "borderBottom": lookup(l, "underline"), "boxSizing": "border-box" }}>
+                  <DesignLink href={lookup(l, "href")} style={{ "textDecoration": "none", "fontSize": "16px", "fontWeight": "700", "display": "inline-flex", "alignItems": "center", "gap": "6px", "minHeight": "44px", "borderBottom": lookup(l, "underline"), "boxSizing": "border-box" }}>
                     <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={lookup(l, "icon")}></path>
                     </svg>
                     {lookup(l, "label")}
-                  </a>
+                  </DesignLink>
                 </Fragment>
               ))}
-              <a href={"https://wa.me/51954802744"} aria-label={"WhatsApp +51 954 802 744"} style={{ "width": "40px", "height": "40px", "borderRadius": "50%", "background": "#25D366", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+              <DesignLink href={"https://wa.me/51954802744"} aria-label={"WhatsApp +51 954 802 744"} style={{ "width": "40px", "height": "40px", "borderRadius": "50%", "background": "#25D366", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                 <svg width={"22"} height={"22"} viewBox={"0 0 24 24"} aria-hidden={"true"}>
                   <path d={"M12 3a9 9 0 0 0-7.8 13.4L3 21l4.7-1.2A9 9 0 1 0 12 3z"} fill={"#FFFFFF"}></path>
                   <path d={"M9.2 7.8c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.9 4.5 3.9 2.2.9 2.7.7 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3l-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.9z"} fill={"#25D366"}></path>
                 </svg>
-              </a>
-              <a href={"/mi-cuenta"} aria-label={"Mi cuenta"} style={{ "width": "32px", "height": "44px", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "padding": "0" }}>
+              </DesignLink>
+              <DesignLink href={"/mi-cuenta"} aria-label={"Mi cuenta"} style={{ "width": "32px", "height": "44px", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "padding": "0" }}>
                 <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <circle cx={"12"} cy={"8"} r={"4"}></circle>
                   <path d={"M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"}></path>
                 </svg>
-              </a>
-              <a href={"/carrito"} aria-label={"Carrito"} style={{ "position": "relative", "width": "40px", "height": "40px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
+              </DesignLink>
+              <DesignLink href={"/carrito"} aria-label={"Carrito"} style={{ "position": "relative", "width": "40px", "height": "40px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
                 <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M3 4h2l2.2 11h11l2-8H6.2"}></path>
                   <circle cx={"9"} cy={"19"} r={"1.3"}></circle>
@@ -139,7 +140,7 @@ export default function Header(props) {
                     </span>
                   </Fragment>
                 )}
-              </a>
+              </DesignLink>
             </div>
           </div>
           <nav aria-label={"Categorías"} style={{ "borderTop": "1px solid #111111", "minHeight": "56px", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "4px 28px", "flexWrap": "wrap" }}>
@@ -153,11 +154,11 @@ export default function Header(props) {
                 </button>
               </Fragment>
             ))}
-            <a href={"/categoria"} style={{ "minHeight": "44px", "display": "inline-flex", "alignItems": "center", "fontFamily": "Archivo, sans-serif", "fontSize": "15px", "fontWeight": "800", "textTransform": "uppercase", "textDecoration": "none", "color": "#111111" }}>
+            <DesignLink href={"/categoria"} style={{ "minHeight": "44px", "display": "inline-flex", "alignItems": "center", "fontFamily": "Archivo, sans-serif", "fontSize": "15px", "fontWeight": "800", "textTransform": "uppercase", "textDecoration": "none", "color": "#111111" }}>
               <span style={{ "background": lookup(v, "accent"), "padding": "4px 10px", "borderRadius": "999px" }}>
                 {"Ofertas"}
               </span>
-            </a>
+            </DesignLink>
           </nav>
           {Boolean(lookup(v, "menuOpen")) && (
             <Fragment>
@@ -172,20 +173,20 @@ export default function Header(props) {
                   <span style={{ "fontSize": "16px", "lineHeight": "1.5" }}>
                     {lookup(v, "current.blurb")}
                   </span>
-                  <a href={"/categoria"} onClick={lookup(v, "closeMenu")} style={{ "alignSelf": "flex-start", "marginTop": "6px", "display": "inline-flex", "alignItems": "center", "height": "46px", "padding": "0 22px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"/categoria"} onClick={lookup(v, "closeMenu")} style={{ "alignSelf": "flex-start", "marginTop": "6px", "display": "inline-flex", "alignItems": "center", "height": "46px", "padding": "0 22px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Ver todo"}
-                  </a>
+                  </DesignLink>
                 </div>
                 <ul style={{ "flex": "1 1 320px", "listStyle": "none", "margin": "0", "padding": "0", "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "4px 24px", "alignContent": "start" }}>
                   {(lookup(v, "current.subs") || []).map((s, index4) => (
                     <Fragment key={index4}>
                       <li>
-                        <a href={"/categoria"} onClick={lookup(v, "closeMenu")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "minHeight": "48px", "borderBottom": "1px solid #111111", "textDecoration": "none", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "color": "#111111" }}>
+                        <DesignLink href={"/categoria"} onClick={lookup(v, "closeMenu")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "minHeight": "48px", "borderBottom": "1px solid #111111", "textDecoration": "none", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "color": "#111111" }}>
                           {lookup(s, "name")}
                           <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                             <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                           </svg>
-                        </a>
+                        </DesignLink>
                       </li>
                     </Fragment>
                   ))}

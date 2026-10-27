@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -362,11 +363,11 @@ export default function MovilAlmacen(props) {
       <div style={{ "position": "absolute", "top": "0", "left": "0", "right": "0", "zIndex": "5", "padding": "16px 16px 12px", "display": "flex", "alignItems": "center", "gap": "10px", "background": "#E9E9E7" }}>
         {Boolean(lookup(v, "backToList")) && (
           <Fragment>
-            <a href={"/admin/movil"} aria-label={"Volver a pedidos"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+            <DesignLink href={"/admin/movil"} aria-label={"Volver a pedidos"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
               <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2.2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                 <path d={"M15 6l-6 6 6 6"}></path>
               </svg>
-            </a>
+            </DesignLink>
           </Fragment>
         )}
         {Boolean(lookup(v, "backToKardex")) && (
@@ -1118,9 +1119,9 @@ export default function MovilAlmacen(props) {
                 </div>
                 {Boolean(lookup(v, "dv.sel.refunded")) && (
                   <Fragment>
-                    <a href={"/movil/finanzas"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "46px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                    <DesignLink href={"/movil/finanzas"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "46px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Ver la nota de crédito en Comprobantes"}
-                    </a>
+                    </DesignLink>
                   </Fragment>
                 )}
               </Fragment>
@@ -1521,7 +1522,7 @@ export default function MovilAlmacen(props) {
                       )}
                       {Boolean(lookup(i, "isLink")) && (
                         <Fragment>
-                          <a href={lookup(i, "href")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "minHeight": "112px", "padding": "12px", "borderRadius": "22px", "background": "#F4F4F2", "color": "#111111", "textDecoration": "none", "boxSizing": "border-box" }}>
+                          <DesignLink href={lookup(i, "href")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "minHeight": "112px", "padding": "12px", "borderRadius": "22px", "background": "#F4F4F2", "color": "#111111", "textDecoration": "none", "boxSizing": "border-box" }}>
                             <span style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "gap": "6px" }}>
                               <span style={{ "width": "38px", "height": "38px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                                 <svg width={"17"} height={"17"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
@@ -1551,7 +1552,7 @@ export default function MovilAlmacen(props) {
                                 </Fragment>
                               )}
                             </span>
-                          </a>
+                          </DesignLink>
                         </Fragment>
                       )}
                     </Fragment>
@@ -1583,12 +1584,12 @@ export default function MovilAlmacen(props) {
                       {"Administrador"}
                     </span>
                   </span>
-                  <a href={"/admin/login"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "7px", "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                  <DesignLink href={"/admin/login"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "7px", "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                     <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"}></path>
                     </svg>
                     {"Cerrar sesión"}
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
             </nav>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -241,7 +242,7 @@ export default function TiendaMovil(props) {
             <path d={"M4 7h16M4 12h16M4 17h10"}></path>
           </svg>
         </button>
-        <a href={"/tienda"} aria-label={"VIA Provisiones, inicio"} style={{ "flex": "1", "display": "flex", "justifyContent": "center" }}>
+        <DesignLink href={"/tienda"} aria-label={"VIA Provisiones, inicio"} style={{ "flex": "1", "display": "flex", "justifyContent": "center" }}>
           <svg width={"108"} height={"36"} viewBox={"134 205 278 92"} aria-hidden={"true"}>
             <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#111111"} strokeWidth={"4"}></circle>
             <clipPath id={"via-clip-tmov"}>
@@ -258,7 +259,7 @@ export default function TiendaMovil(props) {
               {"PROVISIONES"}
             </text>
           </svg>
-        </a>
+        </DesignLink>
         <button onClick={lookup(v, "goBusqueda")} aria-label={"Buscar"} style={{ "width": "44px", "height": "44px", "border": "none", "background": "transparent", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
           <svg width={"21"} height={"21"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} aria-hidden={"true"}>
             <circle cx={"11"} cy={"11"} r={"6.5"}></circle>
@@ -329,7 +330,7 @@ export default function TiendaMovil(props) {
                     {(lookup(v, "items") || []).map((p, index2) => (
                       <Fragment key={index2}>
                         <div style={{ "display": "flex", "flexDirection": "column", "gap": "6px" }}>
-                          <a href={"/producto"} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "16px", "overflow": "hidden", "background": "#F4F4F2" }}>
+                          <DesignLink href={"/producto"} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "16px", "overflow": "hidden", "background": "#F4F4F2" }}>
                             <img src={assetSrc(lookup(p, "img"))} alt={lookup(p, "name")} style={{ "width": "100%", "height": "100%", "objectFit": "cover", "display": "block" }} />
                             {Boolean(lookup(p, "offer")) && (
                               <Fragment>
@@ -338,13 +339,13 @@ export default function TiendaMovil(props) {
                                 </span>
                               </Fragment>
                             )}
-                          </a>
+                          </DesignLink>
                           <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "10px", "fontWeight": "700", "textTransform": "uppercase", "color": "#6B6B6B" }}>
                             {lookup(p, "cat")}
                           </span>
-                          <a href={"/producto"} style={{ "fontSize": "13px", "fontWeight": "500", "lineHeight": "1.3", "textDecoration": "none", "minHeight": "34px" }}>
+                          <DesignLink href={"/producto"} style={{ "fontSize": "13px", "fontWeight": "500", "lineHeight": "1.3", "textDecoration": "none", "minHeight": "34px" }}>
                             {lookup(p, "name")}
-                          </a>
+                          </DesignLink>
                           <span style={{ "display": "flex", "alignItems": "baseline", "gap": "6px" }}>
                             <span style={{ "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "800" }}>
                               {lookup(p, "price")}
@@ -377,9 +378,9 @@ export default function TiendaMovil(props) {
                     <span style={{ "fontSize": "14px", "lineHeight": "1.5", "color": "#E8E8E8" }}>
                       {"Revisa cómo lo escribiste o prueba con una palabra más general, como “luz” o “cable”."}
                     </span>
-                    <a href={"https://wa.me/51954802744"} style={{ "alignSelf": "flex-start", "display": "inline-flex", "alignItems": "center", "height": "44px", "padding": "0 18px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                    <DesignLink href={"https://wa.me/51954802744"} style={{ "alignSelf": "flex-start", "display": "inline-flex", "alignItems": "center", "height": "44px", "padding": "0 18px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                       {"Pedir por WhatsApp"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </Fragment>
               )}
@@ -635,9 +636,9 @@ export default function TiendaMovil(props) {
                   <button onClick={lookup(v, "goSeguimiento")} style={{ "height": "52px", "borderRadius": "999px", "border": "none", "background": "#111111", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Ver mi pedido"}
                   </button>
-                  <a href={"/tienda"} style={{ "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"/tienda"} style={{ "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Seguir comprando"}
-                  </a>
+                  </DesignLink>
                 </Fragment>
               )}
             </div>
@@ -705,9 +706,9 @@ export default function TiendaMovil(props) {
                     <br />
                     {"Placa [PLACA]"}
                   </span>
-                  <a href={"https://wa.me/51954802744"} style={{ "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"https://wa.me/51954802744"} style={{ "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "flex", "alignItems": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"WhatsApp"}
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
               <div style={{ "display": "flex", "flexDirection": "column", "gap": "10px" }}>
@@ -747,9 +748,9 @@ export default function TiendaMovil(props) {
                 <span style={{ "fontSize": "13px", "lineHeight": "1.5", "color": "#444444" }}>
                   {"Tienes 7 días para cambios o devoluciones. Escríbenos y lo resolvemos."}
                 </span>
-                <a href={"https://wa.me/51954802744"} style={{ "alignSelf": "flex-start", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
+                <DesignLink href={"https://wa.me/51954802744"} style={{ "alignSelf": "flex-start", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
                   {"Escribir al 954 802 744"}
-                </a>
+                </DesignLink>
               </div>
             </div>
           </Fragment>
@@ -792,9 +793,9 @@ export default function TiendaMovil(props) {
                   </button>
                   <div style={{ "padding": "16px", "borderRadius": "16px", "background": "#111111", "color": "#FFFFFF", "fontSize": "13px", "lineHeight": "1.6" }}>
                     {"Con tu cuenta ves tus pedidos, guardas direcciones y pides factura más rápido. "}
-                    <a href={"/empresas"} style={{ "color": lookup(v, "accent"), "fontWeight": "700" }}>
+                    <DesignLink href={"/empresas"} style={{ "color": lookup(v, "accent"), "fontWeight": "700" }}>
                       {"¿Compras para tu negocio?"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </Fragment>
               )}
@@ -1018,12 +1019,12 @@ export default function TiendaMovil(props) {
                 </svg>
                 {"Buscar focos, camping, solar…"}
               </button>
-              <a href={"/tienda"} style={{ "height": "52px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              <DesignLink href={"/tienda"} style={{ "height": "52px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {"Ir al inicio"}
-              </a>
-              <a href={"https://wa.me/51954802744"} style={{ "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              </DesignLink>
+              <DesignLink href={"https://wa.me/51954802744"} style={{ "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {"Escribir por WhatsApp"}
-              </a>
+              </DesignLink>
             </div>
           </Fragment>
         )}
@@ -1047,12 +1048,12 @@ export default function TiendaMovil(props) {
         </Fragment>
       )}
       <nav aria-label={"Navegación de la tienda"} style={{ "height": "68px", "flex": "none", "display": "grid", "gridTemplateColumns": "repeat(5, minmax(0, 1fr))", "borderTop": "1px solid #111111", "background": "#FFFFFF", "zIndex": "6" }}>
-        <a href={"/tienda"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "center", "gap": "4px", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "10px", "fontWeight": "700", "textTransform": "uppercase" }}>
+        <DesignLink href={"/tienda"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "center", "gap": "4px", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "10px", "fontWeight": "700", "textTransform": "uppercase" }}>
           <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
             <path d={"M3 11l9-7 9 7v9H3zM9 20v-6h6v6"}></path>
           </svg>
           {"Inicio"}
-        </a>
+        </DesignLink>
         {(lookup(v, "tabs") || []).map((t, index15) => (
           <Fragment key={index15}>
             <button onClick={lookup(t, "pick")} aria-current={lookup(t, "current")} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "center", "gap": "4px", "border": "none", "background": "transparent", "cursor": "pointer", "fontFamily": "'Roboto Mono', monospace", "fontSize": "10px", "fontWeight": "700", "textTransform": "uppercase", "color": "#111111" }}>
@@ -1161,21 +1162,21 @@ export default function TiendaMovil(props) {
               </div>
               {(lookup(v, "menuLinks") || []).map((m, index20) => (
                 <Fragment key={index20}>
-                  <a href={lookup(m, "href")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "minHeight": "52px", "borderBottom": "1px solid #DCDCD8", "textDecoration": "none", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "800", "textTransform": "uppercase" }}>
+                  <DesignLink href={lookup(m, "href")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "minHeight": "52px", "borderBottom": "1px solid #DCDCD8", "textDecoration": "none", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "800", "textTransform": "uppercase" }}>
                     {lookup(m, "t")}
                     <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2.4"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M9 6l6 6-6 6"}></path>
                     </svg>
-                  </a>
+                  </DesignLink>
                 </Fragment>
               ))}
               <button onClick={lookup(v, "goError")} style={{ "alignSelf": "flex-start", "marginTop": "10px", "height": "36px", "padding": "0", "border": "none", "background": "transparent", "cursor": "pointer", "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "textTransform": "uppercase", "color": "#6B6B6B", "textDecoration": "underline", "textUnderlineOffset": "4px" }}>
                 {"Ver página 404 (ejemplo)"}
               </button>
               <span style={{ "flex": "1" }}></span>
-              <a href={"https://wa.me/51954802744"} style={{ "height": "50px", "borderRadius": "999px", "background": lookup(v, "accent"), "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              <DesignLink href={"https://wa.me/51954802744"} style={{ "height": "50px", "borderRadius": "999px", "background": lookup(v, "accent"), "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {"WhatsApp 954 802 744"}
-              </a>
+              </DesignLink>
             </nav>
           </div>
         </Fragment>

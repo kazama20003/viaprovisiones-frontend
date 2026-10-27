@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -203,7 +204,7 @@ export default function Ofertas(props) {
                     <path d={"M4 8h16M4 16h10"}></path>
                   </svg>
                 </button>
-                <a href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
+                <DesignLink href={"/dashboard"} aria-label={"Ir al panel"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                   <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
                     <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"5"}></circle>
                     <clipPath id={"via-clip-ofe"}>
@@ -212,7 +213,7 @@ export default function Ofertas(props) {
                     <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#FFFFFF"}></polygon>
                     <path clipPath={"url(#via-clip-ofe)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#FFFFFF"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.2" }}>
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Ofertas y cupones"}
@@ -352,9 +353,9 @@ export default function Ofertas(props) {
                   <span style={{ "fontSize": "13px", "color": "#6B6B6B" }}>
                     {"86 usos · S/ 3,180 en ventas"}
                   </span>
-                  <a href={"/tienda"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textDecoration": "none" }}>
+                  <DesignLink href={"/tienda"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textDecoration": "none" }}>
                     {"Ver en la tienda →"}
-                  </a>
+                  </DesignLink>
                 </span>
               </div>
             </div>
@@ -583,9 +584,9 @@ export default function Ofertas(props) {
                           </span>
                           <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
                             {"Se arma en "}
-                            <a href={"/banners"} style={{ "color": "#C2410C", "fontWeight": "700" }}>
+                            <DesignLink href={"/banners"} style={{ "color": "#C2410C", "fontWeight": "700" }}>
                               {"Banners de la tienda"}
-                            </a>
+                            </DesignLink>
                           </span>
                         </span>
                         <span style={{ "width": "48px", "height": "28px", "borderRadius": "999px", "background": lookup(v, "bannerTrack"), "display": "flex", "alignItems": "center", "padding": "3px", "boxSizing": "border-box", "justifyContent": lookup(v, "bannerJustify") }}>
@@ -873,9 +874,9 @@ export default function Ofertas(props) {
                       {lookup(v, "pkStock")}
                       {" (lo limita el producto con menos unidades). Al venderlo, cada producto sale de su lote según el orden de salida."}
                     </span>
-                    <a href={"/inventario"} style={{ "height": "44px", "borderRadius": "999px", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                    <DesignLink href={"/inventario"} style={{ "height": "44px", "borderRadius": "999px", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Ver lotes de estos productos"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </Fragment>
               )}

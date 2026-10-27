@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -227,9 +228,9 @@ export default function Seguimiento(props) {
                         </span>
                       </span>
                     </span>
-                    <a href={"https://wa.me/51954802744"} style={{ "fontSize": "14px", "fontWeight": "700", "textUnderlineOffset": "3px" }}>
+                    <DesignLink href={"https://wa.me/51954802744"} style={{ "fontSize": "14px", "fontWeight": "700", "textUnderlineOffset": "3px" }}>
                       {"Coordinar por WhatsApp"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </div>
                 <div style={{ "borderRadius": "20px", "background": "#FFF1E6", "padding": "24px", "display": "flex", "flexWrap": "wrap", "gap": "18px", "alignItems": "center" }}>
@@ -241,12 +242,12 @@ export default function Seguimiento(props) {
                       {"Si algo llegó dañado o no es lo que pediste, tienes 7 días para cambiarlo. Escríbenos con tu N° de pedido y una foto, y coordinamos el cambio o la devolución."}
                     </span>
                   </span>
-                  <a href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 24px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 24px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M4 20l1.5-4A8 8 0 1 1 8 18.5z"}></path>
                     </svg>
                     {"Escribir por WhatsApp"}
-                  </a>
+                  </DesignLink>
                 </div>
               </section>
               <aside aria-label={"Resumen del pedido"} style={{ "flex": "1 1 380px", "minWidth": "0", "border": "2px solid #111111", "borderRadius": "24px", "padding": "26px", "display": "flex", "flexDirection": "column", "gap": "18px" }}>
@@ -300,15 +301,15 @@ export default function Seguimiento(props) {
                     {"IGV incluido · Pagado con Yape"}
                   </span>
                 </div>
-                <a href={"#comprobante"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                <DesignLink href={"#comprobante"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "52px", "borderRadius": "999px", "border": "2px solid #111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                   <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M12 4v11M7 10l5 5 5-5M5 20h14"}></path>
                   </svg>
                   {"Boleta B001-00424 (PDF)"}
-                </a>
-                <a href={"/mi-cuenta"} style={{ "fontSize": "14px", "fontWeight": "700", "textUnderlineOffset": "3px", "alignSelf": "center" }}>
+                </DesignLink>
+                <DesignLink href={"/mi-cuenta"} style={{ "fontSize": "14px", "fontWeight": "700", "textUnderlineOffset": "3px", "alignSelf": "center" }}>
                   {"Ver todos mis pedidos"}
-                </a>
+                </DesignLink>
               </aside>
             </div>
           </Fragment>

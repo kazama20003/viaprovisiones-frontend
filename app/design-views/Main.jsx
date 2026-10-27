@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -154,7 +155,7 @@ export default function Main(props) {
       <header style={{ "background": "#FFFFFF", "position": "sticky", "top": "0", "zIndex": "5", "borderBottom": "1px solid #111111" }}>
         <div style={{ "maxWidth": "1520px", "margin": "0 auto", "padding": "0 40px", "position": "relative" }}>
           <div style={{ "minHeight": "88px", "display": "flex", "alignItems": "center", "gap": "24px", "justifyContent": "space-between", "flexWrap": "wrap" }}>
-            <a href={"#top"} aria-label={"VIA Provisiones, inicio"} style={{ "display": "flex", "alignItems": "center", "textDecoration": "none" }}>
+            <DesignLink href={"#top"} aria-label={"VIA Provisiones, inicio"} style={{ "display": "flex", "alignItems": "center", "textDecoration": "none" }}>
               <svg width={"176"} height={"58"} viewBox={"134 205 278 92"} role={"img"} aria-label={"VIA Provisiones"}>
                 <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={lookup(v, "accent")} strokeWidth={"3"}></circle>
                 <clipPath id={"via-clip-h"}>
@@ -171,7 +172,7 @@ export default function Main(props) {
                   {"PROVISIONES"}
                 </text>
               </svg>
-            </a>
+            </DesignLink>
             <div style={{ "display": "flex", "alignItems": "center", "gap": "22px", "flexWrap": "wrap", "justifyContent": "flex-end" }}>
               <label style={{ "position": "relative", "display": "flex", "alignItems": "center", "width": "474px", "maxWidth": "80vw", "height": "46px", "border": "1px solid #111111", "borderRadius": "999px", "padding": "0 6px 0 18px", "boxSizing": "border-box" }}>
                 <span style={{ "position": "absolute", "width": "1px", "height": "1px", "overflow": "hidden", "clip": "rect(0 0 0 0)" }}>
@@ -185,15 +186,15 @@ export default function Main(props) {
                   </svg>
                 </span>
               </label>
-              <a href={"/empresas"} style={{ "textDecoration": "none", "fontSize": "16px", "fontWeight": "700", "display": "inline-flex", "alignItems": "center", "gap": "6px" }}>
+              <DesignLink href={"/empresas"} style={{ "textDecoration": "none", "fontSize": "16px", "fontWeight": "700", "display": "inline-flex", "alignItems": "center", "gap": "6px" }}>
                 <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"}></path>
                 </svg>
                 {"Empresas"}
-              </a>
-              <a href={"#historia"} style={{ "textDecoration": "none", "fontSize": "16px", "fontWeight": "500" }}>
+              </DesignLink>
+              <DesignLink href={"#historia"} style={{ "textDecoration": "none", "fontSize": "16px", "fontWeight": "500" }}>
                 {"Nosotros"}
-              </a>
+              </DesignLink>
               <button aria-label={"Favoritos"} style={{ "width": "32px", "height": "44px", "border": "none", "background": "transparent", "color": "#111111", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center", "padding": "0" }}>
                 <svg width={"22"} height={"22"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"}></path>
@@ -205,7 +206,7 @@ export default function Main(props) {
                   <path d={"M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"}></path>
                 </svg>
               </button>
-              <a href={"/carrito"} aria-label={"Carrito"} style={{ "position": "relative", "width": "40px", "height": "40px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
+              <DesignLink href={"/carrito"} aria-label={"Carrito"} style={{ "position": "relative", "width": "40px", "height": "40px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
                 <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M3 4h2l2.2 11h11l2-8H6.2"}></path>
                   <circle cx={"9"} cy={"19"} r={"1.3"}></circle>
@@ -218,7 +219,7 @@ export default function Main(props) {
                     </span>
                   </Fragment>
                 )}
-              </a>
+              </DesignLink>
             </div>
           </div>
           <nav aria-label={"Categorías"} style={{ "borderTop": "1px solid #111111", "minHeight": "56px", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "4px 28px", "flexWrap": "wrap" }}>
@@ -232,11 +233,11 @@ export default function Main(props) {
                 </button>
               </Fragment>
             ))}
-            <a href={"#destacados"} style={{ "minHeight": "44px", "display": "inline-flex", "alignItems": "center", "fontFamily": "Archivo, sans-serif", "fontSize": "15px", "fontWeight": "800", "textTransform": "uppercase", "textDecoration": "none", "color": "#111111" }}>
+            <DesignLink href={"#destacados"} style={{ "minHeight": "44px", "display": "inline-flex", "alignItems": "center", "fontFamily": "Archivo, sans-serif", "fontSize": "15px", "fontWeight": "800", "textTransform": "uppercase", "textDecoration": "none", "color": "#111111" }}>
               <span style={{ "background": lookup(v, "accent"), "padding": "4px 10px", "borderRadius": "999px" }}>
                 {"Ofertas"}
               </span>
-            </a>
+            </DesignLink>
           </nav>
           {Boolean(lookup(v, "menuOpen")) && (
             <Fragment>
@@ -251,20 +252,20 @@ export default function Main(props) {
                   <span style={{ "fontSize": "16px", "lineHeight": "1.5" }}>
                     {lookup(v, "current.blurb")}
                   </span>
-                  <a href={"/categoria"} onClick={lookup(v, "closeMenu")} style={{ "alignSelf": "flex-start", "marginTop": "6px", "display": "inline-flex", "alignItems": "center", "height": "46px", "padding": "0 22px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                  <DesignLink href={"/categoria"} onClick={lookup(v, "closeMenu")} style={{ "alignSelf": "flex-start", "marginTop": "6px", "display": "inline-flex", "alignItems": "center", "height": "46px", "padding": "0 22px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Ver todo"}
-                  </a>
+                  </DesignLink>
                 </div>
                 <ul style={{ "flex": "1 1 320px", "listStyle": "none", "margin": "0", "padding": "0", "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "4px 24px", "alignContent": "start" }}>
                   {(lookup(v, "current.subs") || []).map((s, index3) => (
                     <Fragment key={index3}>
                       <li>
-                        <a href={"#nuevos"} onClick={lookup(v, "closeMenu")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "minHeight": "48px", "borderBottom": "1px solid #111111", "textDecoration": "none", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                        <DesignLink href={"#nuevos"} onClick={lookup(v, "closeMenu")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between", "minHeight": "48px", "borderBottom": "1px solid #111111", "textDecoration": "none", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase" }}>
                           {lookup(s, "name")}
                           <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                             <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                           </svg>
-                        </a>
+                        </DesignLink>
                       </li>
                     </Fragment>
                   ))}
@@ -297,16 +298,16 @@ export default function Main(props) {
                 {lookup(v, "slide.text")}
               </p>
               <div style={{ "display": "flex", "alignItems": "center", "gap": "24px", "flexWrap": "wrap", "marginTop": "6px" }}>
-                <a href={lookup(v, "slide.href")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
+                <DesignLink href={lookup(v, "slide.href")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 28px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
                   {lookup(v, "slide.cta")}
                   {" "}
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                     <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                   </svg>
-                </a>
-                <a href={"#categorias"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px", "minHeight": "44px", "display": "inline-flex", "alignItems": "center" }}>
+                </DesignLink>
+                <DesignLink href={"#categorias"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px", "minHeight": "44px", "display": "inline-flex", "alignItems": "center" }}>
                   {"Todas las categorías"}
-                </a>
+                </DesignLink>
               </div>
             </div>
           </div>
@@ -341,7 +342,7 @@ export default function Main(props) {
           <div className={"noscroll"} style={{ "display": "flex", "gap": "24px", "overflowX": "auto", "justifyContent": "space-between" }}>
             {(lookup(v, "menu") || []).map((c, index5) => (
               <Fragment key={index5}>
-                <a href={"/categoria"} style={{ "flex": "none", "textDecoration": "none", "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "14px", "width": "150px" }}>
+                <DesignLink href={"/categoria"} style={{ "flex": "none", "textDecoration": "none", "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "14px", "width": "150px" }}>
                   <img src={assetSrc(lookup(c, "img"))} alt={""} style={{ "width": "140px", "height": "140px", "borderRadius": "50%", "border": "3px solid " + String(lookup(v, "accent") ?? ""), "objectFit": "cover", "boxSizing": "border-box" }} />
                   <span style={{ "fontFamily": "Archivo, sans-serif", "fontSize": "16px", "fontWeight": "800", "textTransform": "uppercase" }}>
                     {lookup(c, "name")}
@@ -349,7 +350,7 @@ export default function Main(props) {
                   <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "500", "color": "#444444" }}>
                     {lookup(c, "count")}
                   </span>
-                </a>
+                </DesignLink>
               </Fragment>
             ))}
           </div>
@@ -403,12 +404,12 @@ export default function Main(props) {
                 <p style={{ "margin": "0 0 16px", "lineHeight": "1.55" }}>
                   {lookup(r, "sub")}
                 </p>
-                <a href={"#nuevos"} style={{ "alignSelf": "flex-start", "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase", "boxSizing": "border-box" }}>
+                <DesignLink href={"#nuevos"} style={{ "alignSelf": "flex-start", "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase", "boxSizing": "border-box" }}>
                   {"Ver la colección "}
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                     <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                   </svg>
-                </a>
+                </DesignLink>
                 <div style={{ "display": "flex", "gap": "10px", "marginTop": "18px" }}>
                   <button aria-label={"Anterior"} style={{ "width": "40px", "height": "40px", "borderRadius": "50%", "border": "2px solid #111111", "background": "#FFFFFF", "color": "#111111", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                     <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
@@ -457,15 +458,15 @@ export default function Main(props) {
                           </svg>
                         </button>
                       </div>
-                      <a href={"#categorias"} style={{ "marginTop": "16px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "3px" }}>
+                      <DesignLink href={"#categorias"} style={{ "marginTop": "16px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "12px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "3px" }}>
                         {lookup(p, "cat")}
                         {" · "}
                         {lookup(p, "sub")}
-                      </a>
+                      </DesignLink>
                       <h3 style={{ "margin": "6px 0 0", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "lineHeight": "1.3", "minHeight": "44px" }}>
-                        <a href={"/producto"} style={{ "textDecoration": "none" }}>
+                        <DesignLink href={"/producto"} style={{ "textDecoration": "none" }}>
                           {lookup(p, "name")}
-                        </a>
+                        </DesignLink>
                       </h3>
                       <div style={{ "marginTop": "12px", "display": "flex", "gap": "8px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "16px", "fontWeight": "700" }}>
                         <span>
@@ -502,7 +503,7 @@ export default function Main(props) {
           <div style={{ "display": "grid", "gridTemplateColumns": "repeat(auto-fit, minmax(300px, 1fr))", "gap": "20px" }}>
             {(lookup(v, "bundles") || []).map((b, index9) => (
               <Fragment key={index9}>
-                <a href={"#nuevos"} style={{ "textDecoration": "none", "display": "flex", "flexDirection": "column" }}>
+                <DesignLink href={"#nuevos"} style={{ "textDecoration": "none", "display": "flex", "flexDirection": "column" }}>
                   <img src={assetSrc(lookup(b, "img"))} alt={""} style={{ "width": "100%", "aspectRatio": "4 / 3", "borderRadius": "16px", "objectFit": "cover", "display": "block" }} />
                   <span style={{ "marginTop": "18px", "fontFamily": "Archivo, sans-serif", "fontSize": "24px", "fontWeight": "800", "textTransform": "uppercase" }}>
                     {lookup(b, "title")}
@@ -513,7 +514,7 @@ export default function Main(props) {
                   <span style={{ "marginTop": "10px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textDecoration": "underline", "textUnderlineOffset": "4px" }}>
                     {"Ver el kit"}
                   </span>
-                </a>
+                </DesignLink>
               </Fragment>
             ))}
           </div>
@@ -537,14 +538,14 @@ export default function Main(props) {
             <p style={{ "margin": "0 0 24px", "fontSize": "19px", "lineHeight": "1.55" }}>
               {"VIA Provisiones reúne iluminación, energía solar, conexión, organización, camping y accesorios en una sola tienda, para que encuentres lo que buscas sin dar vueltas."}
             </p>
-            <a href={"#historia"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textDecoration": "none", "minHeight": "44px" }}>
+            <DesignLink href={"#historia"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textDecoration": "none", "minHeight": "44px" }}>
               {"Conócenos "}
               <span style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "inline-flex", "alignItems": "center", "justifyContent": "center" }}>
                 <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                   <path d={"M5 12h14M13 6l6 6-6 6"}></path>
                 </svg>
               </span>
-            </a>
+            </DesignLink>
           </div>
         </section>
         <section style={{ "padding": "40px 0 72px" }}>
@@ -560,12 +561,12 @@ export default function Main(props) {
                 {"Lámparas recargables, linternas de cabeza y todo el equipo para acampar con luz y energía de sobra."}
               </p>
             </div>
-            <a href={"#destacados"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase", "boxSizing": "border-box" }}>
+            <DesignLink href={"#destacados"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase", "boxSizing": "border-box" }}>
               {"Comprar camping "}
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                 <path d={"M5 12h14M13 6l6 6-6 6"}></path>
               </svg>
-            </a>
+            </DesignLink>
           </div>
           <img src={assetSrc("img/6bfeade76520c7a9cd478f997069e6ca")} alt={"Casa de campaña iluminada de noche"} style={{ "width": "100%", "height": "581px", "borderRadius": "16px", "objectFit": "cover", "display": "block" }} />
         </section>
@@ -587,9 +588,9 @@ export default function Main(props) {
                   <p style={{ "margin": "0 0 16px", "fontSize": "16px", "lineHeight": "1.55" }}>
                     {lookup(a, "excerpt")}
                   </p>
-                  <a href={"#top"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px", "alignSelf": "flex-start" }}>
+                  <DesignLink href={"#top"} style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px", "alignSelf": "flex-start" }}>
                     {"Leer más"}
-                  </a>
+                  </DesignLink>
                 </article>
               </Fragment>
             ))}
@@ -615,17 +616,17 @@ export default function Main(props) {
                 {"Vendemos por mayor y menor a bodegas, minoristas, mayoristas, ferreterías, constructoras, mineras, hoteles y oficinas, con precios según tu volumen, factura y despacho a todo el Perú."}
               </p>
             </div>
-            <a href={"/empresas"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
+            <DesignLink href={"/empresas"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "12px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "letterSpacing": "0.56px", "textTransform": "uppercase" }}>
               {"Cotizar para mi empresa "}
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                 <path d={"M5 12h14M13 6l6 6-6 6"}></path>
               </svg>
-            </a>
+            </DesignLink>
           </div>
           <div style={{ "display": "grid", "gridTemplateColumns": "repeat(auto-fit, minmax(260px, 1fr))", "gap": "20px" }}>
             {(lookup(v, "sectors") || []).map((x, index11) => (
               <Fragment key={index11}>
-                <a href={"/empresas"} style={{ "position": "relative", "display": "block", "height": "420px", "borderRadius": "16px", "overflow": "hidden", "textDecoration": "none", "background": "#111111" }}>
+                <DesignLink href={"/empresas"} style={{ "position": "relative", "display": "block", "height": "420px", "borderRadius": "16px", "overflow": "hidden", "textDecoration": "none", "background": "#111111" }}>
                   <img src={assetSrc(lookup(x, "img"))} alt={""} style={{ "position": "absolute", "inset": "0", "width": "100%", "height": "100%", "objectFit": "cover" }} />
                   <span style={{ "position": "absolute", "left": "16px", "right": "16px", "bottom": "16px", "background": "#FFFFFF", "padding": "18px 20px", "display": "flex", "flexDirection": "column", "gap": "6px", "borderTop": "4px solid " + String(lookup(v, "accent") ?? "") }}>
                     <span style={{ "fontFamily": "Archivo, sans-serif", "fontSize": "22px", "fontWeight": "900", "textTransform": "uppercase", "color": "#111111" }}>
@@ -635,7 +636,7 @@ export default function Main(props) {
                       {lookup(x, "text")}
                     </span>
                   </span>
-                </a>
+                </DesignLink>
               </Fragment>
             ))}
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -1080,7 +1081,7 @@ export default function AdminMovil(props) {
                       )}
                       {Boolean(lookup(i, "isLink")) && (
                         <Fragment>
-                          <a href={lookup(i, "href")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "minHeight": "112px", "padding": "12px", "borderRadius": "22px", "background": "#F4F4F2", "color": "#111111", "textDecoration": "none", "boxSizing": "border-box" }}>
+                          <DesignLink href={lookup(i, "href")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "minHeight": "112px", "padding": "12px", "borderRadius": "22px", "background": "#F4F4F2", "color": "#111111", "textDecoration": "none", "boxSizing": "border-box" }}>
                             <span style={{ "display": "flex", "alignItems": "center", "justifyContent": "space-between" }}>
                               <span style={{ "width": "38px", "height": "38px", "borderRadius": "50%", "background": "#FFFFFF", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                                 <svg width={"17"} height={"17"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
@@ -1106,7 +1107,7 @@ export default function AdminMovil(props) {
                                 </Fragment>
                               )}
                             </span>
-                          </a>
+                          </DesignLink>
                         </Fragment>
                       )}
                       {Boolean(lookup(i, "isSoon")) && (
@@ -1169,12 +1170,12 @@ export default function AdminMovil(props) {
                       {"Administrador"}
                     </span>
                   </span>
-                  <a href={"/admin/login"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "7px", "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                  <DesignLink href={"/admin/login"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "7px", "height": "40px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                     <svg width={"14"} height={"14"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                       <path d={"M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"}></path>
                     </svg>
                     {"Cerrar sesión"}
-                  </a>
+                  </DesignLink>
                 </div>
               </div>
             </nav>

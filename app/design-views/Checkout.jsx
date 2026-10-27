@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -164,9 +165,9 @@ export default function Checkout(props) {
     <div style={{ "fontFamily": "Roboto, system-ui, sans-serif", "fontSize": "17px", "letterSpacing": "0.02em", "color": "#111111", "background": "#FFFFFF", "minHeight": "100vh" }}>
       <DesignImport name={"Header"} accent={lookup(v, "accent")} cart={lookup(v, "cartCount")} active={""} />
       <main style={{ "maxWidth": "1520px", "margin": "0 auto", "padding": "48px 40px 80px" }}>
-        <a href={"/carrito"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
+        <DesignLink href={"/carrito"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase", "textUnderlineOffset": "4px" }}>
           {"← Volver al carrito"}
-        </a>
+        </DesignLink>
         <h1 style={{ "margin": "14px 0 28px", "fontFamily": "Archivo, sans-serif", "fontWeight": "900", "fontSize": "56px", "textTransform": "uppercase", "lineHeight": "1" }}>
           {lookup(v, "pageTitle")}
         </h1>
@@ -528,13 +529,13 @@ export default function Checkout(props) {
                   <label style={{ "display": "flex", "alignItems": "flex-start", "gap": "10px", "fontSize": "15px", "lineHeight": "1.45" }}>
                     <input type={"checkbox"} defaultChecked style={{ "width": "20px", "height": "20px", "margin": "1px 0 0", "accentColor": "#111111", "flex": "none" }} />
                     {"Acepto los "}
-                    <a href={"#terminos"} style={{ "textUnderlineOffset": "3px" }}>
+                    <DesignLink href={"#terminos"} style={{ "textUnderlineOffset": "3px" }}>
                       {"términos y condiciones"}
-                    </a>
+                    </DesignLink>
                     {" y la "}
-                    <a href={"#privacidad"} style={{ "textUnderlineOffset": "3px" }}>
+                    <DesignLink href={"#privacidad"} style={{ "textUnderlineOffset": "3px" }}>
                       {"política de privacidad"}
-                    </a>
+                    </DesignLink>
                     {"."}
                   </label>
                 </div>
@@ -577,18 +578,18 @@ export default function Checkout(props) {
                     ))}
                   </div>
                   <div style={{ "display": "flex", "gap": "10px", "flexWrap": "wrap" }}>
-                    <a href={"/tienda"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                    <DesignLink href={"/tienda"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                       {"Seguir comprando"}
-                    </a>
-                    <a href={"/seguimiento"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "border": "2px solid #FFFFFF", "boxSizing": "border-box", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                    </DesignLink>
+                    <DesignLink href={"/seguimiento"} style={{ "display": "inline-flex", "alignItems": "center", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "border": "2px solid #FFFFFF", "boxSizing": "border-box", "color": "#FFFFFF", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                       {"Ver mi pedido"}
-                    </a>
-                    <a href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": "#FFFFFF", "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
+                    </DesignLink>
+                    <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "54px", "padding": "0 26px", "borderRadius": "999px", "background": "#FFFFFF", "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                       <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                         <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                       </svg>
                       {"Escribir por WhatsApp"}
-                    </a>
+                    </DesignLink>
                   </div>
                 </div>
               </Fragment>

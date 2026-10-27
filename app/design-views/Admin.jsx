@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 
@@ -608,7 +609,7 @@ export default function Admin(props) {
     <div style={{ "fontFamily": "Roboto, system-ui, sans-serif", "fontSize": "15px", "letterSpacing": "0.01em", "color": "#111111", "background": "#F6F6F4", "minHeight": "100vh", "width": "100%", "borderRadius": "40px", "overflow": "hidden", "display": "flex", "flexWrap": "wrap", "alignItems": "stretch" }}>
       <div style={{ "flex": "0 0 auto", "display": "flex", "alignSelf": "stretch" }}>
         <nav aria-label={"Áreas del panel"} style={{ "width": "76px", "background": "#0E0E0E", "display": "flex", "flexDirection": "column", "alignItems": "center", "padding": "18px 0 16px", "boxSizing": "border-box", "gap": "6px" }}>
-          <a href={"/tienda"} aria-label={"VIA Provisiones · ver tienda"} style={{ "width": "46px", "height": "46px", "borderRadius": "14px", "background": lookup(v, "accent"), "display": "flex", "alignItems": "center", "justifyContent": "center", "marginBottom": "18px" }}>
+          <DesignLink href={"/tienda"} aria-label={"VIA Provisiones · ver tienda"} style={{ "width": "46px", "height": "46px", "borderRadius": "14px", "background": lookup(v, "accent"), "display": "flex", "alignItems": "center", "justifyContent": "center", "marginBottom": "18px" }}>
             <svg width={"30"} height={"30"} viewBox={"136 205 86 86"} aria-hidden={"true"}>
               <circle cx={"178.6"} cy={"247.5"} r={"39.4"} fill={"none"} stroke={"#111111"} strokeWidth={"5"}></circle>
               <clipPath id={"via-clip-rail"}>
@@ -617,7 +618,7 @@ export default function Admin(props) {
               <polygon points={"178.6,222.5 208.5,261.5 178.6,251 149,261.5"} fill={"#111111"}></polygon>
               <path clipPath={"url(#via-clip-rail)"} d={"M136 270.5 C158 271, 174 265, 190 264.6 C200 264.4, 208 267.5, 221 271 L221 292 L136 292 Z"} fill={"#111111"}></path>
             </svg>
-          </a>
+          </DesignLink>
           {(lookup(v, "rail") || []).map((r, index1) => (
             <Fragment key={index1}>
               <button onClick={lookup(r, "go")} aria-label={lookup(r, "name")} aria-current={lookup(r, "current")} title={lookup(r, "name")} style={{ "position": "relative", "width": "60px", "minHeight": "58px", "border": "none", "borderRadius": "14px", "background": lookup(r, "bg"), "color": lookup(r, "fg"), "cursor": "pointer", "display": "flex", "flexDirection": "column", "alignItems": "center", "justifyContent": "center", "gap": "4px", "padding": "6px 0" }}>
@@ -642,10 +643,10 @@ export default function Admin(props) {
               <path d={lookup(v, "toggleIcon")}></path>
             </svg>
           </button>
-          <a href={"/admin/login"} aria-label={"Beltran Carlos Ccapa · cerrar sesión"} title={"Cerrar sesión"} style={{ "position": "relative", "width": "42px", "height": "42px", "borderRadius": "50%", "background": "#FFFFFF", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "13px", "fontWeight": "700", "textDecoration": "none" }}>
+          <DesignLink href={"/admin/login"} aria-label={"Beltran Carlos Ccapa · cerrar sesión"} title={"Cerrar sesión"} style={{ "position": "relative", "width": "42px", "height": "42px", "borderRadius": "50%", "background": "#FFFFFF", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "13px", "fontWeight": "700", "textDecoration": "none" }}>
             {"BC"}
             <span style={{ "position": "absolute", "right": "-1px", "bottom": "-1px", "width": "12px", "height": "12px", "borderRadius": "50%", "background": "#34C759", "border": "2px solid #0E0E0E" }}></span>
-          </a>
+          </DesignLink>
         </nav>
         {Boolean(lookup(v, "showInbox")) && (
           <Fragment>
@@ -978,12 +979,12 @@ export default function Admin(props) {
                               </span>
                             </Fragment>
                           )}
-                          <a href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "minHeight": "46px", "padding": "0 16px", "borderRadius": "12px", "border": "1px solid #DADAD6", "color": "#111111", "textDecoration": "none", "fontSize": "14px", "fontWeight": "600" }}>
+                          <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "minHeight": "46px", "padding": "0 16px", "borderRadius": "12px", "border": "1px solid #DADAD6", "color": "#111111", "textDecoration": "none", "fontSize": "14px", "fontWeight": "600" }}>
                             <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#25A244"} strokeWidth={"2"} aria-hidden={"true"}>
                               <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                             </svg>
                             {"Escribir al cliente"}
-                          </a>
+                          </DesignLink>
                           <button style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "minHeight": "46px", "padding": "0 16px", "borderRadius": "12px", "border": "1px solid #DADAD6", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Roboto, sans-serif", "fontSize": "14px", "fontWeight": "600" }}>
                             <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                               <path d={"M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"}></path>
@@ -1194,12 +1195,12 @@ export default function Admin(props) {
                           </span>
                         </div>
                         <div style={{ "display": "flex", "gap": "10px", "flexWrap": "wrap" }}>
-                          <a href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "minHeight": "46px", "padding": "0 20px", "borderRadius": "12px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
+                          <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "minHeight": "46px", "padding": "0 20px", "borderRadius": "12px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
                             <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} aria-hidden={"true"}>
                               <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                             </svg>
                             {"Enviar por WhatsApp"}
-                          </a>
+                          </DesignLink>
                           <button style={{ "minHeight": "46px", "padding": "0 16px", "borderRadius": "12px", "border": "1px solid #DADAD6", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Roboto, sans-serif", "fontSize": "14px", "fontWeight": "600" }}>
                             {"Descargar PDF"}
                           </button>
@@ -1987,12 +1988,12 @@ export default function Admin(props) {
                         </span>
                       </div>
                       <div style={{ "display": "flex", "gap": "8px", "marginTop": "4px" }}>
-                        <a href={"https://wa.me/51954802744"} style={{ "flex": "1", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "8px", "minHeight": "44px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600" }}>
+                        <DesignLink href={"https://wa.me/51954802744"} style={{ "flex": "1", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "8px", "minHeight": "44px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600" }}>
                           <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                             <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                           </svg>
                           {"Responder"}
-                        </a>
+                        </DesignLink>
                         <button style={{ "minHeight": "44px", "padding": "0 16px", "borderRadius": "10px", "border": "1px solid #DADAD6", "background": "#FFFFFF", "cursor": "pointer", "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600" }}>
                           {"Ver detalle"}
                         </button>
@@ -2106,11 +2107,11 @@ export default function Admin(props) {
                                 {lookup(c, "channel")}
                               </td>
                               <td style={{ "padding": "12px 8px", "textAlign": "right", "whiteSpace": "nowrap" }}>
-                                <a href={"https://wa.me/51954802744"} aria-label={"Escribir por WhatsApp"} style={{ "width": "36px", "height": "36px", "borderRadius": "10px", "background": "#25D366", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "verticalAlign": "middle" }}>
+                                <DesignLink href={"https://wa.me/51954802744"} aria-label={"Escribir por WhatsApp"} style={{ "width": "36px", "height": "36px", "borderRadius": "10px", "background": "#25D366", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "verticalAlign": "middle" }}>
                                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} aria-hidden={"true"}>
                                     <path d={"M12 3a9 9 0 0 0-7.8 13.4L3 21l4.7-1.2A9 9 0 1 0 12 3z"} fill={"#FFFFFF"}></path>
                                   </svg>
-                                </a>
+                                </DesignLink>
                                 <button style={{ "minHeight": "36px", "padding": "0 12px", "borderRadius": "10px", "border": "1px solid #DADAD6", "background": "#FFFFFF", "cursor": "pointer", "fontVariantNumeric": "tabular-nums", "fontSize": "13px", "fontWeight": "600", "verticalAlign": "middle" }}>
                                   {"Ver ficha"}
                                 </button>
@@ -2315,9 +2316,9 @@ export default function Admin(props) {
                         {"Las 4 pestañas que rotan en la portada de la tienda."}
                       </span>
                     </div>
-                    <a href={"/tienda"} style={{ "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600", "textUnderlineOffset": "4px", "minHeight": "44px", "display": "inline-flex", "alignItems": "center" }}>
+                    <DesignLink href={"/tienda"} style={{ "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600", "textUnderlineOffset": "4px", "minHeight": "44px", "display": "inline-flex", "alignItems": "center" }}>
                       {"Ver en la tienda ↗"}
-                    </a>
+                    </DesignLink>
                   </div>
                   {(lookup(v, "slides") || []).map((s, index40) => (
                     <Fragment key={index40}>
@@ -2486,9 +2487,9 @@ export default function Admin(props) {
                     <h2 style={{ "margin": "0", "fontSize": "16px", "fontWeight": "700" }}>
                       {"Botones de la página de enlaces"}
                     </h2>
-                    <a href={"/enlaces"} style={{ "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600", "textUnderlineOffset": "4px", "minHeight": "44px", "display": "inline-flex", "alignItems": "center" }}>
+                    <DesignLink href={"/enlaces"} style={{ "fontVariantNumeric": "tabular-nums", "fontSize": "12px", "fontWeight": "600", "textUnderlineOffset": "4px", "minHeight": "44px", "display": "inline-flex", "alignItems": "center" }}>
                       {"Ver página ↗"}
-                    </a>
+                    </DesignLink>
                   </div>
                   {(lookup(v, "linkRows") || []).map((l, index45) => (
                     <Fragment key={index45}>
@@ -2543,9 +2544,9 @@ export default function Admin(props) {
                     <button style={{ "minHeight": "40px", "padding": "0 14px", "borderRadius": "10px", "border": "none", "background": lookup(v, "accent"), "cursor": "pointer", "fontVariantNumeric": "tabular-nums", "fontSize": "13px", "fontWeight": "600" }}>
                       {"Descargar SVG"}
                     </button>
-                    <a href={"/cartel-qr"} style={{ "minHeight": "40px", "padding": "0 14px", "borderRadius": "999px", "border": "1px solid #FFFFFF", "color": "#FFFFFF", "textDecoration": "none", "display": "inline-flex", "alignItems": "center", "fontVariantNumeric": "tabular-nums", "fontSize": "13px", "fontWeight": "600" }}>
+                    <DesignLink href={"/cartel-qr"} style={{ "minHeight": "40px", "padding": "0 14px", "borderRadius": "999px", "border": "1px solid #FFFFFF", "color": "#FFFFFF", "textDecoration": "none", "display": "inline-flex", "alignItems": "center", "fontVariantNumeric": "tabular-nums", "fontSize": "13px", "fontWeight": "600" }}>
                       {"Ver cartel"}
-                    </a>
+                    </DesignLink>
                   </div>
                   <span style={{ "fontSize": "12px", "color": "#CFCFCF" }}>
                     {"Escaneos este mes: 214 (ejemplo)"}
