@@ -15,3 +15,16 @@ export function rutaCategoria(categorias, id) {
 export function opcionesCategoria(categorias) {
   return [...categorias].sort((a, b) => rutaCategoria(categorias, a.id).localeCompare(rutaCategoria(categorias, b.id), 'es'));
 }
+
+export function nivelCategoria(categorias, id) {
+  const mapa = new Map(categorias.map(c => [c.id, c]));
+  const vistos = new Set();
+  let nivel = 0;
+  let padre = mapa.get(id)?.categoriaPadreId;
+  while (padre && mapa.has(padre) && !vistos.has(padre)) {
+    vistos.add(padre);
+    nivel++;
+    padre = mapa.get(padre)?.categoriaPadreId;
+  }
+  return nivel;
+}
