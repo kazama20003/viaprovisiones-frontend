@@ -6,6 +6,7 @@ import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 import { opcionesCategoria, rutaCategoria } from '../categoria-jerarquia';
 import { CodigoBarras, EscanerCodigo, QrProducto } from '../producto-codigos';
+import { atributosIniciales, claveVariante, nombreVariante, prepararVariantes } from '../variantes';
 
 class Component extends DesignLogic {
   constructor(props) {
@@ -17,7 +18,8 @@ class Component extends DesignLogic {
       name: p?.nombre || '', sku: p?.sku || '', marca: p?.marca || '', codigoBarras: p?.codigoBarras || '',
       desc: p?.descripcion || '',
       prices: { pub: p?.precios?.['Público'] ?? p?.precio ?? 0, min: p?.precios?.Minorista ?? 0, may: p?.precios?.Mayorista ?? 0, emp: p?.precios?.Empresa ?? 0 },
-      uploading: false, uploadError: '', uploadMessage: '', scanning: false, colors: p?.datosAdicionales?.colores || [], caps: p?.datosAdicionales?.capacidades || [],
+      uploading: false, uploadError: '', uploadMessage: '', scanning: false,
+      gruposVariantes: atributosIniciales(p?.datosAdicionales), preciosVariantes: Object.fromEntries((p?.variantes || []).map(v => [claveVariante(v.atributos), v.precioPublico == null ? '' : String(v.precioPublico)])),
       categoria: p?.categoriaId || '', tags: p?.datosAdicionales?.etiquetas || [], tagInput: '',
       peso: p?.datosAdicionales?.peso || '', medidas: p?.datosAdicionales?.medidas || '', garantia: p?.datosAdicionales?.garantia || 'Sin garantía', tipoEnvio: p?.datosAdicionales?.tipoEnvio || 'Paquete pequeño',
       visible: p?.visibleEnTienda ?? false, featured: p?.destacado ?? false, delivery: p?.permiteDelivery ?? true, agency: p?.permiteAgencia ?? true, pickup: p?.permiteRecojo ?? true, minStock: p?.stockMinimo ?? 0
@@ -36,13 +38,13 @@ class Component extends DesignLogic {
     const imagenes = archivos.filter(a => a.tipo === 'imagen');
     const videos = archivos.filter(a => a.tipo === 'video');
     const principal = imagenes.find(a => a.principal) || imagenes[0];
-    const COLORS = ['Negro', 'Verde', 'Naranja'], CAPS = ['2000 mAh', '4000 mAh', '6000 mAh'];
-    const toggleIn = (key, v) => () => { const a = st[key]; const has = a.indexOf(v) !== -1; this.setState({ [key]: has ? a.filter((x) => x !== v) : a.concat([v]), saved: false }); };
+    let preparado = { atributos: [], combinaciones: [] }, errorVariantes = '';
+    try { preparado = prepararVariantes(st.gruposVariantes); } catch (error) { errorVariantes = error.message; }
     const SW = (label, sub, key) => ({ label, sub, on: st[key] ? 'true' : 'false', track: st[key] ? '#E8701F' : '#CFCFCB', knob: st[key] ? '21px' : '3px', toggle: () => this.setState({ [key]: !st[key] }) });
     const STS = { Publicado: ['#E4F4E7', '#1B5E20', OK], Borrador: ['#FFF4D6', '#7A4A00', 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4'], Oculto: ['#EFEFEC', '#444444', 'M3 3l18 18M10.6 6.1A10 10 0 0 1 22 12s-1.2 2.2-3.4 4.1M6.6 6.6C3.8 8.3 2 12 2 12s4 7 10 7c1.6 0 3-.4 4.3-1'] };
     const sstock = units <= st.minStock ? ['Stock bajo', '#7A4A00', WARN] : ['Disponible', '#1B5E20', OK];
     const pub = st.prices.pub;
-    const vcount = st.colors.length * st.caps.length;
+    const vcount = preparado.combinaciones.length;
     const todasCategorias = this.props.categorias || [];
     const categorias = opcionesCategoria(todasCategorias).filter(c => c.activa || c.id === st.categoria).map(c => ({ ...c, ruta: rutaCategoria(todasCategorias, c.id) }));
     const categoriaNombre = categorias.find(c => c.id === st.categoria)?.ruta || this.props.productoActual?.categoria || 'Sin categoría';
@@ -89,10 +91,13 @@ class Component extends DesignLogic {
       save: async () => {
         if (this.state.saving) return;
         if (!st.name.trim() || !st.sku.trim()) { this.setState({ error: 'Completa el nombre y el código SKU.' }); return; }
+        if (errorVariantes) { this.setState({ error: errorVariantes }); return; }
+        const preciosVariantes = {};
+        for (const atributos of preparado.combinaciones) { const key = claveVariante(atributos); const value = st.preciosVariantes[key]; if (value === '' || value == null) preciosVariantes[key] = null; else if (!Number.isFinite(Number(value)) || Number(value) < 0) { this.setState({ error:'El precio de la variante no es válido.' }); return; } else preciosVariantes[key] = Number(value); }
         if (this.props.estado !== 'success' || this.props.marcasEstado !== 'success') { this.setState({ error: 'Espera a que se carguen las categorías y marcas o reintenta la conexión.' }); return; }
         this.setState({ saving: true, error: '', saved: false });
         try {
-          const result = await this.props.onGuardarProducto(st.id, { nombre: st.name, sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras, descripcion: st.desc, estado: ({ Publicado: 'publicado', Borrador: 'borrador', Oculto: 'oculto' })[st.status], categoriaId: st.categoria || null, datosAdicionales: { peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, etiquetas: st.tags, colores: st.colors, capacidades: st.caps }, visibleEnTienda: st.visible, destacado: st.featured, permiteDelivery: st.delivery, permiteAgencia: st.agency, permiteRecojo: st.pickup, stockMinimo: st.minStock, precios: st.prices });
+          const result = await this.props.onGuardarProducto(st.id, { nombre: st.name, sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras, descripcion: st.desc, estado: ({ Publicado: 'publicado', Borrador: 'borrador', Oculto: 'oculto' })[st.status], categoriaId: st.categoria || null, datosAdicionales: { peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, etiquetas: st.tags, colores: preparado.atributos.find(a => a.nombre.toLocaleLowerCase('es') === 'color')?.valores || [], capacidades: preparado.atributos.find(a => a.nombre.toLocaleLowerCase('es') === 'capacidad')?.valores || [], atributosVariantes: preparado.atributos }, preciosVariantes, visibleEnTienda: st.visible, destacado: st.featured, permiteDelivery: st.delivery, permiteAgencia: st.agency, permiteRecojo: st.pickup, stockMinimo: st.minStock, precios: st.prices });
           this.setState({ id: result.datos.id, saving: false, saved: true });
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo guardar el producto.' }); }
       },
@@ -126,23 +131,24 @@ class Component extends DesignLogic {
       }),
       pubText: soles(pub),
       wholesaleText: 'Mayorista desde ' + soles(st.prices.may) + ' · 24 u.',
-      options: [['Color', 'colors', COLORS], ['Capacidad', 'caps', CAPS]].map((o) => ({
-        name: o[0],
-        values: o[2].map((v) => { const on = st[o[1]].indexOf(v) !== -1; return { label: v, pressed: on ? 'true' : 'false', aria: (on ? 'Quitar ' : 'Agregar ') + v, bg: on ? '#111111' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111111', border: on ? '#111111' : '#DCDCD8', icon: on ? 'M5 12l5 5 9-10' : 'M12 5v14M5 12h14', toggle: toggleIn(o[1], v) }; })
-      })),
-      variantCount: vcount + (vcount === 1 ? ' variante' : ' variantes') + ' · toca para agregar o quitar',
-      variants: st.colors.reduce((acc, c) => acc.concat(st.caps.map((k) => {
-        const existente = (this.props.productoActual?.variantes || []).find(v => v.atributos?.color === c && v.atributos?.capacidad === k);
+      gruposVariantes: st.gruposVariantes, errorVariantes,
+      agregarAtributo: () => this.setState({ gruposVariantes: [...st.gruposVariantes, { nombre:'', texto:'' }], saved:false }),
+      cambiarAtributo: (i, campo, valor) => this.setState({ gruposVariantes: st.gruposVariantes.map((g, n) => n === i ? { ...g, [campo]:valor } : g), saved:false }),
+      quitarAtributo: i => this.setState({ gruposVariantes: st.gruposVariantes.filter((_, n) => n !== i), saved:false }),
+      variantCount: vcount + (vcount === 1 ? ' variante' : ' variantes'),
+      variants: preparado.combinaciones.map(atributos => {
+        const key = claveVariante(atributos);
+        const existente = (this.props.productoActual?.variantes || []).find(v => claveVariante(v.atributos) === key);
         const stock = existente?.stock || 0;
         return {
-          name: c + ' · ' + k,
+          name: nombreVariante(atributos),
           sku: existente?.sku || 'Se asigna al guardar',
-          price: soles(pub),
+          price: st.preciosVariantes[key] ?? '', setPrice: e => this.setState({ preciosVariantes: { ...st.preciosVariantes, [key]:e.target.value }, saved:false }),
           stock: stock ? stock + ' u.' : 'Sin stock',
           fg: stock ? (stock < 5 ? '#7A4A00' : '#1B5E20') : '#8E1C14',
           icon: stock ? (stock < 5 ? WARN : OK) : BAD
         };
-      })), []),
+      }),
       ship: [SW('Recojo en tienda', 'Dean Valdivia 533', 'pickup'), SW('Delivery Arequipa', 'Motorizado', 'delivery'), SW('Agencia a provincias', 'Cusco, Puno, Moquegua…', 'agency')],
       tags: st.tags.map(t => ({ label: t, remove: () => this.setState({ tags: this.state.tags.filter(x => x !== t), saved: false }) })),
       orgToggles: [SW('Visible en la tienda', 'Aparece en catálogo y búsqueda', 'visible'), SW('Destacado', 'Sale en la portada y en ofertas', 'featured')],
@@ -493,25 +499,14 @@ export default function ProductoEditar(props) {
                       {lookup(v, "variantCount")}
                     </span>
                   </span>
-                  {(lookup(v, "options") || []).map((o, index5) => (
-                    <Fragment key={index5}>
-                      <div style={{ "display": "flex", "alignItems": "center", "gap": "10px", "flexWrap": "wrap" }}>
-                        <span style={{ "width": "90px", "fontSize": "13px", "fontWeight": "700" }}>
-                          {lookup(o, "name")}
-                        </span>
-                        {(lookup(o, "values") || []).map((v, index6) => (
-                          <Fragment key={index6}>
-                            <button onClick={lookup(v, "toggle")} aria-pressed={lookup(v, "pressed")} aria-label={lookup(v, "aria")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "height": "38px", "padding": "0 14px", "borderRadius": "999px", "border": "1px solid " + String(lookup(v, "border") ?? ""), "background": lookup(v, "bg"), "color": lookup(v, "fg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700" }}>
-                              <svg width={"12"} height={"12"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.6"} strokeLinecap={"round"} aria-hidden={"true"}>
-                                <path d={lookup(v, "icon")}></path>
-                              </svg>
-                              {lookup(v, "label")}
-                            </button>
-                          </Fragment>
-                        ))}
-                      </div>
-                    </Fragment>
-                  ))}
+                  <p style={{ margin:0,fontSize:13,color:'#6b6b6b' }}>Define atributos y separa sus valores con comas. Deja el precio vacío para usar el precio público del producto.</p>
+                  {(lookup(v, 'gruposVariantes') || []).map((grupo, index) => <div key={index} style={{ display:'flex',flexWrap:'wrap',gap:10,alignItems:'end' }}>
+                    <label className="pe-lab" style={{ flex:'1 1 130px' }}>Atributo<input className="pe-in" value={grupo.nombre} maxLength={50} placeholder="Ej.: Color" onChange={e => lookup(v, 'cambiarAtributo')(index, 'nombre', e.target.value)} /></label>
+                    <label className="pe-lab" style={{ flex:'2 1 220px' }}>Valores separados por comas<input className="pe-in" value={grupo.texto} placeholder="Ej.: Negro, Verde" onChange={e => lookup(v, 'cambiarAtributo')(index, 'texto', e.target.value)} /></label>
+                    <button type="button" onClick={() => lookup(v, 'quitarAtributo')(index)} style={{ border:0,borderRadius:999,padding:'12px 16px',cursor:'pointer' }}>Quitar</button>
+                  </div>)}
+                  {(lookup(v, 'gruposVariantes') || []).length < 3 && <button type="button" onClick={lookup(v, 'agregarAtributo')} style={{ alignSelf:'flex-start',border:0,borderRadius:999,padding:'12px 16px',background:'#f4f4f2',fontWeight:700,cursor:'pointer' }}>+ Agregar atributo</button>}
+                  {lookup(v, 'errorVariantes') && <p role="status" style={{ margin:0,color:'#a04d10',fontSize:12 }}>{lookup(v, 'errorVariantes')}</p>}
                   <div style={{ "overflowX": "auto" }} className={"noscroll"}>
                     <table style={{ "width": "100%", "minWidth": "560px", "borderCollapse": "collapse", "fontSize": "13px" }}>
                       <thead>
@@ -541,7 +536,7 @@ export default function ProductoEditar(props) {
                                 {lookup(r, "sku")}
                               </td>
                               <td style={{ "padding": "12px 10px", "fontWeight": "700", "fontVariantNumeric": "tabular-nums" }}>
-                                {lookup(r, "price")}
+                                <input type="number" min="0" step="0.01" aria-label={`Precio público ${r.name}`} value={r.price} onChange={r.setPrice} placeholder="Precio del producto" style={{ width:150,maxWidth:'100%',border:'1px solid #e4e4e0',borderRadius:10,padding:8 }} />
                               </td>
                               <td style={{ "padding": "12px 10px" }}>
                                 <span style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontWeight": "700", "color": lookup(r, "fg") }}>

@@ -4,11 +4,12 @@ import { Fragment } from "react";
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
+import { nombreVariante } from '../variantes';
 
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', loc: 0, saved: false, formHi: false, productoId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '' };
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', loc: 0, saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '' };
   }
   renderVals() {
     const B = 'img/';
@@ -43,9 +44,9 @@ class Component extends DesignLogic {
     const productosConectados = ['success', 'pending', 'error'].includes(this.props.apiProductosAdminState);
     const PROD = this.props.apiProductosAdminState === 'success'
       ? (this.props.apiProductosAdmin || []).map((p) => ({
-          id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Otros',
+          id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Otros', variantes: p.variantes || [],
           price: Number(p.precio || 0), min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
-          lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, l.proveedor?.nombre || 'Sin proveedor', new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', ({ disponible: 'Activo', en_revision: 'En revisión', agotado: 'Agotado', bloqueado: 'En revisión' })[l.estado] || 'En revisión'), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
+          lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, [l.proveedor?.nombre || 'Sin proveedor', l.variante && nombreVariante(l.variante.atributos)].filter(Boolean).join(' · '), new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', ({ disponible: 'Activo', en_revision: 'En revisión', agotado: 'Agotado', bloqueado: 'En revisión' })[l.estado] || 'En revisión'), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
           stockDisponible: Number(p.stockDisponible || 0),
         }))
       : productosConectados ? [] : PRODDemo;
@@ -122,15 +123,17 @@ class Component extends DesignLogic {
       formBg: st.formHi ? '#FFF1E6' : '#F4F4F2',
       saved: st.saved, codigo: st.codigo, error: st.error, aviso: st.aviso, saving: st.saving,
       productosForm: PROD.map(p => ({ id: p.id, name: p.name })),
+      variantesForm: (PROD.find(p => p.id === st.productoId)?.variantes || []).map(v => ({ id:v.id, nombre:`${nombreVariante(v.atributos)} · ${v.sku}` })), varianteId: st.varianteId,
       productoId: st.productoId, proveedor: st.proveedor, cantidad: st.cantidad, costo: st.costo, ingreso: st.ingreso, garantia: st.garantia, revisar: st.revisar,
       field: (key) => (e) => this.setState({ [key]: e.target.value, saved: false }),
-      setProducto: (e) => this.setState({ productoId: e.target.value, saved: false }), setProveedor: (e) => this.setState({ proveedor: e.target.value }), setCantidad: (e) => this.setState({ cantidad: e.target.value }), setCosto: (e) => this.setState({ costo: e.target.value }), setIngreso: (e) => this.setState({ ingreso: e.target.value }), setGarantia: (e) => this.setState({ garantia: e.target.value }), setRevisar: (e) => this.setState({ revisar: e.target.checked }),
+      setProducto: (e) => this.setState({ productoId: e.target.value, varianteId:'', saved: false }), setVariante: e => this.setState({ varianteId:e.target.value, saved:false }), setProveedor: (e) => this.setState({ proveedor: e.target.value }), setCantidad: (e) => this.setState({ cantidad: e.target.value }), setCosto: (e) => this.setState({ costo: e.target.value }), setIngreso: (e) => this.setState({ ingreso: e.target.value }), setGarantia: (e) => this.setState({ garantia: e.target.value }), setRevisar: (e) => this.setState({ revisar: e.target.checked }),
       saveLot: async () => {
         if (this.state.saving) return;
         if (!st.productoId || !st.cantidad || !st.costo || !st.ingreso) { this.setState({ error: 'Completa el producto, la cantidad, el costo y la fecha de ingreso.' }); return; }
+        if ((PROD.find(p => p.id === st.productoId)?.variantes || []).length && !st.varianteId) { this.setState({ error:'Selecciona la variante del lote.' }); return; }
         this.setState({ saving: true, saved: false, error: '' });
         try {
-          const result = await this.props.onRegistrarLote({ productoId: st.productoId, proveedor: st.proveedor, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, ubicacion: LOCS[st.loc], revisar: st.revisar });
+          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedor: st.proveedor, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, ubicacion: LOCS[st.loc], revisar: st.revisar });
           this.setState({ saving: false, saved: true, codigo: result.datos.codigo, formHi: false, cantidad: '', costo: '' });
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo registrar el lote.' }); }
       },
@@ -680,6 +683,7 @@ export default function Inventario(props) {
                         {(lookup(v, "productosForm") || []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
                     </label>
+                    {(lookup(v, 'variantesForm') || []).length > 0 && <label style={{ display:'flex',flexDirection:'column',gap:6,fontSize:12,fontWeight:700 }}>Variante<select value={lookup(v, 'varianteId')} onChange={lookup(v, 'setVariante')} style={{ height:44,border:'none',borderRadius:14,padding:'0 12px',background:'#fff',fontFamily:'inherit',fontSize:13 }}><option value="">Selecciona una variante</option>{lookup(v, 'variantesForm').map(x => <option key={x.id} value={x.id}>{x.nombre}</option>)}</select></label>}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Proveedor"}
                       <input type={"text"} value={lookup(v, "proveedor")} onChange={lookup(v, "setProveedor")} placeholder={"[PROVEEDOR]"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
