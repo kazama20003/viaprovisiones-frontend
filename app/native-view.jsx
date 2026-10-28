@@ -7,6 +7,8 @@ import Banners from "./design-views/Banners";
 import Caja from "./design-views/Caja";
 import Clientes from "./design-views/Clientes";
 import CategoriasAdmin from "./design-views/CategoriasAdmin";
+import MarcasAdmin from "./design-views/MarcasAdmin";
+import ProductoPublico from "./design-views/ProductoPublico";
 import Compras from "./design-views/Compras";
 import Comprobantes from "./design-views/Comprobantes";
 import Cotizaciones from "./design-views/Cotizaciones";
@@ -28,7 +30,7 @@ import { Suspense, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { pinPanelMenu, registerPopup } from "./panel-menu-state";
-import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarCategorias, guardarCategoria, listarClientes, listarPedidos, listarProductos, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion } from "./backend-api";
+import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion } from "./backend-api";
 
 const views = {
   Admin: dynamic(() => import("./design-views/Admin"), { ssr: false }),
@@ -42,6 +44,7 @@ const views = {
   CartelQR: dynamic(() => import("./design-views/CartelQR"), { ssr: false }),
   Categoria: dynamic(() => import("./design-views/Categoria"), { ssr: false }),
   CategoriasAdmin,
+  MarcasAdmin,
   Checkout: dynamic(() => import("./design-views/Checkout"), { ssr: false }),
   Clientes,
   Compras,
@@ -76,7 +79,7 @@ const views = {
   TiendaMovil: dynamic(() => import("./design-views/TiendaMovil"), { ssr: false }),
   Traslados,
 };
-const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","CategoriasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
+const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","CategoriasAdmin","MarcasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
 const mobileViews = new Set(["AdminMovil","MovilAlmacen","MovilFinanzas","MovilMarketing","TiendaMovil"]);
 
 function PanelMenuPopup({ View, ...props }) {
@@ -94,6 +97,7 @@ function ConnectedView({ name }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const productoId = name === 'ProductoEditar' ? searchParams.get('id') : null;
+  const productoPublicoId = name === 'Producto' ? searchParams.get('id') : null;
   const queryClient = useQueryClient();
   const cargaCatalogo = ["Main", "Categoria", "Busqueda"].includes(name);
   const requiereSesion = panelViews.has(name) && name !== "AdminLogin";
@@ -102,6 +106,8 @@ function ConnectedView({ name }) {
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
   const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario"].includes(name) });
   const categorias = useQuery({ queryKey: ['categorias', 'admin'], queryFn: ({ signal }) => listarCategorias(signal), enabled: ['CategoriasAdmin', 'ProductoEditar'].includes(name) });
+  const marcas = useQuery({ queryKey: ['marcas', 'admin'], queryFn: ({ signal }) => listarMarcas(signal), enabled: ['MarcasAdmin', 'ProductoEditar'].includes(name) });
+  const productoPublico = useQuery({ queryKey: ['tienda', 'producto', productoPublicoId], queryFn: ({ signal }) => obtenerProductoTienda(productoPublicoId, signal), enabled: !!productoPublicoId });
   const productos = useQuery({
     queryKey: ["tienda", "productos"],
     queryFn: ({ signal }) => listarProductos(signal),
@@ -133,6 +139,7 @@ function ConnectedView({ name }) {
   });
   const productoMutation = useMutation({ mutationFn: ({ id, datos }) => guardarProducto(id, datos), onSuccess: async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); } });
   const categoriaMutation = useMutation({ mutationFn: ({ id, datos }) => guardarCategoria(id, datos), onSuccess: async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['categorias'] }), queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); } });
+  const marcaMutation = useMutation({ mutationFn: ({ id, datos }) => guardarMarca(id, datos), onSuccess: async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['marcas'] }), queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda'] })]); } });
   const loteMutation = useMutation({ mutationFn: registrarLote, onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['productos'] }); queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] }); } });
   const operarLoteMutation = useMutation({ mutationFn: ({ id, accion, datos }) => operarLote(id, accion, datos), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['productos'] }); queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] }); } });
   const actualizarArchivos = async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); };
@@ -155,6 +162,7 @@ function ConnectedView({ name }) {
   if (name === 'ProductoEditar' && productoId && productosAdmin.isPending) return <main className="design-frame-shell" aria-busy="true" />;
   if (name === 'ProductoEditar' && productoId && productosAdmin.isError) return <main role="alert" style={{ padding: 32 }}>No se pudo cargar el producto. <button type="button" onClick={() => productosAdmin.refetch()}>Reintentar</button></main>;
   if (name === 'ProductoEditar' && productoId && !productosAdmin.data?.datos.some(p => p.id === productoId)) return <main role="alert" style={{ padding: 32 }}>No se encontró el producto. <Link href="/inventario">Volver al inventario</Link></main>;
+  if (productoPublicoId) return <ProductoPublico key={productoPublicoId} producto={productoPublico.data?.datos || null} estado={productoPublico.status} error={productoPublico.error?.message} reintentar={() => productoPublico.refetch()} />;
   return <div style={{ display: "contents" }} onClickCapture={(event) => {
     if (!requiereSesion || cerrar.isPending) return;
     const enlace = event.target instanceof Element ? event.target.closest("a[href]") : null;
@@ -184,6 +192,7 @@ function ConnectedView({ name }) {
     onAvanzarPedido={(id, estado) => transicionarPedido.mutate({ id, estado })}
     productoActual={productosAdmin.data?.datos.find(p => p.id === productoId) || null}
     categorias={categorias.data?.datos || []} estado={categorias.status} error={categorias.error?.message || ''} reintentar={() => categorias.refetch()}
+    marcas={marcas.data?.datos || []} marcasEstado={marcas.status} marcasError={marcas.error?.message || ''} reintentarMarcas={() => marcas.refetch()} guardarMarca={(id, datos) => marcaMutation.mutateAsync({ id, datos })} marcaPendiente={marcaMutation.isPending}
     guardarCategoria={(id, datos) => categoriaMutation.mutateAsync({ id, datos })} pendiente={categoriaMutation.isPending}
     onGuardarProducto={async (id, datos) => { const result = await productoMutation.mutateAsync({ id, datos }); if (!id) router.replace(`/producto/editar?id=${encodeURIComponent(result.datos.id)}`); return result; }}
     onSubirArchivo={async (id, archivo) => { const result = await subirArchivoProducto(id, archivo); await actualizarArchivos(); return result; }}

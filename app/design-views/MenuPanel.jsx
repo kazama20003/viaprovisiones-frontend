@@ -63,6 +63,7 @@ class Component extends DesignLogic {
       inv: ['Inventario', 'Inventario y lotes', 'Stock por lote', '/inventario', IC.inv, '6 bajos', 6, true],
       nuevoProducto: ['ProductoEditar', 'Crear producto', 'Agregar al catálogo', '/producto/editar', 'M12 5v14M5 12h14'],
       categorias: ['CategoriasAdmin', 'Categorías', 'Organizar el catálogo', '/categorias', IC.inv],
+      marcas: ['MarcasAdmin', 'Marcas', 'Administrar marcas', '/marcas', IC.inv],
       compras: ['Compras', 'Compras', 'Órdenes de compra', '/compras', IC.compras, '3 en camino'],
       prov: ['', 'Proveedores', 'Datos y deudas', '/compras', IC.prov],
       traslado: ['Traslados', 'Traslados', 'Entre tienda y almacén', '/traslados', IC.traslado],
@@ -84,7 +85,7 @@ class Component extends DesignLogic {
     const G = [
       ['fav', 'Favoritos', 'Lo que más usas', IC.star, ['pos', 'pedidos', 'inv', 'cotiz', 'caja', 'panel']],
       ['ventas', 'Ventas', 'Mostrador, pedidos y clientes', IC.ventas, ['pos', 'pedidos', 'cotiz', 'clientes', 'devol']],
-      ['almacen', 'Almacén', 'Stock, lotes y compras', IC.almacen, ['inv', 'nuevoProducto', 'categorias', 'kardex', 'compras', 'prov', 'traslado']],
+      ['almacen', 'Almacén', 'Stock, lotes y compras', IC.almacen, ['inv', 'nuevoProducto', 'categorias', 'marcas', 'kardex', 'compras', 'prov', 'traslado']],
       ['finanzas', 'Finanzas', 'Caja, cobros y gastos', IC.finanzas, ['caja', 'cobro', 'gasto', 'sunat']],
       ['tienda', 'Tienda y marketing', 'Canales de venta', IC.tienda, ['web', 'qr', 'cupon', 'banner']],
       ['analisis', 'Análisis', 'Cómo va el negocio', IC.analisis, ['panel', 'reportes']],
