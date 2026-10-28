@@ -4,6 +4,7 @@ export type ProductoTienda = {
   nombre: string;
   descripcion: string | null;
   categoria: string | null;
+  categoriasRuta: string[];
   precio: number;
   imagen: string | null;
   textoAlternativo: string;
@@ -79,9 +80,9 @@ export function listarProductosAdministracion(signal?: AbortSignal) {
 
 export type DetallesProducto = { peso: string; medidas: string; garantia: string; tipoEnvio: string; etiquetas: string[]; colores: string[]; capacidades: string[] };
 export type ProductoAdmin = { id: string; sku: string; nombre: string; descripcion: string | null; marca: string | null; codigoBarras: string | null; estado: string; categoria: string | null; categoriaId: string | null; precio: number; precios: Record<string, number>; datosAdicionales: Partial<DetallesProducto>; variantes: { sku: string; atributos: { color?: string; capacidad?: string }; stock: number }[]; historial: { accion: string; creadoEn: string }[]; imagen: string | null; archivos: ArchivoProducto[]; stockDisponible: number; stockMinimo: number; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; lotes: { id: string; codigo: string; costoUnitario: number; fechaIngreso: string; garantiaHasta: string | null; estado: string; proveedor: { nombre: string } | null; existencias: { cantidadFisica: number; cantidadReservada: number; almacen: { id: string; nombre: string; codigo: string } }[] }[] };
-export type CategoriaAdmin = { id: string; nombre: string; descripcion: string | null; activa: boolean; _count: { productos: number } };
+export type CategoriaAdmin = { id: string; nombre: string; descripcion: string | null; activa: boolean; categoriaPadreId: string | null; _count: { productos: number } };
 export function listarCategorias(signal?: AbortSignal) { return request<{ datos: CategoriaAdmin[] }>('/categorias', { signal }); }
-export function guardarCategoria(id: string | null, datos: { nombre?: string; descripcion?: string; activa?: boolean }) { return request(`/categorias${id ? '/' + encodeURIComponent(id) : ''}`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) }); }
+export function guardarCategoria(id: string | null, datos: { nombre?: string; descripcion?: string; activa?: boolean; categoriaPadreId?: string | null }) { return request(`/categorias${id ? '/' + encodeURIComponent(id) : ''}`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) }); }
 export type ArchivoProducto = { id: string; tipo: 'imagen' | 'video'; mime: string; tamano: number; url: string; principal: boolean };
 export function subirArchivoProducto(id: string, archivo: File) {
   const body = new FormData(); body.append('archivo', archivo);

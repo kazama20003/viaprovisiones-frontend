@@ -29,17 +29,17 @@ class Component extends DesignLogic {
     const productosApi = Array.isArray(this.props.apiProductos) ? this.props.apiProductos : [];
     const productos = catalogoConectado
       ? productosApi.map((p) => ({
-          id: p.id, sub: p.categoria || 'Otros', name: p.nombre,
+          id: p.id, sub: p.categoria || 'Otros', ruta: p.categoriasRuta?.length ? p.categoriasRuta : [p.categoria || 'Otros'], name: p.nombre,
           price: 'S/ ' + Number(p.precio).toFixed(2), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
           badge: p.stockDisponible <= 5 ? (p.stockDisponible > 0 ? 'Pocas unidades' : 'Agotado') : '',
           stockDisponible: p.stockDisponible,
         }))
       : catalogoEnConsulta ? [] : all;
     const names = catalogoConectado
-      ? ['Todo', ...new Set(productos.map((p) => p.sub))]
+      ? ['Todo', ...new Set(productos.flatMap((p) => p.ruta))]
       : ['Todo', 'Lámparas y linternas', 'Casas de campaña', 'Cocina de campamento', 'Mochilas', 'Sillas plegables'];
     const cur = this.state.sub;
-    const items = productos.filter((p) => cur === 'Todo' || p.sub === cur).map((p) => ({
+    const items = productos.filter((p) => cur === 'Todo' || (p.ruta || [p.sub]).includes(cur)).map((p) => ({
       ...p,
       img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
       was: p.was || '',
@@ -54,7 +54,7 @@ class Component extends DesignLogic {
       add: () => this.setState({ cart: this.state.cart + 1 }),
       subs: names.map((name) => ({
         name,
-        count: String(name === 'Todo' ? productos.length : productos.filter((p) => p.sub === name).length),
+        count: String(name === 'Todo' ? productos.length : productos.filter((p) => (p.ruta || [p.sub]).includes(name)).length),
         pressed: cur === name ? 'true' : 'false',
         bg: cur === name ? accent : '#FFFFFF',
         pick: () => this.setState({ sub: name })

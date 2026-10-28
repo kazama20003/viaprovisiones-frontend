@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
+import { opcionesCategoria, rutaCategoria } from '../categoria-jerarquia';
 
 class Component extends DesignLogic {
   constructor(props) {
@@ -41,8 +42,9 @@ class Component extends DesignLogic {
     const sstock = units <= st.minStock ? ['Stock bajo', '#7A4A00', WARN] : ['Disponible', '#1B5E20', OK];
     const pub = st.prices.pub;
     const vcount = st.colors.length * st.caps.length;
-    const categorias = (this.props.categorias || []).filter(c => c.activa || c.id === st.categoria);
-    const categoriaNombre = categorias.find(c => c.id === st.categoria)?.nombre || this.props.productoActual?.categoria || 'Sin categoría';
+    const todasCategorias = this.props.categorias || [];
+    const categorias = opcionesCategoria(todasCategorias).filter(c => c.activa || c.id === st.categoria).map(c => ({ ...c, ruta: rutaCategoria(todasCategorias, c.id) }));
+    const categoriaNombre = categorias.find(c => c.id === st.categoria)?.ruta || this.props.productoActual?.categoria || 'Sin categoría';
     return {
       accent: this.props.accent ?? '#FF914C',
       menuOpen: st.menu || !!this.props.menuAbierto,
@@ -661,7 +663,7 @@ export default function ProductoEditar(props) {
                     {"Categoría"}
                     <select className={"pe-in"} value={lookup(v, "categoria")} onChange={lookup(v, "setCategoria")} disabled={lookup(v, "categoriaEstado") !== 'success'}>
                       <option value="">Sin categoría</option>
-                      {(lookup(v, "categorias") || []).map(c => <option key={c.id} value={c.id}>{c.nombre}{c.activa ? '' : ' (inactiva)'}</option>)}
+                      {(lookup(v, "categorias") || []).map(c => <option key={c.id} value={c.id}>{c.ruta}{c.activa ? '' : ' (inactiva)'}</option>)}
                     </select>
                   </label>
                   {lookup(v, "categoriaEstado") === 'error' && <p role="alert" style={{ margin: 0, color: '#8E1C14', fontSize: 12 }}>{lookup(v, "categoriaError") || 'No se pudieron cargar las categorías.'} <button type="button" onClick={props.reintentar}>Reintentar</button></p>}
