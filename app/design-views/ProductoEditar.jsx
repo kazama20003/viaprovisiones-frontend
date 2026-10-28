@@ -5,6 +5,7 @@ import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 import { opcionesCategoria, rutaCategoria } from '../categoria-jerarquia';
+import { CodigoBarras, EscanerCodigo, QrProducto } from '../producto-codigos';
 
 class Component extends DesignLogic {
   constructor(props) {
@@ -16,7 +17,7 @@ class Component extends DesignLogic {
       name: p?.nombre || '', sku: p?.sku || '', marca: p?.marca || '', codigoBarras: p?.codigoBarras || '',
       desc: p?.descripcion || '',
       prices: { pub: p?.precios?.['Público'] ?? p?.precio ?? 0, min: p?.precios?.Minorista ?? 0, may: p?.precios?.Mayorista ?? 0, emp: p?.precios?.Empresa ?? 0 },
-      uploading: false, uploadError: '', uploadMessage: '', colors: p?.datosAdicionales?.colores || [], caps: p?.datosAdicionales?.capacidades || [],
+      uploading: false, uploadError: '', uploadMessage: '', scanning: false, colors: p?.datosAdicionales?.colores || [], caps: p?.datosAdicionales?.capacidades || [],
       categoria: p?.categoriaId || '', tags: p?.datosAdicionales?.etiquetas || [], tagInput: '',
       peso: p?.datosAdicionales?.peso || '', medidas: p?.datosAdicionales?.medidas || '', garantia: p?.datosAdicionales?.garantia || 'Sin garantía', tipoEnvio: p?.datosAdicionales?.tipoEnvio || 'Paquete pequeño',
       visible: p?.visibleEnTienda ?? false, featured: p?.destacado ?? false, delivery: p?.permiteDelivery ?? true, agency: p?.permiteAgencia ?? true, pickup: p?.permiteRecojo ?? true, minStock: p?.stockMinimo ?? 0
@@ -56,6 +57,10 @@ class Component extends DesignLogic {
       togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
       name: st.name,
       sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras,
+      marcas: (this.props.marcas || []).filter(m => m.activa || m.nombre === st.marca), marcasEstado: this.props.marcasEstado,
+      scanning: st.scanning, abrirEscaner: () => this.setState({ scanning: true }), cerrarEscaner: () => this.setState({ scanning: false }), codigoDetectado: (value) => this.setState({ codigoBarras: value, scanning: false, saved: false }),
+      productoId: st.id, productoPublicado: this.props.productoActual?.estado === 'publicado', productoVisible: !!this.props.productoActual?.visibleEnTienda,
+      codigoGuardado: this.props.productoActual?.codigoBarras || '',
       setSku: (e) => this.setState({ sku: e.target.value, saved: false }),
       setMarca: (e) => this.setState({ marca: e.target.value, saved: false }),
       setCodigoBarras: (e) => this.setState({ codigoBarras: e.target.value, saved: false }),
@@ -84,7 +89,7 @@ class Component extends DesignLogic {
       save: async () => {
         if (this.state.saving) return;
         if (!st.name.trim() || !st.sku.trim()) { this.setState({ error: 'Completa el nombre y el código SKU.' }); return; }
-        if (this.props.estado !== 'success') { this.setState({ error: 'Espera a que se carguen las categorías o reintenta la conexión.' }); return; }
+        if (this.props.estado !== 'success' || this.props.marcasEstado !== 'success') { this.setState({ error: 'Espera a que se carguen las categorías y marcas o reintenta la conexión.' }); return; }
         this.setState({ saving: true, error: '', saved: false });
         try {
           const result = await this.props.onGuardarProducto(st.id, { nombre: st.name, sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras, descripcion: st.desc, estado: ({ Publicado: 'publicado', Borrador: 'borrador', Oculto: 'oculto' })[st.status], categoriaId: st.categoria || null, datosAdicionales: { peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, etiquetas: st.tags, colores: st.colors, capacidades: st.caps }, visibleEnTienda: st.visible, destacado: st.featured, permiteDelivery: st.delivery, permiteAgencia: st.agency, permiteRecojo: st.pickup, stockMinimo: st.minStock, precios: st.prices });
@@ -211,7 +216,7 @@ export default function ProductoEditar(props) {
                     </Fragment>
                   ))}
                 </div>
-                <DesignLink href={"/producto"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "52px", "padding": "0 20px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
+                <DesignLink href={lookup(v, 'productoId') ? `/producto?id=${encodeURIComponent(lookup(v, 'productoId'))}` : '/producto'} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "52px", "padding": "0 20px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"}></path>
                   </svg>
@@ -303,7 +308,7 @@ export default function ProductoEditar(props) {
                   <div style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "12px" }}>
                     <label className={"pe-lab"}>
                       {"Marca"}
-                      <input className={"pe-in"} value={lookup(v, "marca")} onChange={lookup(v, "setMarca")} />
+                      <select className={"pe-in"} value={lookup(v, "marca")} onChange={lookup(v, "setMarca")} disabled={lookup(v, 'marcasEstado') !== 'success'}><option value="">Sin marca</option>{(lookup(v, 'marcas') || []).map(m => <option key={m.id} value={m.nombre}>{m.nombre}{m.activa ? '' : ' (inactiva)'}</option>)}</select><DesignLink href="/marcas" style={{ fontSize:12,color:'#c2410c',fontWeight:700 }}>Administrar marcas ›</DesignLink>
                     </label>
                     <label className={"pe-lab"}>
                       {"Código / SKU"}
@@ -313,7 +318,7 @@ export default function ProductoEditar(props) {
                       {"Código de barras"}
                       <span style={{ "display": "flex", "gap": "6px" }}>
                         <input className={"pe-in"} value={lookup(v, "codigoBarras")} onChange={lookup(v, "setCodigoBarras")} />
-                        <button aria-label={"Escanear código"} style={{ "width": "46px", "height": "46px", "flex": "none", "borderRadius": "14px", "border": "none", "background": "#F4F4F2", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
+                        <button type="button" onClick={lookup(v, 'abrirEscaner')} aria-label={"Escanear código"} style={{ "width": "46px", "height": "46px", "flex": "none", "borderRadius": "14px", "border": "none", "background": "#F4F4F2", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                           <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} aria-hidden={"true"}>
                             <path d={"M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3M8 8v8M11 8v8M14 8v8M17 8v8"}></path>
                           </svg>
@@ -321,7 +326,11 @@ export default function ProductoEditar(props) {
                       </span>
                     </label>
                   </div>
+                  {lookup(v, 'marcasEstado') === 'error' && <p role="alert" style={{ margin:0,color:'#8e1c14',fontSize:12 }}>{props.marcasError || 'No se pudieron cargar las marcas.'} <button type="button" onClick={props.reintentarMarcas}>Reintentar</button></p>}
+                  {truthy(lookup(v, 'scanning')) && <EscanerCodigo onDetectar={lookup(v, 'codigoDetectado')} onCerrar={lookup(v, 'cerrarEscaner')} />}
                 </section>
+                <QrProducto id={lookup(v, 'productoId')} publicado={lookup(v, 'productoPublicado')} visible={lookup(v, 'productoVisible')} />
+                <CodigoBarras valor={lookup(v, 'codigoGuardado')} />
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px" }}>
                     <span style={{ "fontSize": "18px", "fontWeight": "700" }}>

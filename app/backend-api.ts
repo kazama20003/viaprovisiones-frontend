@@ -53,6 +53,8 @@ async function request<T>(ruta: string, init: RequestInit = {}): Promise<T> {
 export function listarProductos(signal?: AbortSignal) {
   return request<ListaProductos>("/tienda/productos", { signal });
 }
+export type DetalleTienda = { id: string; nombre: string; sku: string; marca: string | null; descripcion: string | null; categoria: { nombre: string } | null; imagenes: { url: string; textoAlternativo: string | null; esPrincipal: boolean }[]; precios: { precioUnitario: number; cantidadMinima: number }[] };
+export function obtenerProductoTienda(id: string, signal?: AbortSignal) { return request<{ datos: DetalleTienda }>(`/tienda/productos/${encodeURIComponent(id)}`, { signal }); }
 
 export function iniciarSesion(credenciales: Credenciales) {
   return request<{ datos: UsuarioSesion }>("/sesion/iniciar", {
@@ -82,6 +84,9 @@ export type DetallesProducto = { peso: string; medidas: string; garantia: string
 export type ProductoAdmin = { id: string; sku: string; nombre: string; descripcion: string | null; marca: string | null; codigoBarras: string | null; estado: string; categoria: string | null; categoriaId: string | null; precio: number; precios: Record<string, number>; datosAdicionales: Partial<DetallesProducto>; variantes: { sku: string; atributos: { color?: string; capacidad?: string }; stock: number }[]; historial: { accion: string; creadoEn: string }[]; imagen: string | null; archivos: ArchivoProducto[]; stockDisponible: number; stockMinimo: number; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; lotes: { id: string; codigo: string; costoUnitario: number; fechaIngreso: string; garantiaHasta: string | null; estado: string; proveedor: { nombre: string } | null; existencias: { cantidadFisica: number; cantidadReservada: number; almacen: { id: string; nombre: string; codigo: string } }[] }[] };
 export type CategoriaAdmin = { id: string; nombre: string; descripcion: string | null; activa: boolean; categoriaPadreId: string | null; _count: { productos: number } };
 export function listarCategorias(signal?: AbortSignal) { return request<{ datos: CategoriaAdmin[] }>('/categorias', { signal }); }
+export type MarcaAdmin = { id: string; nombre: string; activa: boolean };
+export function listarMarcas(signal?: AbortSignal) { return request<{ datos: MarcaAdmin[] }>('/marcas', { signal }); }
+export function guardarMarca(id: string | null, datos: { nombre?: string; activa?: boolean }) { return request(`/marcas${id ? '/' + encodeURIComponent(id) : ''}`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datos) }); }
 export function guardarCategoria(id: string | null, datos: { nombre?: string; descripcion?: string; activa?: boolean; categoriaPadreId?: string | null }) { return request(`/categorias${id ? '/' + encodeURIComponent(id) : ''}`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) }); }
 export type ArchivoProducto = { id: string; tipo: 'imagen' | 'video'; mime: string; tamano: number; url: string; principal: boolean };
 export function subirArchivoProducto(id: string, archivo: File) {

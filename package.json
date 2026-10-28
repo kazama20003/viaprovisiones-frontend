@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@tanstack/react-query": "5.83.0",
+    "@zxing/browser": "^0.2.1",
+    "jsbarcode": "^3.12.3",
     "next": "16.4.2",
+    "qrcode.react": "^4.2.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

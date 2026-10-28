@@ -1,0 +1,16 @@
+'use client';
+import Link from 'next/link';
+import { useState } from 'react';
+import { DesignImport } from '../native-view';
+import { assetSrc } from '../design-runtime';
+
+export default function ProductoPublico({ producto, estado, error, reintentar }) {
+  const [foto, setFoto] = useState(0);
+  const imagenes = producto?.imagenes || [];
+  const principal = imagenes.findIndex(i => i.esPrincipal);
+  const orden = principal > 0 ? [imagenes[principal], ...imagenes.filter((_, i) => i !== principal)] : imagenes;
+  const precio = producto?.precios?.find(p => Number(p.cantidadMinima) === 1)?.precioUnitario ?? producto?.precios?.[0]?.precioUnitario;
+  return <div style={{ minHeight:'100vh',background:'#fff',fontFamily:'Roboto,system-ui',color:'#111' }}><DesignImport name="Header" accent="#FF914C" cart={0} active=""/><main style={{ maxWidth:1520,margin:'auto',padding:'24px clamp(20px,4vw,40px) 80px' }}><nav style={{ fontSize:13,fontWeight:700,marginBottom:30 }}><Link href="/tienda">Inicio</Link> / <Link href="/categoria">Catálogo</Link> {producto?.categoria ? ` / ${producto.categoria.nombre}` : ''}</nav>
+  {estado === 'pending' && <p role="status">Cargando producto…</p>}{estado === 'error' && <div role="alert"><h1>Producto no disponible</h1><p>{error || 'No se pudo cargar el producto.'}</p><button type="button" onClick={reintentar}>Reintentar</button></div>}
+  {producto && <div style={{ display:'flex',flexWrap:'wrap',gap:56,alignItems:'flex-start' }}><div style={{ flex:'1 1 560px',minWidth:0,display:'flex',gap:16 }}>{orden.length > 0 && <div style={{ display:'flex',flexDirection:'column',gap:12 }}>{orden.map((img,i) => <button key={img.url} type="button" aria-label={`Ver foto ${i+1}`} onClick={() => setFoto(i)} style={{ width:72,height:72,padding:0,border:i===foto?'3px solid #ff914c':'1px solid #ddd',borderRadius:14,overflow:'hidden',background:'#fff',cursor:'pointer' }}><img src={assetSrc(img.url)} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/></button>)}</div>}<div style={{ flex:1,aspectRatio:'1 / 1',background:'#f4f4f2',borderRadius:20,overflow:'hidden',display:'grid',placeItems:'center' }}>{orden[foto] ? <img src={assetSrc(orden[foto].url)} alt={orden[foto].textoAlternativo || producto.nombre} style={{ width:'100%',height:'100%',objectFit:'cover' }}/> : <span>Sin imagen</span>}</div></div><div style={{ flex:'1 1 440px',minWidth:0 }}><p style={{ fontSize:13,fontWeight:700,textTransform:'uppercase' }}>{producto.categoria?.nombre || 'Producto'} · SKU {producto.sku}</p><h1 style={{ fontSize:'clamp(32px,4vw,52px)',lineHeight:1,textTransform:'uppercase',margin:'20px 0' }}>{producto.nombre}</h1>{producto.marca && <p>Marca: {producto.marca}</p>}<strong style={{ fontSize:32 }}>{precio != null ? `S/ ${Number(precio).toFixed(2)}` : 'Precio no disponible'}</strong><h2 style={{ marginTop:42,fontSize:18 }}>Descripción</h2><p style={{ lineHeight:1.7,whiteSpace:'pre-wrap' }}>{producto.descripcion || 'Sin descripción.'}</p></div></div>}</main></div>;
+}

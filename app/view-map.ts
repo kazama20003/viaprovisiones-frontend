@@ -17,6 +17,7 @@ export const designViews: DesignView[] = [
   { path: "/dashboard", name: "Dashboard", label: "Dashboard" },
   { path: "/inventario", name: "Inventario", label: "Inventario" },
   { path: "/categorias", name: "CategoriasAdmin", label: "Administrar categorías" },
+  { path: "/marcas", name: "MarcasAdmin", label: "Administrar marcas" },
   { path: "/pedidos", name: "Pedidos", label: "Pedidos" },
   { path: "/cotizaciones", name: "Cotizaciones", label: "Cotizaciones" },
   { path: "/clientes", name: "Clientes", label: "Clientes" },
