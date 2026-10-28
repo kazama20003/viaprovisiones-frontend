@@ -27,6 +27,7 @@ import Traslados from "./design-views/Traslados";
 import { Suspense, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
+import { pinPanelMenu, registerPopup } from "./panel-menu-state";
 import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarCategorias, guardarCategoria, listarClientes, listarPedidos, listarProductos, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion } from "./backend-api";
 
 const views = {
@@ -78,8 +79,14 @@ const views = {
 const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","CategoriasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
 const mobileViews = new Set(["AdminMovil","MovilAlmacen","MovilFinanzas","MovilMarketing","TiendaMovil"]);
 
+function PanelMenuPopup({ View, ...props }) {
+  useEffect(() => registerPopup(), []);
+  return <View {...props} onPin={() => { pinPanelMenu(); props.onClose?.(); }} />;
+}
+
 export function DesignImport({ name, ...props }) {
   const View = views[name];
+  if (name === "MenuPanel" && props.mode === "pop" && View) return <PanelMenuPopup View={View} {...props} />;
   return View ? <View {...props} /> : null;
 }
 
