@@ -50,5 +50,6 @@ export function lookup(root, path) {
 export function truthy(value) { return value !== "false" && Boolean(value); }
 export function assetSrc(value) {
   if (typeof value !== "string") return value;
+  if (value.startsWith('/api/v1/archivos/')) return (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api/v1').replace(/\/api\/v1\/?$/, '') + value;
   return value.startsWith("img/") ? `/storefront/${value}` : value;
 }

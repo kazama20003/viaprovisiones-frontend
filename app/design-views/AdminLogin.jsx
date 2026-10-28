@@ -8,7 +8,7 @@ import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-run
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { show: false, error: false };
+    this.state = { show: false, correo: '', clave: '', recordarSesion: false, recuperacion: '' };
   }
   renderVals() {
     return {
@@ -16,8 +16,18 @@ class Component extends DesignLogic {
       pwType: this.state.show ? 'text' : 'password',
       pwLabel: this.state.show ? 'Ocultar contraseña' : 'Mostrar contraseña',
       togglePw: () => this.setState({ show: !this.state.show }),
-      error: this.state.error,
-      showError: () => this.setState({ error: !this.state.error })
+      error: Boolean(this.props.loginError),
+      errorText: this.props.loginError || 'Correo o contraseña incorrectos. Inténtalo otra vez.',
+      loading: Boolean(this.props.loginLoading),
+      correo: this.state.correo,
+      clave: this.state.clave,
+      recordarSesion: this.state.recordarSesion,
+      recuperacion: this.state.recuperacion,
+      onCorreo: (e) => this.setState({ correo: e.target.value, recuperacion: '' }),
+      onClave: (e) => this.setState({ clave: e.target.value }),
+      onRecordar: (e) => this.setState({ recordarSesion: e.target.checked }),
+      onRecuperar: (e) => { e.preventDefault(); this.setState({ recuperacion: 'Solicita al administrador de VIA Provisiones que restablezca tu contraseña.' }); },
+      onSubmit: (e) => { e.preventDefault(); this.props.onLogin?.({ correo: this.state.correo, clave: this.state.clave, recordarSesion: this.state.recordarSesion }); }
     };
   }
 }
@@ -78,19 +88,19 @@ export default function AdminLogin(props) {
                 <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} aria-hidden={"true"}>
                   <path d={"M12 3l9 16H3zM12 10v4M12 17h.01"}></path>
                 </svg>
-                {"Correo o contraseña incorrectos. Inténtalo otra vez."}
+                {lookup(v, "errorText")}
               </div>
             </Fragment>
           )}
-          <form style={{ "display": "flex", "flexDirection": "column", "gap": "16px" }}>
+          <form onSubmit={lookup(v, "onSubmit")} style={{ "display": "flex", "flexDirection": "column", "gap": "16px" }}>
             <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "14px", "fontWeight": "500" }}>
               {"Correo\n"}
-              <input type={"email"} defaultValue={"viaprovisionesperu@gmail.com"} autoComplete={"username"} style={{ "height": "52px", "border": "1px solid #111111", "borderRadius": "12px", "padding": "0 16px", "fontFamily": "inherit", "fontSize": "16px" }} />
+              <input type={"email"} value={lookup(v, "correo")} onChange={lookup(v, "onCorreo")} autoComplete={"username"} required style={{ "height": "52px", "border": "1px solid #111111", "borderRadius": "12px", "padding": "0 16px", "fontFamily": "inherit", "fontSize": "16px" }} />
             </label>
             <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "14px", "fontWeight": "500" }}>
               {"Contraseña\n"}
               <span style={{ "display": "flex", "alignItems": "center", "height": "52px", "border": "1px solid #111111", "borderRadius": "12px", "padding": "0 6px 0 16px", "boxSizing": "border-box" }}>
-                <input type={lookup(v, "pwType")} placeholder={"••••••••"} autoComplete={"current-password"} style={{ "flex": "1", "minWidth": "0", "border": "none", "fontFamily": "inherit", "fontSize": "16px", "outline": "none" }} />
+                <input type={lookup(v, "pwType")} value={lookup(v, "clave")} onChange={lookup(v, "onClave")} placeholder={"••••••••"} autoComplete={"current-password"} required style={{ "flex": "1", "minWidth": "0", "border": "none", "fontFamily": "inherit", "fontSize": "16px", "outline": "none" }} />
                 <button type={"button"} onClick={lookup(v, "togglePw")} aria-label={lookup(v, "pwLabel")} style={{ "width": "40px", "height": "40px", "border": "none", "background": "transparent", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                   <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.8"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"}></path>
@@ -101,21 +111,19 @@ export default function AdminLogin(props) {
             </label>
             <div style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center", "gap": "12px", "flexWrap": "wrap", "fontSize": "14px" }}>
               <label style={{ "display": "flex", "alignItems": "center", "gap": "8px" }}>
-                <input type={"checkbox"} defaultChecked style={{ "width": "18px", "height": "18px", "accentColor": "#111111" }} />
+                <input type={"checkbox"} checked={lookup(v, "recordarSesion")} onChange={lookup(v, "onRecordar")} style={{ "width": "18px", "height": "18px", "accentColor": "#111111" }} />
                 {"Mantener sesión iniciada"}
               </label>
-              <DesignLink href={"#recuperar"} style={{ "fontWeight": "500", "textUnderlineOffset": "3px" }}>
+              <DesignLink href={"#recuperar"} onClick={lookup(v, "onRecuperar")} style={{ "fontWeight": "500", "textUnderlineOffset": "3px" }}>
                 {"¿Olvidaste tu contraseña?"}
               </DesignLink>
+              {Boolean(lookup(v, "recuperacion")) && <span role={"status"} style={{ "flexBasis": "100%", "fontSize": "12px", "color": "#444444" }}>{lookup(v, "recuperacion")}</span>}
             </div>
-            <DesignLink href={"/dashboard"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "56px", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "textDecoration": "none", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
-              {"Ingresar al panel "}
+            <button type="submit" disabled={lookup(v, "loading")} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "10px", "height": "56px", "border": "none", "borderRadius": "999px", "background": lookup(v, "accent"), "color": "#111111", "cursor": "pointer", "fontFamily": "'Roboto Mono', monospace", "fontSize": "15px", "fontWeight": "700", "textTransform": "uppercase" }}>
+              {lookup(v, "loading") ? "Ingresando…" : "Ingresar al panel "}
               <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} aria-hidden={"true"}>
                 <path d={"M5 12h14M13 6l6 6-6 6"}></path>
               </svg>
-            </DesignLink>
-            <button type={"button"} onClick={lookup(v, "showError")} style={{ "height": "44px", "border": "none", "background": "transparent", "cursor": "pointer", "fontSize": "13px", "color": "#444444", "textDecoration": "underline", "textUnderlineOffset": "3px" }}>
-              {"Ver cómo se muestra un error"}
             </button>
           </form>
           <div style={{ "display": "flex", "gap": "12px", "alignItems": "center", "padding": "14px 16px", "border": "1px dashed #111111", "borderRadius": "14px", "fontSize": "13px", "lineHeight": "1.45" }}>

@@ -61,6 +61,8 @@ class Component extends DesignLogic {
       clientes: ['Clientes', 'Clientes', 'Fichas y cobranzas', '/clientes', IC.clientes, '414'],
       devol: ['Devoluciones', 'Devoluciones', 'Cambios y garantías', '/devoluciones', IC.devol, '2 abiertas', 2, true],
       inv: ['Inventario', 'Inventario y lotes', 'Stock por lote', '/inventario', IC.inv, '6 bajos', 6, true],
+      nuevoProducto: ['ProductoEditar', 'Crear producto', 'Agregar al catálogo', '/producto/editar', 'M12 5v14M5 12h14'],
+      categorias: ['CategoriasAdmin', 'Categorías', 'Organizar el catálogo', '/categorias', IC.inv],
       compras: ['Compras', 'Compras', 'Órdenes de compra', '/compras', IC.compras, '3 en camino'],
       prov: ['', 'Proveedores', 'Datos y deudas', '/compras', IC.prov],
       traslado: ['Traslados', 'Traslados', 'Entre tienda y almacén', '/traslados', IC.traslado],
@@ -82,7 +84,7 @@ class Component extends DesignLogic {
     const G = [
       ['fav', 'Favoritos', 'Lo que más usas', IC.star, ['pos', 'pedidos', 'inv', 'cotiz', 'caja', 'panel']],
       ['ventas', 'Ventas', 'Mostrador, pedidos y clientes', IC.ventas, ['pos', 'pedidos', 'cotiz', 'clientes', 'devol']],
-      ['almacen', 'Almacén', 'Stock, lotes y compras', IC.almacen, ['inv', 'kardex', 'compras', 'prov', 'traslado']],
+      ['almacen', 'Almacén', 'Stock, lotes y compras', IC.almacen, ['inv', 'nuevoProducto', 'categorias', 'kardex', 'compras', 'prov', 'traslado']],
       ['finanzas', 'Finanzas', 'Caja, cobros y gastos', IC.finanzas, ['caja', 'cobro', 'gasto', 'sunat']],
       ['tienda', 'Tienda y marketing', 'Canales de venta', IC.tienda, ['web', 'qr', 'cupon', 'banner']],
       ['analisis', 'Análisis', 'Cómo va el negocio', IC.analisis, ['panel', 'reportes']],
@@ -104,7 +106,7 @@ class Component extends DesignLogic {
       };
     };
     const home = (G.find((g) => g[0] !== 'fav' && g[4].some((k) => IT[k][0] === active)) || G[0])[0];
-    const sel = st.grp || 'fav';
+    const sel = st.grp || (['ProductoEditar', 'CategoriasAdmin'].includes(active) ? 'almacen' : 'fav');
     const groups = G.map((g) => {
       const items = g[4].map(item);
       const alert = items.reduce((a, i) => a + i.n, 0);
@@ -160,6 +162,7 @@ class Component extends DesignLogic {
       actions: [
         ['Vender', '/punto-de-venta', 'M12 5v14M5 12h14', '#E8701F'],
         ['Nuevo pedido', '/pedidos', IC.pedidos, '#2A2A2A'],
+        ['Crear producto', '/producto/editar', 'M12 5v14M5 12h14', '#2A2A2A'],
         ['Cotización', '/cotizaciones', IC.cotiz, '#2A2A2A'],
         ['Ingresar lote', '/inventario', IC.inv, '#2A2A2A'],
         ['Orden de compra', '/compras', IC.compras, '#2A2A2A']

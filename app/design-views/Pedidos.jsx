@@ -18,7 +18,7 @@ class Component extends DesignLogic {
     const COLS = [['Por pagar', '#F2A100'], ['Pagado', '#2F7BD8'], ['Preparando', '#E8701F'], ['Enviado', '#7B5CD6'], ['Entregado', '#2E9E4F']];
     const NEXT = ['Confirmar pago', 'Preparar', 'Enviar', 'Entregado'];
     const L = (name, qty, price, img, lot) => ({ name, qty, price, img, lot });
-    const ORD = [
+    const ORDDemo = [
       { id: '#1042', client: 'María Q.', type: 'Consumidor', channel: 'Web', time: '10:24', col: 0, tags: ['Yape', 'Recojo'], doc: 'boleta', lines: [L('Lámpara de camping recargable', 2, 69.9, 'a58999411e32d7481815ba8cdc175e97', 'L-0915'), L('Cable USB-C carga rápida 1 m', 1, 19.9, '3aba2390d3fbd5f06fdd2cede507b16f', 'L-0901')] },
       { id: '#1043', client: 'Ana T.', type: 'Consumidor', channel: 'WhatsApp', time: '11:02', col: 0, tags: ['Plin', 'Delivery'], doc: 'boleta', lines: [L('Collar dorado de cadena fina', 1, 29.9, '792438e54fa4b4d81f31171a2cf026f6', 'L-0820')] },
       { id: '#1041', client: 'Bodega San Martín', type: 'Minorista', channel: 'WhatsApp', time: '09:51', col: 1, tags: ['Transferencia', 'Delivery'], doc: 'factura', lines: [L('Foco LED 9 W luz cálida', 48, 8.9, '52dc55c2523393f8f60ab89499fa3ec1', 'L-1008'), L('Mosquetón llavero de aluminio', 30, 6.9, 'eb0c79147accd306bbd7a39d350a8e88', 'L-0830'), L('Ganchos de pared (set de 3)', 12, 9.9, 'b68602a2601d3a2d118c7190d31f96a1', 'L-0907')] },
@@ -28,11 +28,27 @@ class Component extends DesignLogic {
       { id: '#1039', client: 'Hotel [Cliente]', type: 'Empresa', channel: 'Empresas', time: 'Ayer', col: 4, tags: ['Factura'], doc: 'factura', lines: [L('Foco LED 9 W luz cálida', 60, 8.9, '52dc55c2523393f8f60ab89499fa3ec1', 'L-0921')] },
       { id: '#1037', client: 'Minimarket Yanahuara', type: 'Minorista', channel: 'WhatsApp', time: 'Ayer', col: 4, tags: ['Yape'], doc: 'boleta', lines: [L('Cable USB-C carga rápida 1 m', 20, 15.9, '3aba2390d3fbd5f06fdd2cede507b16f', 'L-0901')] }
     ];
+    const pedidosConectados = ['success', 'pending', 'error'].includes(this.props.apiPedidosState);
+    const estadosColumna = { por_pagar: 0, pagado: 1, preparando: 2, enviado: 3, entregado: 4 };
+    const canalNombre = { tienda_web: 'Web', whatsapp: 'WhatsApp', empresas: 'Empresas', mostrador: 'Web', otro: 'Web' };
+    const tipoNombre = { consumidor: 'Consumidor', minorista: 'Minorista', mayorista: 'Mayorista', empresa: 'Empresa' };
+    const ORD = this.props.apiPedidosState === 'success'
+      ? (this.props.apiPedidos || []).map((p) => ({
+          id: p.numero, apiId: p.id, client: p.cliente.nombre,
+          type: tipoNombre[p.cliente.tipoCliente] || 'Consumidor',
+          channel: canalNombre[p.canal] || 'Web',
+          time: new Date(p.creadoEn).toLocaleDateString('es-PE'),
+          col: estadosColumna[p.estado] ?? 4,
+          tags: [p.estadoPago, p.estado].filter(Boolean), doc: 'comprobante',
+          total: Number(p.total),
+          lines: p.lineas.map((linea) => L(linea.descripcion, Number(linea.cantidad), Number(linea.precioUnitario), 'a58999411e32d7481815ba8cdc175e97', '—')),
+        }))
+      : pedidosConectados ? [] : ORDDemo;
     const colOf = (o) => (o.id in st.moved ? st.moved[o.id] : o.col);
-    const sum = (o) => o.lines.reduce((a, l) => a + l.qty * l.price, 0);
+    const sum = (o) => o.total ?? o.lines.reduce((a, l) => a + l.qty * l.price, 0);
     const CH = ['Todos', 'Web', 'WhatsApp', 'Empresas'];
     const vis = ORD.filter((o) => st.channel === 'Todos' || o.channel === st.channel);
-    const S = ORD.find((o) => o.id === st.sel) || ORD[0];
+    const S = ORD.find((o) => o.id === st.sel) || ORD[0] || { id: '—', client: 'Sin pedidos registrados', channel: '—', time: '—', col: 0, tags: [], doc: '—', total: 0, lines: [] };
     const MI = (label, href, icon, on) => ({ label, href, icon, bg: on ? '#F4F4F2' : 'transparent', iconBg: on ? '#E8701F' : '#F4F4F2', iconFg: on ? '#FFFFFF' : '#111111' });
     return {
       accent,
@@ -43,12 +59,14 @@ class Component extends DesignLogic {
       menuBtnLabel: 'Abrir menú',
       menuBtn: () => this.setState({ menu: true }),
       togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
+      apiPedidosState: this.props.apiPedidosState,
+      pedidoError: this.props.pedidoError || '',
       activeCount: String(ORD.filter((o) => colOf(o) < 4).length),
       headStats: [
-        { v: '126', k1: 'Pedidos', k2: 'en octubre', bg: '#FFFFFF', fg: '#111111' },
+        { v: pedidosConectados ? String(ORD.length) : '126', k1: 'Pedidos', k2: pedidosConectados ? 'cargados' : 'en octubre', bg: '#FFFFFF', fg: '#111111' },
         { v: String(ORD.filter((o) => colOf(o) === 0).length), k1: 'Por', k2: 'pagar', bg: '#FFF4D6', fg: '#7A4A00' },
-        { v: '3 h', k1: 'Preparación', k2: 'promedio', bg: '#FFFFFF', fg: '#111111' },
-        { v: 'S/ 146', k1: 'Ticket', k2: 'promedio', bg: '#111111', fg: '#FFFFFF' }
+        { v: pedidosConectados ? '—' : '3 h', k1: 'Preparación', k2: 'promedio', bg: '#FFFFFF', fg: '#111111' },
+        { v: pedidosConectados ? (ORD.length ? money(ORD.reduce((s, o) => s + sum(o), 0) / ORD.length) : '—') : 'S/ 146', k1: 'Ticket', k2: 'promedio', bg: '#111111', fg: '#FFFFFF' }
       ],
       channels: CH.map((c) => ({ name: c, pressed: st.channel === c ? 'true' : 'false', bg: st.channel === c ? '#111111' : '#FFFFFF', fg: st.channel === c ? '#FFFFFF' : '#111111', border: st.channel === c ? '#111111' : '#E4E4E0', pick: () => this.setState({ channel: c }) })),
       columns: COLS.map((c, ci) => {
@@ -59,10 +77,12 @@ class Component extends DesignLogic {
             ini: o.client.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
             tags: o.tags.map((t) => ({ t })),
             bg: on ? '#FFF6EF' : '#FFFFFF', border: on ? '#E8701F' : '#EDEDEA',
-            canAdvance: ci < 4, next: NEXT[Math.min(ci, 3)],
+            canAdvance: pedidosConectados ? ci >= 1 && ci < 4 : ci < 4, next: NEXT[Math.min(ci, 3)],
             btnBg: ci === 0 ? '#E8701F' : '#111111', btnFg: '#FFFFFF',
             select: () => this.setState({ sel: o.id }),
-            advance: () => this.setState({ moved: { ...this.state.moved, [o.id]: ci + 1 }, sel: o.id })
+            advance: () => pedidosConectados
+              ? this.props.onAvanzarPedido?.(o.apiId, ['por_pagar', 'pagado', 'preparando', 'enviado', 'entregado'][ci + 1])
+              : this.setState({ moved: { ...this.state.moved, [o.id]: ci + 1 }, sel: o.id })
           };
         });
         return { name: c[0], dot: c[1], count: String(cards.length), cards, empty: cards.length === 0 };
@@ -149,6 +169,7 @@ export default function Pedidos(props) {
                 </label>
               </div>
               <div style={{ "display": "flex", "alignItems": "flex-end", "gap": "24px", "flexWrap": "wrap" }}>
+                {Boolean(lookup(v, "pedidoError")) && <p role="alert" style={{ "flexBasis": "100%", "margin": 0, "padding": "12px 16px", "borderRadius": "12px", "background": "#FDE4E2", "color": "#8E1C14" }}>{lookup(v, "pedidoError")}</p>}
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.12", "minWidth": "300px" }}>
                   <span style={{ "fontSize": "38px", "fontWeight": "600", "letterSpacing": "-0.02em" }}>
                     {"Pedidos"}

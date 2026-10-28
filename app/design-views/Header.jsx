@@ -30,6 +30,7 @@ class Component extends DesignLogic {
     const links = [
       { label: 'Empresas', href: '/empresas', icon: 'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6' },
       { label: 'Redes', href: '/enlaces', icon: 'M8 12h8M10 8H7a4 4 0 0 0 0 8h3M14 8h3a4 4 0 0 1 0 8h-3' },
+      { label: 'Panel', href: '/admin/login', icon: 'M12 3l8 4v5c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V7zM9 12l2 2 4-4' },
       { label: 'Nosotros', href: '/tienda', icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c1.5-4 4.5-6 8-6s6.5 2 8 6' }
     ];
     return {

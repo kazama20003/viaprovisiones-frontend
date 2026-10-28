@@ -24,11 +24,24 @@ class Component extends DesignLogic {
       { sub: 'Sillas plegables', name: 'Silla plegable con portavasos', price: 'S/ 89.00', img: '5bcbbd21ce25a9016f20a6456029204e' },
       { sub: 'Lámparas y linternas', name: 'Linterna táctica recargable', price: 'S/ 59.90', img: '621ce65a45113393656af23955c4e044' }
     ];
-    const names = ['Todo', 'Lámparas y linternas', 'Casas de campaña', 'Cocina de campamento', 'Mochilas', 'Sillas plegables'];
+    const catalogoConectado = this.props.apiCatalogState === 'success';
+    const catalogoEnConsulta = ['success', 'pending', 'error'].includes(this.props.apiCatalogState);
+    const productosApi = Array.isArray(this.props.apiProductos) ? this.props.apiProductos : [];
+    const productos = catalogoConectado
+      ? productosApi.map((p) => ({
+          id: p.id, sub: p.categoria || 'Otros', name: p.nombre,
+          price: 'S/ ' + Number(p.precio).toFixed(2), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
+          badge: p.stockDisponible <= 5 ? (p.stockDisponible > 0 ? 'Pocas unidades' : 'Agotado') : '',
+          stockDisponible: p.stockDisponible,
+        }))
+      : catalogoEnConsulta ? [] : all;
+    const names = catalogoConectado
+      ? ['Todo', ...new Set(productos.map((p) => p.sub))]
+      : ['Todo', 'Lámparas y linternas', 'Casas de campaña', 'Cocina de campamento', 'Mochilas', 'Sillas plegables'];
     const cur = this.state.sub;
-    const items = all.filter((p) => cur === 'Todo' || p.sub === cur).map((p) => ({
+    const items = productos.filter((p) => cur === 'Todo' || p.sub === cur).map((p) => ({
       ...p,
-      img: B + p.img,
+      img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
       was: p.was || '',
       badge: p.badge || '',
       badgeBg: p.badge === 'Más vendido' ? '#111111' : accent,
@@ -41,13 +54,18 @@ class Component extends DesignLogic {
       add: () => this.setState({ cart: this.state.cart + 1 }),
       subs: names.map((name) => ({
         name,
-        count: String(name === 'Todo' ? all.length : all.filter((p) => p.sub === name).length),
+        count: String(name === 'Todo' ? productos.length : productos.filter((p) => p.sub === name).length),
         pressed: cur === name ? 'true' : 'false',
         bg: cur === name ? accent : '#FFFFFF',
         pick: () => this.setState({ sub: name })
       })),
       items,
-      resultLabel: items.length + ' productos'
+      resultLabel: items.length + ' productos',
+      apiCatalogState: this.props.apiCatalogState,
+      apiCatalogError: this.props.apiCatalogError,
+      catalogMessage: this.props.apiCatalogState === 'error'
+        ? (this.props.apiCatalogError || 'No se pudo conectar con el catálogo.')
+        : this.props.apiCatalogState === 'pending' ? 'Cargando catálogo…' : ''
     };
   }
 }
@@ -140,6 +158,7 @@ export default function Categoria(props) {
               <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {lookup(v, "resultLabel")}
               </span>
+              {Boolean(lookup(v, "catalogMessage")) && <p role="status">{lookup(v, "catalogMessage")}</p>}
               <label style={{ "display": "flex", "alignItems": "center", "gap": "10px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
                 {"Ordenar\n"}
                 <select style={{ "height": "44px", "border": "2px solid #111111", "borderRadius": "999px", "padding": "0 16px", "fontFamily": "Roboto, sans-serif", "fontSize": "15px", "background": "#FFFFFF" }}>

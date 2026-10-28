@@ -30,7 +30,12 @@ class Component extends DesignLogic {
     const f = FEATS[st.chip];
     const fDone = !!st.done[f.id];
     const open = TASKS.filter((t) => !st.done[t.id]).length;
-    const R = [['Mes', 'del mes', '18,450.00', '146.43', 'Octubre'], ['Semana', 'de la semana', '4,410.00', '142.26', 'Esta semana']][st.range];
+    const resumenConectado = this.props.apiResumenState === 'success' && this.props.apiResumen;
+    const resumenHoy = resumenConectado ? this.props.apiResumen : null;
+    const R = resumenHoy
+      ? ['Hoy', 'de hoy', Number(resumenHoy.ventasHoy).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          (resumenHoy.pedidosHoy ? Number(resumenHoy.ventasHoy / resumenHoy.pedidosHoy) : 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 'Hoy']
+      : [['Mes', 'del mes', '18,450.00', '146.43', 'Octubre'], ['Semana', 'de la semana', '4,410.00', '142.26', 'Esta semana']][st.range];
     const hoursV = [3, 6, 8, 10, 9, 7, 8, 11, 12, 14, 10, 5];
     const mx = Math.max(...hoursV);
     let wave = '';
@@ -56,6 +61,7 @@ class Component extends DesignLogic {
       showTasks: () => this.setState({ chip: 'Todo' }),
       ranges: ['Mes', 'Semana'].map((n, i) => ({ name: n, pressed: i === st.range ? 'true' : 'false', bg: i === st.range ? '#111111' : '#FFFFFF', fg: i === st.range ? '#FFFFFF' : '#111111', border: i === st.range ? '#111111' : '#E4E4E0', pick: () => this.setState({ range: i }) })),
       rangeWord: R[1], sales: R[2], ticket: R[3], rangeLabel: R[4],
+      apiResumenState: this.props.apiResumenState,
       goalDash: (2 * Math.PI * 52 * 0.74).toFixed(1) + ' 400',
       days: Array.from({ length: 31 }, (_, i) => ({ c: i < 24 ? '#E8701F' : '#DADAD6' })),
       wave,
@@ -156,10 +162,11 @@ export default function Dashboard(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
-                <DesignLink href={"/producto/editar"} aria-label={"Nuevo producto"} title={"Nuevo producto"} style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
-                  <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"2"} strokeLinecap={"round"} aria-hidden={"true"}>
+                <DesignLink href={"/producto/editar"} aria-label={"Crear producto"} style={{ "minHeight": "52px", "padding": "0 20px", "gap": "9px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700", "whiteSpace": "nowrap" }}>
+                  <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
                   </svg>
+                  {"Crear producto"}
                 </DesignLink>
                 <span style={{ "display": "flex", "alignItems": "center", "gap": "12px", "paddingRight": "10px" }}>
                   <span style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "16px", "fontWeight": "800" }}>

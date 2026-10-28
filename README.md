@@ -1,26 +1,26 @@
-# VIA Provisiones — Frontend
+# VIA Provisiones — frontend
 
-Aplicación de tienda y panel de administración creada con Next.js y React. Las vistas del diseño están implementadas como componentes JSX; las imágenes se sirven desde `public/storefront/img` y el logo está integrado en los componentes.
+Tienda y panel construidos con Next.js y React. Las pantallas conservan el diseño existente; la tienda consulta los productos publicados del backend con TanStack Query.
 
-## Ejecutar el proyecto
+## Desarrollo local
 
-```bash
-pnpm install
-pnpm dev
-```
+1. Configura PostgreSQL, `DATABASE_URL` y los campos `BOOTSTRAP_*` del `.env` del backend. El bootstrap crea la empresa, un rol administrador y su usuario.
+2. Aplica la migración y prepara la cuenta inicial. Copia el UUID que imprime a `EMPRESA_ID` en el `.env` del backend y reinicia el servidor:
 
-Abre `http://localhost:3000` o el puerto que indique Next.js. Para verificar la compilación de producción, ejecuta `pnpm build`.
+   ```powershell
+   cd ..\viaprovisiones-backend
+   pnpm db:migrate:dev
+   pnpm db:bootstrap
+   pnpm start:dev
+   ```
 
-## Estructura
+3. Copia `.env.example` a `.env.local` en esta carpeta. La URL por defecto es `http://localhost:3002/api/v1`.
+4. Inicia la interfaz:
 
-- `app/design-views/`: componentes React de las vistas de tienda, administración y móvil.
-- `app/native-view.jsx`: registro y carga de componentes compartidos.
-- `app/design-runtime.jsx`: estado e interacciones conservados del diseño de referencia.
-- `app/view-map.ts`: relación entre rutas y vistas.
-- `app/enlaces/`: página de enlaces responsive.
-- `public/storefront/img/`: imágenes y recursos gráficos.
+   ```powershell
+   pnpm dev
+   ```
 
-La portada está en `/tienda`, el panel en `/dashboard` y la página de enlaces en `/enlaces`. Las rutas de inventario, pedidos, caja y las demás secciones se encuentran en `app/view-map.ts`.
+La API de salud está en `/api/v1/salud` y el catálogo está en `/api/v1/tienda/productos`. El catálogo filtra por empresa y solo devuelve productos publicados y visibles en tienda. Categorías y búsqueda usan el mismo catálogo; muestran estados de carga y error.
 
-Los productos, pedidos, importes y usuarios incluidos son datos de ejemplo del diseño. Para operar con datos reales es necesario conectar las vistas a un backend y configurar autenticación, pagos y persistencia.
-
+El ingreso al panel usa una cookie HttpOnly: 8 horas por defecto o 30 días al marcar “Mantener sesión iniciada”. Las páginas protegidas comprueban la sesión y redirigen al ingreso cuando vence. Los enlaces de “Cerrar sesión” revocan la sesión en el backend y limpian las consultas del panel. Clientes, productos, pedidos y el resumen consultan endpoints protegidos por permisos y filtrados por empresa. La recuperación por correo aún requiere configurar un proveedor de correo; el formulario informa que se solicite el restablecimiento al administrador. Otras pantallas administrativas todavía requieren conectar sus consultas y acciones. Las vistas y recursos están en `app/design-views/` y `public/storefront/img/`.

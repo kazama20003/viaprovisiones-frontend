@@ -25,7 +25,7 @@ class Component extends DesignLogic {
     const TYPE = { Consumidor: 'Consumidores', Minorista: 'Minoristas y bodegas', Mayorista: 'Mayoristas', Empresa: 'Empresas' };
     const TIER = { Consumidor: 'Precio de tienda', Minorista: 'Precio minorista', Mayorista: 'Precio mayorista', Empresa: 'Precio empresa por volumen' };
     const C = (id, name, type, city, last, orders, total, cond, status, credit, contact) => ({ id, name, type, city, last, orders, total, cond, status, credit, contact });
-    const CL = [
+    const CLDemo = [
       C('c1', 'Constructora [Cliente]', 'Empresa', 'Arequipa', 'Ayer', 18, 42380, 'Factura a 30 días', 'Por cobrar', [15000, 8460], '[Nombre] · Logística'),
       C('c2', 'Ferretería Cayma', 'Mayorista', 'Arequipa', 'Ayer', 26, 31940, 'Factura a 30 días', 'Al día', [10000, 6120], '[Nombre] · Dueño'),
       C('c3', 'Minera [Cliente]', 'Empresa', 'Moquegua', '12 oct', 6, 21600, 'Factura a 45 días', 'Al día', [20000, 1600], '[Nombre] · Compras'),
@@ -37,9 +37,20 @@ class Component extends DesignLogic {
       C('c9', 'Luis R.', 'Consumidor', 'Arequipa', 'Hoy', 4, 1749, 'Contado · Tarjeta', 'Al día', null, 'Luis R.'),
       C('c10', 'María Q.', 'Consumidor', 'Arequipa', 'Hoy', 7, 892, 'Contado · Yape', 'Al día', null, 'María Q.')
     ];
+    const datosConectados = ['success', 'pending', 'error'].includes(this.props.apiClientesState);
+    const CL = this.props.apiClientesState === 'success'
+      ? (this.props.apiClientes || []).map((c) => {
+          const tipo = { consumidor: 'Consumidor', minorista: 'Minorista', mayorista: 'Mayorista', empresa: 'Empresa' }[c.tipoCliente] || 'Consumidor';
+          return C(c.id, c.razonSocial || c.nombre, tipo, '—', 'Sin compras', 0, 0,
+            c.condicionPagoDias ? `Factura a ${c.condicionPagoDias} días` : 'Contado', 'Al día',
+            c.limiteCredito > 0 ? [c.limiteCredito, 0] : null, c.correo || c.telefono || '—');
+        })
+      : datosConectados ? [] : CLDemo;
     const vis = CL.filter((c) => st.seg === 'Todos' || c.type === st.seg);
-    const S = CL.find((c) => c.id === st.sel) || CL[0];
-    const SEG = [['Consumidor', 214, 6900], ['Minorista', 142, 4980], ['Mayorista', 37, 3870], ['Empresa', 21, 2700]];
+    const S = CL.find((c) => c.id === st.sel) || CL[0] || C('', 'Sin clientes registrados', 'Consumidor', '—', '—', 0, 0, '—', 'Al día', null, '—');
+    const SEG = datosConectados
+      ? ['Consumidor', 'Minorista', 'Mayorista', 'Empresa'].map((tipo) => [tipo, CL.filter((c) => c.type === tipo).length, CL.filter((c) => c.type === tipo).reduce((suma, c) => suma + c.total, 0)])
+      : [['Consumidor', 214, 6900], ['Minorista', 142, 4980], ['Mayorista', 37, 3870], ['Empresa', 21, 2700]];
     const MON = ['May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct'];
     const NEW = [14, 17, 15, 19, 21, 23];
     const W = [0.13, 0.15, 0.14, 0.17, 0.19, 0.22];
@@ -47,7 +58,7 @@ class Component extends DesignLogic {
     const smMax = Math.max(...sm);
     const idx = CL.indexOf(S);
     const OST = { Pagado: ['#E3F1FF', '#0B4A8A'], Enviado: ['#EDE7FF', '#4A2E9A'], Entregado: ['#E4F4E7', '#1B5E20'] };
-    const avg = S.total / S.orders;
+    const avg = S.total / Math.max(1, S.orders);
     const hist = [0, 1, 2].map((k) => {
       const status = k === 0 && (S.last === 'Hoy' || S.last === 'Ayer') ? 'Pagado' : 'Entregado';
       return { id: '#' + (1041 - idx * 2 - k * 9), date: [S.last, '02 oct', '18 set'][k], status, bg: OST[status][0], fg: OST[status][1], total: money2(avg * [1.1, 0.9, 1.05][k]) };
@@ -64,10 +75,10 @@ class Component extends DesignLogic {
       menuBtn: () => this.setState({ menu: true }),
       togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
       headStats: [
-        { v: '414', k1: 'Clientes', k2: 'registrados', bg: '#FFFFFF', fg: '#111111' },
-        { v: '62%', k1: 'Vuelven', k2: 'a comprar', bg: '#FFFFFF', fg: '#111111' },
-        { v: '3', k1: 'Pagos', k2: 'vencidos', bg: '#FDE4E2', fg: '#8E1C14' },
-        { v: 'S/ 18k', k1: 'Por', k2: 'cobrar', bg: '#111111', fg: '#FFFFFF' }
+        { v: datosConectados ? String(CL.length) : '414', k1: 'Clientes', k2: 'registrados', bg: '#FFFFFF', fg: '#111111' },
+        { v: datosConectados ? '—' : '62%', k1: 'Vuelven', k2: 'a comprar', bg: '#FFFFFF', fg: '#111111' },
+        { v: datosConectados ? '—' : '3', k1: 'Pagos', k2: 'vencidos', bg: '#FDE4E2', fg: '#8E1C14' },
+        { v: datosConectados ? '—' : 'S/ 18k', k1: 'Por', k2: 'cobrar', bg: '#111111', fg: '#FFFFFF' }
       ],
       segments: SEG.map((s) => ({
         name: TYPE[s[0]], n: String(s[1]), sales: money(s[2]), w: Math.round((s[2] / SEG[0][2]) * 100) + '%',
@@ -87,6 +98,8 @@ class Component extends DesignLogic {
         pick: () => this.setState({ seg: c })
       })),
       rowsCount: String(vis.length),
+      apiClientesState: this.props.apiClientesState,
+      apiClientesError: this.props.apiClientesError || '',
       rows: vis.map((c) => {
         const on = c.id === S.id;
         return {
@@ -318,7 +331,7 @@ export default function Clientes(props) {
                       </span>
                       <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
                         {lookup(v, "rowsCount")}
-                        {" mostrados de 414 · datos de ejemplo"}
+                        {lookup(v, "apiClientesState") === "success" ? " clientes cargados del backend" : lookup(v, "apiClientesState") === "error" ? "No se pudo cargar la lista de clientes." : " mostrados de 414 · datos de ejemplo"}
                       </span>
                     </span>
                     <div style={{ "display": "flex", "gap": "6px", "flexWrap": "wrap" }}>

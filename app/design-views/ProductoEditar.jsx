@@ -8,34 +8,41 @@ import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-run
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
+    const p = props.productoActual;
     this.state = {
       menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(),
-      status: 'Publicado', saved: false,
-      name: 'Lámpara de camping recargable',
-      desc: 'Lámpara LED recargable por USB con tres niveles de luz y modo SOS. Ideal para camping, cortes de luz y trabajo de campo. Gancho plegable para colgar en la carpa.',
-      prices: { pub: 69.9, min: 62.9, may: 55, emp: 52 },
-      photo: 0, colors: ['Negro', 'Verde'], caps: ['2000 mAh', '4000 mAh'],
-      visible: true, featured: true, delivery: true, agency: true, pickup: true, minStock: 15
+      id: p?.id || null, status: ({ publicado: 'Publicado', borrador: 'Borrador', oculto: 'Oculto' })[p?.estado] || 'Borrador', saved: false, saving: false, error: '',
+      name: p?.nombre || '', sku: p?.sku || '', marca: p?.marca || '', codigoBarras: p?.codigoBarras || '',
+      desc: p?.descripcion || '',
+      prices: { pub: p?.precios?.['Público'] ?? p?.precio ?? 0, min: p?.precios?.Minorista ?? 0, may: p?.precios?.Mayorista ?? 0, emp: p?.precios?.Empresa ?? 0 },
+      uploading: false, uploadError: '', uploadMessage: '', colors: p?.datosAdicionales?.colores || [], caps: p?.datosAdicionales?.capacidades || [],
+      categoria: p?.categoriaId || '', tags: p?.datosAdicionales?.etiquetas || [], tagInput: '',
+      peso: p?.datosAdicionales?.peso || '', medidas: p?.datosAdicionales?.medidas || '', garantia: p?.datosAdicionales?.garantia || 'Sin garantía', tipoEnvio: p?.datosAdicionales?.tipoEnvio || 'Paquete pequeño',
+      visible: p?.visibleEnTienda ?? false, featured: p?.destacado ?? false, delivery: p?.permiteDelivery ?? true, agency: p?.permiteAgencia ?? true, pickup: p?.permiteRecojo ?? true, minStock: p?.stockMinimo ?? 0
     };
   }
   renderVals() {
     const st = this.state;
     const B = 'img/';
     const soles = (n) => 'S/ ' + Number(n || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    // lotes con stock (ejemplo): restante y costo unitario
-    const LOTS = [['L-1012', 24, 30.5, '12 oct', 'Tienda · B2'], ['L-1031', 40, 31.8, '31 oct', 'Almacén · R1']];
+    const LOTS = (this.props.productoActual?.lotes || []).filter(l => l.estado === 'disponible').map(l => [l.codigo, l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.map(x => x.almacen.nombre).join(', ')]);
     const units = LOTS.reduce((a, l) => a + l[1], 0);
-    const cost = LOTS.reduce((a, l) => a + l[1] * l[2], 0) / units;
+    const cost = units ? LOTS.reduce((a, l) => a + l[1] * l[2], 0) / units : 0;
     const OK = 'M5 12l5 5 9-10', WARN = 'M12 7v6M12 17h.01', BAD = 'M6 6l12 12M18 6L6 18';
     const TIERS = [['pub', 'Público', 'Tienda web y mostrador', '1 unidad'], ['min', 'Minorista', 'Bodegas y tiendas', 'Desde 6 u.'], ['may', 'Mayorista', 'Distribuidores', 'Desde 24 u.'], ['emp', 'Empresa', 'Minería, constructoras', 'Desde 50 u.']];
-    const PH = ['a58999411e32d7481815ba8cdc175e97', 'eb0c79147accd306bbd7a39d350a8e88', '792438e54fa4b4d81f31171a2cf026f6', '56a034356f25e7cd0fe7251db3cbbddc'];
+    const archivos = this.props.productoActual?.archivos || [];
+    const imagenes = archivos.filter(a => a.tipo === 'imagen');
+    const videos = archivos.filter(a => a.tipo === 'video');
+    const principal = imagenes.find(a => a.principal) || imagenes[0];
     const COLORS = ['Negro', 'Verde', 'Naranja'], CAPS = ['2000 mAh', '4000 mAh', '6000 mAh'];
-    const toggleIn = (key, v) => () => { const a = st[key]; const has = a.indexOf(v) !== -1; if (has && a.length === 1) return; this.setState({ [key]: has ? a.filter((x) => x !== v) : a.concat([v]) }); };
+    const toggleIn = (key, v) => () => { const a = st[key]; const has = a.indexOf(v) !== -1; this.setState({ [key]: has ? a.filter((x) => x !== v) : a.concat([v]), saved: false }); };
     const SW = (label, sub, key) => ({ label, sub, on: st[key] ? 'true' : 'false', track: st[key] ? '#E8701F' : '#CFCFCB', knob: st[key] ? '21px' : '3px', toggle: () => this.setState({ [key]: !st[key] }) });
     const STS = { Publicado: ['#E4F4E7', '#1B5E20', OK], Borrador: ['#FFF4D6', '#7A4A00', 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4'], Oculto: ['#EFEFEC', '#444444', 'M3 3l18 18M10.6 6.1A10 10 0 0 1 22 12s-1.2 2.2-3.4 4.1M6.6 6.6C3.8 8.3 2 12 2 12s4 7 10 7c1.6 0 3-.4 4.3-1'] };
     const sstock = units <= st.minStock ? ['Stock bajo', '#7A4A00', WARN] : ['Disponible', '#1B5E20', OK];
     const pub = st.prices.pub;
     const vcount = st.colors.length * st.caps.length;
+    const categorias = (this.props.categorias || []).filter(c => c.activa || c.id === st.categoria);
+    const categoriaNombre = categorias.find(c => c.id === st.categoria)?.nombre || this.props.productoActual?.categoria || 'Sin categoría';
     return {
       accent: this.props.accent ?? '#FF914C',
       menuOpen: st.menu || !!this.props.menuAbierto,
@@ -46,16 +53,24 @@ class Component extends DesignLogic {
       menuBtn: () => this.setState({ menu: true }),
       togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
       name: st.name,
+      sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras,
+      setSku: (e) => this.setState({ sku: e.target.value, saved: false }),
+      setMarca: (e) => this.setState({ marca: e.target.value, saved: false }),
+      setCodigoBarras: (e) => this.setState({ codigoBarras: e.target.value, saved: false }),
       setName: (e) => this.setState({ name: (e && e.target && e.target.value) || '', saved: false }),
       desc: st.desc,
       setDesc: (e) => this.setState({ desc: (e && e.target && e.target.value) || '', saved: false }),
       descCount: st.desc.length + ' / 600',
       descFg: st.desc.length > 560 ? '#C2410C' : '#8C8C8C',
-      headline: 'Camping · ' + soles(pub) + ' público',
+      headline: categoriaNombre + ' · ' + soles(pub) + ' público',
+      categoria: st.categoria, categoriaNombre, categorias, categoriaEstado: this.props.estado, categoriaError: this.props.error,
+      peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, tagInput: st.tagInput, units: String(units),
+      setCategoria: e => this.setState({ categoria: e.target.value, saved: false }), setPeso: e => this.setState({ peso: e.target.value, saved: false }), setMedidas: e => this.setState({ medidas: e.target.value, saved: false }), setGarantia: e => this.setState({ garantia: e.target.value, saved: false }), setTipoEnvio: e => this.setState({ tipoEnvio: e.target.value, saved: false }), setTagInput: e => this.setState({ tagInput: e.target.value }),
+      addTag: () => { const tag = this.state.tagInput.trim(); if (tag && !this.state.tags.includes(tag) && this.state.tags.length < 20) this.setState({ tags: [...this.state.tags, tag], tagInput: '', saved: false }); },
       headStats: [
-        [String(units), 'Unidades', 'en 2 lotes', '#FFFFFF', '#111111'],
-        [Math.round(((pub - cost) / pub) * 100) + '%', 'Margen', 'precio público', '#FFFFFF', '#111111'],
-        ['412', 'Vendidas', 'últimos 90 días', '#FFFFFF', '#111111'],
+        [String(units), 'Unidades', 'en ' + LOTS.length + ' lotes', '#FFFFFF', '#111111'],
+        [(pub ? Math.round(((pub - cost) / pub) * 100) : 0) + '%', 'Margen', 'precio público', '#FFFFFF', '#111111'],
+        ['—', 'Vendidas', 'últimos 90 días', '#FFFFFF', '#111111'],
         [String(vcount), 'Variantes', 'activas', '#111111', '#FFFFFF']
       ].map((h) => ({ v: h[0], k1: h[1], k2: h[2], bg: h[3], fg: h[4] })),
       statuses: ['Publicado', 'Borrador', 'Oculto'].map((s) => ({ label: s, icon: STS[s][2], checked: st.status === s ? 'true' : 'false', bg: st.status === s ? STS[s][0] : 'transparent', fg: st.status === s ? STS[s][1] : '#6B6B6B', pick: () => this.setState({ status: s, saved: false }) })),
@@ -63,9 +78,31 @@ class Component extends DesignLogic {
       previewTagBg: STS[st.status][0], previewTagFg: STS[st.status][1],
       previewO: st.status === 'Publicado' ? '1' : '0.6',
       saved: st.saved,
-      save: () => this.setState({ saved: !st.saved }),
-      mainImg: B + PH[st.photo],
-      photos: PH.map((p, i) => ({ src: B + p, n: String(i + 1), aria: 'Usar foto ' + (i + 1) + ' como principal', pressed: st.photo === i ? 'true' : 'false', ring: st.photo === i ? '#E8701F' : 'transparent', pick: () => this.setState({ photo: i }) })),
+      error: st.error, saving: st.saving, dismiss: () => this.setState({ saved: false }),
+      save: async () => {
+        if (this.state.saving) return;
+        if (!st.name.trim() || !st.sku.trim()) { this.setState({ error: 'Completa el nombre y el código SKU.' }); return; }
+        if (this.props.estado !== 'success') { this.setState({ error: 'Espera a que se carguen las categorías o reintenta la conexión.' }); return; }
+        this.setState({ saving: true, error: '', saved: false });
+        try {
+          const result = await this.props.onGuardarProducto(st.id, { nombre: st.name, sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras, descripcion: st.desc, estado: ({ Publicado: 'publicado', Borrador: 'borrador', Oculto: 'oculto' })[st.status], categoriaId: st.categoria || null, datosAdicionales: { peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, etiquetas: st.tags, colores: st.colors, capacidades: st.caps }, visibleEnTienda: st.visible, destacado: st.featured, permiteDelivery: st.delivery, permiteAgencia: st.agency, permiteRecojo: st.pickup, stockMinimo: st.minStock, precios: st.prices });
+          this.setState({ id: result.datos.id, saving: false, saved: true });
+        } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo guardar el producto.' }); }
+      },
+      mainImg: principal?.url || '',
+      photos: imagenes.map((p, i) => ({ src: p.url, n: String(i + 1), aria: 'Usar foto ' + (i + 1) + ' como principal', pressed: p.principal ? 'true' : 'false', ring: p.principal ? '#E8701F' : 'transparent', pick: async () => { try { await this.props.onImagenPrincipal(st.id, p.id); this.setState({ uploadError: '', uploadMessage: 'Foto principal actualizada.' }); } catch (error) { this.setState({ uploadError: error.message || 'No se pudo actualizar la foto.' }); } } })),
+      videos, uploading: st.uploading, uploadError: st.uploadError, uploadMessage: st.uploadMessage,
+      onArchivos: async e => {
+        const files = Array.from(e.target.files || []); e.target.value = '';
+        if (!files.length) return;
+        if (!st.id) { this.setState({ uploadError: 'Primero guarda el producto para poder subir archivos.', uploadMessage: '' }); return; }
+        this.setState({ uploading: true, uploadError: '', uploadMessage: '' });
+        let subidos = 0;
+        try {
+          for (const file of files) { await this.props.onSubirArchivo(st.id, file); subidos++; }
+          this.setState({ uploading: false, uploadMessage: `${subidos} archivo(s) guardado(s).` });
+        } catch (error) { this.setState({ uploading: false, uploadError: `${subidos ? subidos + ' archivo(s) guardado(s). ' : ''}${error.message || 'No se pudo subir el archivo.'}` }); }
+      },
       costText: soles(cost),
       floorText: soles(cost),
       tiers: TIERS.map((t) => {
@@ -87,20 +124,20 @@ class Component extends DesignLogic {
         values: o[2].map((v) => { const on = st[o[1]].indexOf(v) !== -1; return { label: v, pressed: on ? 'true' : 'false', aria: (on ? 'Quitar ' : 'Agregar ') + v, bg: on ? '#111111' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111111', border: on ? '#111111' : '#DCDCD8', icon: on ? 'M5 12l5 5 9-10' : 'M12 5v14M5 12h14', toggle: toggleIn(o[1], v) }; })
       })),
       variantCount: vcount + (vcount === 1 ? ' variante' : ' variantes') + ' · toca para agregar o quitar',
-      variants: st.colors.reduce((acc, c, ci) => acc.concat(st.caps.map((k, ki) => {
-        const extra = k === '4000 mAh' ? 20 : k === '6000 mAh' ? 40 : 0;
-        const stock = [[18, 14, 6], [12, 9, 0], [4, 0, 0]][ci % 3][ki % 3] || 0;
+      variants: st.colors.reduce((acc, c) => acc.concat(st.caps.map((k) => {
+        const existente = (this.props.productoActual?.variantes || []).find(v => v.atributos?.color === c && v.atributos?.capacidad === k);
+        const stock = existente?.stock || 0;
         return {
           name: c + ' · ' + k,
-          sku: 'CAM-LAMP-R-' + c.slice(0, 3).toUpperCase() + '-' + k.split(' ')[0],
-          price: soles(pub + extra),
+          sku: existente?.sku || 'Se asigna al guardar',
+          price: soles(pub),
           stock: stock ? stock + ' u.' : 'Sin stock',
           fg: stock ? (stock < 5 ? '#7A4A00' : '#1B5E20') : '#8E1C14',
           icon: stock ? (stock < 5 ? WARN : OK) : BAD
         };
       })), []),
       ship: [SW('Recojo en tienda', 'Dean Valdivia 533', 'pickup'), SW('Delivery Arequipa', 'Motorizado', 'delivery'), SW('Agencia a provincias', 'Cusco, Puno, Moquegua…', 'agency')],
-      tags: ["Recargable", "LED", "Cortes de luz"].map((t) => ({ label: t })),
+      tags: st.tags.map(t => ({ label: t, remove: () => this.setState({ tags: this.state.tags.filter(x => x !== t), saved: false }) })),
       orgToggles: [SW('Visible en la tienda', 'Aparece en catálogo y búsqueda', 'visible'), SW('Destacado', 'Sale en la portada y en ofertas', 'featured')],
       featured: st.featured,
       minStock: String(st.minStock),
@@ -112,12 +149,7 @@ class Component extends DesignLogic {
         nBg: i === 0 ? '#E8701F' : '#FFFFFF', nFg: i === 0 ? '#FFFFFF' : '#111111',
         tag: i === 0 ? 'Se vende primero' : 'Después', tagFg: i === 0 ? '#8A3B0A' : '#6B6B6B', tagIcon: i === 0 ? 'M12 5v14M5 12l7 7 7-7' : 'M12 7v5l3 2'
       })),
-      history: [
-        ['Precio público cambió de S/ 64.90 a S/ 69.90', 'Hace 6 días · Beltran C.', '#E8701F'],
-        ['Ingresó el lote L-1031 (40 u.)', '31 oct · Almacén', '#111111'],
-        ['Se agregó la variante 4000 mAh', '18 set · Beltran C.', '#BDBDBD'],
-        ['Producto creado', '02 jun 2026 · Beltran C.', '#BDBDBD']
-      ].map((h) => ({ what: h[0], when: h[1], dot: h[2] }))
+      history: (this.props.productoActual?.historial || []).map(h => ({ what: h.accion, when: new Date(h.creadoEn).toLocaleString('es-PE'), dot: '#E8701F' }))
     };
   }
 }
@@ -161,7 +193,7 @@ export default function ProductoEditar(props) {
                     {lookup(v, "name")}
                   </span>
                   <span style={{ "fontSize": "16px", "fontWeight": "500", "color": "#8C8C8C" }}>
-                    {"Editar producto · CAM-LAMP-R"}
+                    {lookup(v, "sku") ? "Producto · " + lookup(v, "sku") : "Nuevo producto"}
                   </span>
                 </nav>
                 <span style={{ "flex": "1" }}></span>
@@ -183,7 +215,7 @@ export default function ProductoEditar(props) {
                   </svg>
                   {"Ver en la tienda"}
                 </DesignLink>
-                <button onClick={lookup(v, "save")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 24px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700" }}>
+                <button disabled={lookup(v, "saving")} onClick={lookup(v, "save")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 24px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M5 12l5 5 9-10"}></path>
                   </svg>
@@ -232,7 +264,7 @@ export default function ProductoEditar(props) {
                       {lookup(v, "statusName")}
                       {". La tienda muestra los precios nuevos en unos segundos."}
                     </span>
-                    <button onClick={lookup(v, "save")} aria-label={"Cerrar aviso"} style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "border": "none", "background": "transparent", "cursor": "pointer", "color": "inherit", "fontSize": "18px" }}>
+                    <button onClick={lookup(v, "dismiss")} aria-label={"Cerrar aviso"} style={{ "width": "32px", "height": "32px", "borderRadius": "50%", "border": "none", "background": "transparent", "cursor": "pointer", "color": "inherit", "fontSize": "18px" }}>
                       {"×"}
                     </button>
                   </div>
@@ -241,6 +273,7 @@ export default function ProductoEditar(props) {
             </div>
             <div style={{ "padding": "0 20px 24px", "display": "flex", "gap": "16px", "flexWrap": "wrap", "alignItems": "flex-start" }}>
               <div style={{ "flex": "999 1 640px", "minWidth": "0", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
+                {lookup(v, "error") && <p role="alert">{lookup(v, "error")}</p>}
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px" }}>
                     <span style={{ "fontSize": "18px", "fontWeight": "700" }}>
@@ -268,16 +301,16 @@ export default function ProductoEditar(props) {
                   <div style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "12px" }}>
                     <label className={"pe-lab"}>
                       {"Marca"}
-                      <input className={"pe-in"} defaultValue={"[MARCA]"} />
+                      <input className={"pe-in"} value={lookup(v, "marca")} onChange={lookup(v, "setMarca")} />
                     </label>
                     <label className={"pe-lab"}>
                       {"Código / SKU"}
-                      <input className={"pe-in"} defaultValue={"CAM-LAMP-R"} style={{ "fontVariantNumeric": "tabular-nums" }} />
+                      <input className={"pe-in"} value={lookup(v, "sku")} onChange={lookup(v, "setSku")} style={{ "fontVariantNumeric": "tabular-nums" }} />
                     </label>
                     <label className={"pe-lab"}>
                       {"Código de barras"}
                       <span style={{ "display": "flex", "gap": "6px" }}>
-                        <input className={"pe-in"} defaultValue={"[CÓDIGO DE BARRAS]"} />
+                        <input className={"pe-in"} value={lookup(v, "codigoBarras")} onChange={lookup(v, "setCodigoBarras")} />
                         <button aria-label={"Escanear código"} style={{ "width": "46px", "height": "46px", "flex": "none", "borderRadius": "14px", "border": "none", "background": "#F4F4F2", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
                           <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} aria-hidden={"true"}>
                             <path d={"M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3M8 8v8M11 8v8M14 8v8M17 8v8"}></path>
@@ -290,15 +323,15 @@ export default function ProductoEditar(props) {
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px" }}>
                     <span style={{ "fontSize": "18px", "fontWeight": "700" }}>
-                      {"Fotos"}
+                        {"Fotos y videos"}
                     </span>
                     <span style={{ "fontSize": "12px", "color": "#8C8C8C" }}>
-                      {"Arrastra para ordenar · toca una para hacerla principal"}
+                      {"Toca una foto para hacerla principal"}
                     </span>
                   </span>
                   <div style={{ "display": "flex", "gap": "14px", "flexWrap": "wrap" }}>
                     <div style={{ "flex": "1 1 320px", "position": "relative", "borderRadius": "24px", "overflow": "hidden", "background": "#F4F4F2", "aspectRatio": "4 / 3", "minWidth": "0" }}>
-                      <img src={assetSrc(lookup(v, "mainImg"))} alt={lookup(v, "name")} style={{ "width": "100%", "height": "100%", "objectFit": "cover", "display": "block" }} />
+                      {lookup(v, "mainImg") ? <img src={assetSrc(lookup(v, "mainImg"))} alt={lookup(v, "name")} style={{ "width": "100%", "height": "100%", "objectFit": "cover", "display": "block" }} /> : <span style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#8C8C8C' }}>Sin foto principal</span>}
                       <span style={{ "position": "absolute", "top": "14px", "left": "14px", "display": "inline-flex", "alignItems": "center", "gap": "6px", "height": "30px", "padding": "0 12px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "fontSize": "12px", "fontWeight": "700" }}>
                         <svg width={"12"} height={"12"} viewBox={"0 0 24 24"} fill={"#E8701F"} stroke={"#E8701F"} strokeWidth={"2"} aria-hidden={"true"}>
                           <path d={"M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"}></path>
@@ -317,7 +350,8 @@ export default function ProductoEditar(props) {
                           </button>
                         </Fragment>
                       ))}
-                      <div style={{ "gridColumn": "span 2", "border": "2px dashed #DCDCD8", "borderRadius": "20px", "padding": "16px", "display": "flex", "alignItems": "center", "gap": "12px" }}>
+                      <label style={{ "gridColumn": "span 2", "border": "2px dashed #DCDCD8", "borderRadius": "20px", "padding": "16px", "display": "flex", "alignItems": "center", "gap": "12px", "cursor": "pointer" }}>
+                        <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple disabled={lookup(v, "uploading")} onChange={lookup(v, "onArchivos")} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }} />
                         <span style={{ "width": "42px", "height": "42px", "borderRadius": "50%", "background": "#FFF1E6", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                           <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#C2410C"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                             <path d={"M12 16V4M7 9l5-5 5 5M4 20h16"}></path>
@@ -325,15 +359,18 @@ export default function ProductoEditar(props) {
                         </span>
                         <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.3" }}>
                           <span style={{ "fontSize": "13px", "fontWeight": "700" }}>
-                            {"Subir fotos"}
+                            {lookup(v, "uploading") ? "Subiendo archivos…" : "Subir fotos o videos"}
                           </span>
                           <span style={{ "fontSize": "12px", "color": "#8C8C8C" }}>
-                            {"JPG o PNG · fondo claro · hasta 8 fotos"}
+                            {"JPG, PNG, WebP · MP4 o WebM · hasta 8 fotos y 3 videos"}
                           </span>
                         </span>
-                      </div>
+                      </label>
+                      {lookup(v, "uploadError") && <p role="alert" style={{ gridColumn: 'span 2', color: '#8E1C14', margin: 0 }}>{lookup(v, "uploadError")}</p>}
+                      {lookup(v, "uploadMessage") && <p role="status" style={{ gridColumn: 'span 2', color: '#1B5E20', margin: 0 }}>{lookup(v, "uploadMessage")}</p>}
                     </div>
                   </div>
+                  {(lookup(v, "videos") || []).map(video => <video key={video.id} controls preload="metadata" src={assetSrc(video.url)} style={{ width: '100%', maxHeight: 320, borderRadius: 20, background: '#111111' }} />)}
                 </section>
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px", "flexWrap": "wrap" }}>
@@ -347,7 +384,7 @@ export default function ProductoEditar(props) {
                   <div style={{ "display": "flex", "gap": "12px", "flexWrap": "wrap" }}>
                     <div style={{ "flex": "1 1 220px", "borderRadius": "22px", "background": "#111111", "color": "#FFFFFF", "padding": "18px", "display": "flex", "flexDirection": "column", "gap": "6px" }}>
                       <span style={{ "fontSize": "12px", "color": "#BDBDBD" }}>
-                        {"Costo promedio · 2 lotes"}
+                        {"Costo promedio de lotes"}
                       </span>
                       <span style={{ "fontSize": "30px", "fontWeight": "800", "letterSpacing": "-0.01em" }}>
                         {lookup(v, "costText")}
@@ -517,15 +554,15 @@ export default function ProductoEditar(props) {
                   <div style={{ "display": "grid", "gridTemplateColumns": "repeat(4, minmax(0, 1fr))", "gap": "12px" }}>
                     <label className={"pe-lab"}>
                       {"Peso (kg)"}
-                      <input className={"pe-in"} defaultValue={"0.45"} />
+                      <input className={"pe-in"} type="number" min="0" step="0.001" value={lookup(v, "peso")} onChange={lookup(v, "setPeso")} />
                     </label>
                     <label className={"pe-lab"}>
                       {"Medidas (cm)"}
-                      <input className={"pe-in"} defaultValue={"12 × 12 × 22"} />
+                      <input className={"pe-in"} value={lookup(v, "medidas")} onChange={lookup(v, "setMedidas")} placeholder="Ej.: 12 × 12 × 22" />
                     </label>
                     <label className={"pe-lab"}>
                       {"Garantía"}
-                      <select className={"pe-in"}>
+                      <select className={"pe-in"} value={lookup(v, "garantia")} onChange={lookup(v, "setGarantia")}>
                         <option>
                           {"6 meses"}
                         </option>
@@ -542,7 +579,7 @@ export default function ProductoEditar(props) {
                     </label>
                     <label className={"pe-lab"}>
                       {"Tipo de envío"}
-                      <select className={"pe-in"}>
+                      <select className={"pe-in"} value={lookup(v, "tipoEnvio")} onChange={lookup(v, "setTipoEnvio")}>
                         <option>
                           {"Paquete pequeño"}
                         </option>
@@ -588,7 +625,7 @@ export default function ProductoEditar(props) {
                   </span>
                   <div style={{ "borderRadius": "22px", "background": "#FFFFFF", "color": "#111111", "overflow": "hidden", "opacity": lookup(v, "previewO") }}>
                     <div style={{ "position": "relative", "aspectRatio": "4 / 3", "background": "#F4F4F2" }}>
-                      <img src={assetSrc(lookup(v, "mainImg"))} alt={""} style={{ "width": "100%", "height": "100%", "objectFit": "cover", "display": "block" }} />
+                      {lookup(v, "mainImg") && <img src={assetSrc(lookup(v, "mainImg"))} alt={""} style={{ "width": "100%", "height": "100%", "objectFit": "cover", "display": "block" }} />}
                       {Boolean(lookup(v, "featured")) && (
                         <Fragment>
                           <span style={{ "position": "absolute", "top": "10px", "left": "10px", "height": "26px", "padding": "0 10px", "borderRadius": "999px", "background": "#FF914C", "color": "#111111", "fontFamily": "'Roboto Mono', monospace", "fontSize": "11px", "fontWeight": "700", "display": "flex", "alignItems": "center", "textTransform": "uppercase" }}>
@@ -599,7 +636,7 @@ export default function ProductoEditar(props) {
                     </div>
                     <div style={{ "padding": "14px 16px 16px", "display": "flex", "flexDirection": "column", "gap": "6px" }}>
                       <span style={{ "fontSize": "11px", "fontWeight": "700", "color": "#8C8C8C", "textTransform": "uppercase", "letterSpacing": "0.04em" }}>
-                        {"Camping · Lámparas"}
+                        {lookup(v, "categoriaNombre")}
                       </span>
                       <span style={{ "fontSize": "15px", "fontWeight": "700", "lineHeight": "1.3" }}>
                         {lookup(v, "name")}
@@ -622,21 +659,13 @@ export default function ProductoEditar(props) {
                   </span>
                   <label className={"pe-lab"}>
                     {"Categoría"}
-                    <select className={"pe-in"}>
-                      <option>
-                        {"Camping › Lámparas"}
-                      </option>
-                      <option>
-                        {"Camping › Linternas"}
-                      </option>
-                      <option>
-                        {"Focos › LED"}
-                      </option>
-                      <option>
-                        {"Solar › Kits"}
-                      </option>
+                    <select className={"pe-in"} value={lookup(v, "categoria")} onChange={lookup(v, "setCategoria")} disabled={lookup(v, "categoriaEstado") !== 'success'}>
+                      <option value="">Sin categoría</option>
+                      {(lookup(v, "categorias") || []).map(c => <option key={c.id} value={c.id}>{c.nombre}{c.activa ? '' : ' (inactiva)'}</option>)}
                     </select>
                   </label>
+                  {lookup(v, "categoriaEstado") === 'error' && <p role="alert" style={{ margin: 0, color: '#8E1C14', fontSize: 12 }}>{lookup(v, "categoriaError") || 'No se pudieron cargar las categorías.'} <button type="button" onClick={props.reintentar}>Reintentar</button></p>}
+                  <DesignLink href="/categorias" style={{ fontSize: 12, fontWeight: 700, color: '#C2410C', textDecoration: 'none' }}>Administrar categorías ›</DesignLink>
                   <div className={"pe-lab"}>
                     {"Etiquetas"}
                     <span style={{ "display": "flex", "gap": "6px", "flexWrap": "wrap" }}>
@@ -644,12 +673,14 @@ export default function ProductoEditar(props) {
                         <Fragment key={index9}>
                           <span style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "height": "32px", "padding": "0 12px", "borderRadius": "999px", "background": "#F4F4F2", "fontSize": "12px", "fontWeight": "700", "color": "#111111" }}>
                             {lookup(t, "label")}
+                            <button type="button" onClick={lookup(t, "remove")} aria-label={'Quitar etiqueta ' + lookup(t, "label")} style={{ border: 0, background: 'transparent', cursor: 'pointer', fontSize: 15 }}>×</button>
                           </span>
                         </Fragment>
                       ))}
-                      <span style={{ "display": "inline-flex", "alignItems": "center", "height": "32px", "padding": "0 12px", "borderRadius": "999px", "border": "1px dashed #BDBDBD", "fontSize": "12px", "fontWeight": "700", "color": "#6B6B6B" }}>
+                      <input aria-label="Nueva etiqueta" value={lookup(v, "tagInput")} onChange={lookup(v, "setTagInput")} maxLength={50} className="pe-in" style={{ width: 130, height: 32 }} />
+                      <button type="button" onClick={lookup(v, "addTag")} style={{ "display": "inline-flex", "alignItems": "center", "height": "32px", "padding": "0 12px", "borderRadius": "999px", "border": "1px dashed #BDBDBD", "background": "transparent", "cursor": "pointer", "fontSize": "12px", "fontWeight": "700", "color": "#6B6B6B" }}>
                         {"+ Agregar"}
-                      </span>
+                      </button>
                     </span>
                   </div>
                   {(lookup(v, "orgToggles") || []).map((s, index10) => (
@@ -685,7 +716,7 @@ export default function ProductoEditar(props) {
                         {"Stock total"}
                       </span>
                       <span style={{ "fontSize": "26px", "fontWeight": "800" }}>
-                        {"64"}
+                        {lookup(v, "units")}
                       </span>
                       <span style={{ "display": "inline-flex", "alignItems": "center", "gap": "5px", "fontSize": "12px", "fontWeight": "700", "color": lookup(v, "stockFg") }}>
                         <svg width={"12"} height={"12"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.6"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
@@ -717,7 +748,7 @@ export default function ProductoEditar(props) {
                     </svg>
                     {"Ubicación: "}
                     <strong>
-                      {"Tienda · B2"}
+                      {"Consulta los lotes para ver la ubicación"}
                     </strong>
                   </span>
                   <span style={{ "fontSize": "12px", "fontWeight": "700", "color": "#8C8C8C" }}>
@@ -775,7 +806,7 @@ export default function ProductoEditar(props) {
                     </Fragment>
                   ))}
                   <span style={{ "fontSize": "11px", "color": "#9A9A9A", "paddingTop": "6px" }}>
-                    {"Datos de ejemplo."}
+                    {"Historial del producto."}
                   </span>
                 </section>
               </div>
@@ -786,7 +817,7 @@ export default function ProductoEditar(props) {
           <Fragment>
             <div style={{ "position": "absolute", "inset": "0", "zIndex": "20", "background": "rgba(17,17,17,0.3)", "padding": "96px 24px 24px", "boxSizing": "border-box" }}>
               <div style={{ "maxWidth": "1100px" }}>
-                <DesignImport name={"MenuPanel"} mode={"pop"} active={"Inventario"} onPin={lookup(v, "togglePin")} onClose={lookup(v, "closeMenu")} />
+                <DesignImport name={"MenuPanel"} mode={"pop"} active={"ProductoEditar"} onPin={lookup(v, "togglePin")} onClose={lookup(v, "closeMenu")} />
               </div>
             </div>
           </Fragment>

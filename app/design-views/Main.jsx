@@ -22,6 +22,9 @@ class Component extends DesignLogic {
     const B = 'img/';
     const add = () => this.setState({ cart: this.state.cart + 1 });
     const open = this.state.open;
+    const apiProductos = Array.isArray(this.props.apiProductos) ? this.props.apiProductos : [];
+    const apiCatalogState = this.props.apiCatalogState ?? 'idle';
+    const apiCatalogError = this.props.apiCatalogError ?? '';
     const cats = [
       { name: 'Focos', img: B + '3b9c9685b295f2e98de45092f0726e9d', blurb: 'Iluminación LED e inteligente para cada espacio.', subs: ['Focos LED', 'Focos inteligentes', 'Focos ahorradores', 'Reflectores', 'Tiras LED'] },
       { name: 'Cables', img: B + '9b50c161cb5babd38f32f5ae0d6d07f2', blurb: 'Carga, video, red y audio con conexiones confiables.', subs: ['Cables USB', 'Cables HDMI', 'Cables de red', 'Cables de audio', 'Cable eléctrico'] },
@@ -54,6 +57,9 @@ class Component extends DesignLogic {
     return {
       accent: this.props.accent ?? '#FF914C',
       accentText: '#E8701F',
+      apiProductos,
+      apiCatalogState,
+      apiCatalogError,
       ticker: [0, 1].flatMap(() => ['Envío a todo el país', 'Entrega programada', 'Pago seguro', 'Atención por WhatsApp', 'Focos LED e inteligentes', 'Paneles solares y energía portátil', 'Cables y extensiones', 'Todo para camping', 'Bisutería nueva cada semana', 'Ofertas de temporada', 'Kits VIA para cada proyecto'].map((label) => ({ label }))),
       slide: heroSlides[this.state.hero],
       heroTabs: heroSlides.map((h, i) => ({
@@ -200,12 +206,13 @@ export default function Main(props) {
                   <path d={"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"}></path>
                 </svg>
               </button>
-              <button aria-label={"Mi cuenta"} style={{ "width": "32px", "height": "44px", "border": "none", "background": "transparent", "color": "#111111", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center", "padding": "0" }}>
+              <DesignLink href={"/admin/login"} aria-label={"Acceso al panel de administración"} title={"Ingresar al panel de administración"} style={{ "width": "auto", "height": "44px", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "gap": "6px", "padding": "0 6px", "fontSize": "13px", "fontWeight": "700", "textDecoration": "none" }}>
                 <svg width={"20"} height={"20"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <circle cx={"12"} cy={"8"} r={"4"}></circle>
                   <path d={"M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"}></path>
                 </svg>
-              </button>
+                {"Panel"}
+              </DesignLink>
               <DesignLink href={"/carrito"} aria-label={"Carrito"} style={{ "position": "relative", "width": "40px", "height": "40px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none" }}>
                 <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"1.8"} aria-hidden={"true"}>
                   <path d={"M3 4h2l2.2 11h11l2-8H6.2"}></path>
@@ -390,7 +397,34 @@ export default function Main(props) {
             ))}
           </div>
         </section>
-        {(lookup(v, "rails") || []).map((r, index7) => (
+        {lookup(v, "apiCatalogState") === "success" ? (
+          <section id="productos" style={{ padding: "40px 0 64px" }}>
+            <h2 style={{ fontFamily: "Archivo, sans-serif", fontWeight: "800", fontSize: "40px", textTransform: "uppercase", margin: "0 0 24px" }}>
+              Productos <span style={{ color: lookup(v, "accentText") }}>disponibles</span>
+            </h2>
+            {lookup(v, "apiProductos").length === 0 ? (
+              <p role="status">Pronto publicaremos productos en la tienda.</p>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "20px" }}>
+                {(lookup(v, "apiProductos") || []).map((p, index7) => (
+                  <article key={lookup(p, "id") || index7} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <img src={assetSrc(lookup(p, "imagen") || "img/a58999411e32d7481815ba8cdc175e97")} alt={lookup(p, "textoAlternativo") || lookup(p, "nombre")} style={{ width: "100%", aspectRatio: "1", borderRadius: "18px", objectFit: "cover", background: "#F4F4F2" }} />
+                    <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: "12px", textTransform: "uppercase" }}>{lookup(p, "categoria") || "VIA Provisiones"}</span>
+                    <h3 style={{ margin: 0, fontFamily: "Archivo, sans-serif", fontSize: "18px", textTransform: "uppercase" }}>{lookup(p, "nombre")}</h3>
+                    <strong style={{ fontFamily: "'Roboto Mono', monospace" }}>S/ {Number(lookup(p, "precio") || 0).toFixed(2)}</strong>
+                    <button onClick={add} style={{ height: "44px", borderRadius: "999px", border: "2px solid #111111", background: "#FFFFFF", cursor: "pointer", fontWeight: "700" }}>Añadir al carrito</button>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : lookup(v, "apiCatalogState") === "error" ? (
+          <section role="status" style={{ margin: "32px 0", padding: "18px 22px", borderRadius: "16px", background: "#FFF4D6" }}>
+            {lookup(v, "apiCatalogError") || "No se pudo conectar con el catálogo."}
+          </section>
+        ) : lookup(v, "apiCatalogState") === "pending" ? (
+          <section role="status" style={{ padding: "40px 0 64px" }}>Cargando el catálogo…</section>
+        ) : (lookup(v, "rails") || []).map((r, index7) => (
           <Fragment key={index7}>
             <section id={lookup(r, "id")} style={{ "padding": "40px 0 64px", "display": "flex", "flexWrap": "wrap", "gap": "40px" }}>
               <div style={{ "flex": "0 1 340px", "minWidth": "260px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>

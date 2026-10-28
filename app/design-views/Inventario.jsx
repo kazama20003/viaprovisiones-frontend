@@ -8,7 +8,7 @@ import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-run
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: 'P1', filter: 'Todos', cat: 'Todas', loc: 0, saved: false, formHi: false };
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', loc: 0, saved: false, formHi: false, productoId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '' };
   }
   renderVals() {
     const B = 'img/';
@@ -16,7 +16,7 @@ class Component extends DesignLogic {
     const st = this.state;
     const money = (n, d = 2) => 'S/ ' + n.toLocaleString('es-PE', { minimumFractionDigits: d, maximumFractionDigits: d });
     const LOT = (code, supplier, date, qty, left, cost, loc, warranty, status) => ({ code, supplier, date, qty, left, cost, loc, warranty, status });
-    const PROD = [
+    const PRODDemo = [
       { id: 'P1', name: 'Foco LED 9 W luz cálida', sku: 'FOC-LED9-C', cat: 'Focos', price: 8.9, min: 60, img: '52dc55c2523393f8f60ab89499fa3ec1', lots: [
         LOT('L-0921', '[Proveedor A]', '21 set', 300, 0, 4.2, 'Tienda · A3', 'set 2027', 'Agotado'),
         LOT('L-1008', '[Proveedor A]', '08 oct', 200, 140, 4.1, 'Tienda · A3', 'oct 2027', 'Activo'),
@@ -40,12 +40,21 @@ class Component extends DesignLogic {
       { id: 'P8', name: 'Collar dorado de cadena fina', sku: 'BIS-COL-DOR', cat: 'Bisutería', price: 29.9, min: 8, img: '792438e54fa4b4d81f31171a2cf026f6', lots: [
         LOT('L-0820', '[Proveedor G]', '20 ago', 40, 0, 9.8, 'Tienda · Vitrina', '—', 'Agotado')] }
     ];
+    const productosConectados = ['success', 'pending', 'error'].includes(this.props.apiProductosAdminState);
+    const PROD = this.props.apiProductosAdminState === 'success'
+      ? (this.props.apiProductosAdmin || []).map((p) => ({
+          id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Otros',
+          price: Number(p.precio || 0), min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
+          lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, l.proveedor?.nombre || 'Sin proveedor', new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', ({ disponible: 'Activo', en_revision: 'En revisión', agotado: 'Agotado', bloqueado: 'En revisión' })[l.estado] || 'En revisión'), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
+          stockDisponible: Number(p.stockDisponible || 0),
+        }))
+      : productosConectados ? [] : PRODDemo;
     const sellable = (l) => l.status === 'Activo';
     const enrich = PROD.map((p) => {
-      const stock = p.lots.filter(sellable).reduce((a, l) => a + l.left, 0);
-      const units = p.lots.filter((l) => l.status !== 'En tránsito' && l.status !== 'Agotado').reduce((a, l) => a + l.left, 0);
+      const stock = p.stockDisponible ?? p.lots.filter(sellable).reduce((a, l) => a + l.left, 0);
+      const units = p.stockDisponible ?? p.lots.filter((l) => l.status !== 'En tránsito' && l.status !== 'Agotado').reduce((a, l) => a + l.left, 0);
       const valued = p.lots.filter((l) => l.status !== 'En tránsito' && l.status !== 'Agotado');
-      const avg = valued.length ? valued.reduce((a, l) => a + l.left * l.cost, 0) / Math.max(1, units) : p.lots[p.lots.length - 1].cost;
+      const avg = valued.length ? valued.reduce((a, l) => a + l.left * l.cost, 0) / Math.max(1, units) : (p.lots[p.lots.length - 1]?.cost || 0);
       const state = stock === 0 ? 'Agotado' : stock < p.min ? 'Stock bajo' : 'Disponible';
       const transit = p.lots.some((l) => l.status === 'En tránsito');
       return { ...p, stock, units, avg, state, transit, value: units * avg };
@@ -80,6 +89,24 @@ class Component extends DesignLogic {
       ['Ajuste por daño', '−2', 'Cable USB-C · L-0901 · empaque roto', '#FFF4D6', '#7A4A00', 'M12 7v6M12 17h.01', '#7A4A00'],
       ['Venta #1042', '−2', 'Lámpara de camping · lote L-0915', '#FFE7D6', '#8A3B0A', 'M12 5v14M5 12l7 7 7-7', '#8A3B0A']
     ];
+    const operar = async (id, accion, datos = {}) => {
+      try { await this.props.onOperarLote(id, accion, datos); this.setState({ error: '', aviso: accion === 'aprobar' ? 'Lote aprobado y disponible.' : accion === 'ajustar' ? 'Stock ajustado correctamente.' : 'Traslado registrado.' }); }
+      catch (error) { this.setState({ error: error.message || 'No se pudo completar la operación.', aviso: '' }); }
+    };
+    const seleccionar = (p) => {
+      const disponibles = p.lots.filter(l => l.id && l.existencias?.length);
+      if (!disponibles.length) { this.setState({ error: 'Este producto no tiene lotes con existencias.' }); return null; }
+      const codigo = window.prompt('Indica el código del lote:\n' + disponibles.map(l => l.code).join('\n'), disponibles.length === 1 ? disponibles[0].code : '');
+      if (codigo === null) return null;
+      const lote = disponibles.find(l => l.code.toLowerCase() === codigo.trim().toLowerCase());
+      if (!lote) { this.setState({ error: 'No se encontró ese lote.' }); return null; }
+      const ubicaciones = lote.existencias;
+      const nombre = ubicaciones.length === 1 ? ubicaciones[0].almacen.nombre : window.prompt('Indica la ubicación:\n' + ubicaciones.map(x => x.almacen.nombre).join('\n'));
+      if (nombre === null) return null;
+      const existencia = ubicaciones.find(x => x.almacen.nombre.toLowerCase() === nombre.trim().toLowerCase());
+      if (!existencia) { this.setState({ error: 'No se encontró esa ubicación.' }); return null; }
+      return { lote, existencia };
+    };
     return {
       accent,
       menuOpen: st.menu || !!this.props.menuAbierto,
@@ -89,26 +116,40 @@ class Component extends DesignLogic {
       menuBtnLabel: 'Abrir menú',
       menuBtn: () => this.setState({ menu: true }),
       togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
-      focusForm: () => this.setState({ formHi: true, saved: false }),
+      apiProductosAdminState: this.props.apiProductosAdminState,
+      apiProductosAdminError: this.props.apiProductosAdminError || '',
+      focusForm: () => { this.setState({ formHi: true, saved: false }); document.getElementById('registrar-lote')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
       formBg: st.formHi ? '#FFF1E6' : '#F4F4F2',
-      saved: st.saved,
-      saveLot: () => this.setState({ saved: true, formHi: false }),
+      saved: st.saved, codigo: st.codigo, error: st.error, aviso: st.aviso, saving: st.saving,
+      productosForm: PROD.map(p => ({ id: p.id, name: p.name })),
+      productoId: st.productoId, proveedor: st.proveedor, cantidad: st.cantidad, costo: st.costo, ingreso: st.ingreso, garantia: st.garantia, revisar: st.revisar,
+      field: (key) => (e) => this.setState({ [key]: e.target.value, saved: false }),
+      setProducto: (e) => this.setState({ productoId: e.target.value, saved: false }), setProveedor: (e) => this.setState({ proveedor: e.target.value }), setCantidad: (e) => this.setState({ cantidad: e.target.value }), setCosto: (e) => this.setState({ costo: e.target.value }), setIngreso: (e) => this.setState({ ingreso: e.target.value }), setGarantia: (e) => this.setState({ garantia: e.target.value }), setRevisar: (e) => this.setState({ revisar: e.target.checked }),
+      saveLot: async () => {
+        if (this.state.saving) return;
+        if (!st.productoId || !st.cantidad || !st.costo || !st.ingreso) { this.setState({ error: 'Completa el producto, la cantidad, el costo y la fecha de ingreso.' }); return; }
+        this.setState({ saving: true, saved: false, error: '' });
+        try {
+          const result = await this.props.onRegistrarLote({ productoId: st.productoId, proveedor: st.proveedor, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, ubicacion: LOCS[st.loc], revisar: st.revisar });
+          this.setState({ saving: false, saved: true, codigo: result.datos.codigo, formHi: false, cantidad: '', costo: '' });
+        } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo registrar el lote.' }); }
+      },
       totalUnits: totalUnits.toLocaleString('es-PE'),
       lotCount: String(allLots.filter((l) => l.status !== 'Agotado').length),
       headStats: [
-        { v: '291', k1: 'Productos', k2: 'en catálogo', bg: '#FFFFFF', fg: '#111111' },
+        { v: productosConectados ? String(enrich.length) : '291', k1: 'Productos', k2: 'en catálogo', bg: '#FFFFFF', fg: '#111111' },
         { v: String(counts['Stock bajo']), k1: 'Con stock', k2: 'bajo', bg: '#FFF4D6', fg: '#7A4A00' },
         { v: String(counts.Agotado), k1: 'Productos', k2: 'agotados', bg: '#FDE4E2', fg: '#8E1C14' },
         { v: String(allLots.filter((l) => l.status === 'En tránsito').length), k1: 'Lotes', k2: 'en camino', bg: '#111111', fg: '#FFFFFF' }
       ],
       stockValue: totalValue.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       retailValue: retail.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-      potMargin: Math.round(((retail - totalValue) / retail) * 100) + '%',
+      potMargin: (retail ? Math.round(((retail - totalValue) / retail) * 100) : 0) + '%',
       byCat: catArr.map(([name, v]) => ({ name, v: money(v, 0), w: Math.round((v / catArr[0][1]) * 100) + '%' })),
       health: ['Disponible', 'Stock bajo', 'Agotado'].map((k) => ({ name: k, n: String(counts[k]), w: Math.max(3, Math.round((counts[k] / enrich.length) * 100)) + '%', c: SS[k][3], icon: SS[k][2],
         note: k === 'Disponible' ? 'Sobre el mínimo' : k === 'Stock bajo' ? 'Por debajo del mínimo' : 'Sin unidades para vender',
         pick: () => this.setState({ filter: k === 'Disponible' ? 'Todos' : k === 'Agotado' ? 'Agotados' : 'Stock bajo' }) })),
-      rotation: [['Focos', 18], ['Cables', 24], ['Llaveros', 31], ['Camping', 42], ['Solar', 67]].map((r, i) => ({ name: r[0], d: r[1] + ' d', w: Math.round((r[1] / 67) * 100) + '%', o: (1 - i * 0.15).toFixed(2) })),
+      rotation: (productosConectados ? [] : [['Focos', 18], ['Cables', 24], ['Llaveros', 31], ['Camping', 42], ['Solar', 67]]).map((r, i) => ({ name: r[0], d: r[1] + ' d', w: Math.round((r[1] / 67) * 100) + '%', o: (1 - i * 0.15).toFixed(2) })),
       lotStates: ['Activo', 'En tránsito', 'En revisión', 'Agotado'].map((k) => ({ name: k === 'Activo' ? 'Activos' : k === 'Agotado' ? 'Agotados' : k, n: String(allLots.filter((l) => l.status === k).length), fg: LS[k][1], dot: LS[k][2] })),
       filters: FILTERS.map((f) => ({ name: f[0], count: String(enrich.filter(f[1]).length), pressed: st.filter === f[0] ? 'true' : 'false', bg: st.filter === f[0] ? '#111111' : '#FFFFFF', fg: st.filter === f[0] ? '#FFFFFF' : '#111111', border: st.filter === f[0] ? '#111111' : '#E4E4E0', pick: () => this.setState({ filter: f[0] }) })),
       cats: CATS.map((c) => ({ name: c, pressed: st.cat === c ? 'true' : 'false', bg: st.cat === c ? '#E8701F' : '#FFFFFF', fg: st.cat === c ? '#FFFFFF' : '#111111', pick: () => this.setState({ cat: c }) })),
@@ -118,18 +159,21 @@ class Component extends DesignLogic {
         let ord = 0;
         const sortedLots = [...p.lots];
         return {
-          name: p.name, sku: p.sku, cat: p.cat, img: B + p.img,
+          id: p.id,
+          name: p.name, sku: p.sku, cat: p.cat, img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
           lotsActive: String(active.length), lotsNote: p.lots.length > active.length ? '+' + (p.lots.length - active.length) + ' cerrado' : (p.transit ? '1 en camino' : 'activos'),
-          stock: String(p.stock), min: String(p.min), w: Math.min(100, Math.round((p.stock / (p.min * 3)) * 100)) + '%', barC: SS[p.state][3],
+          stock: String(p.stock), min: String(p.min), w: (p.min ? Math.min(100, Math.round((p.stock / (p.min * 3)) * 100)) : (p.stock ? 100 : 0)) + '%', barC: SS[p.state][3],
           cost: money(p.avg), price: money(p.price), margin: Math.round(((p.price - p.avg) / p.price) * 100) + '%',
           status: p.state, sBg: SS[p.state][0], sFg: SS[p.state][1], sIcon: SS[p.state][2],
           border: open ? '#E8701F' : '#FFFFFF', open, expanded: open ? 'true' : 'false', chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
           toggle: () => this.setState({ open: open ? null : p.id }),
+          ajustar: () => { const elegido = seleccionar(p); if (!elegido) return; const valor = window.prompt('Cantidad a ajustar: usa un número positivo para añadir o negativo para retirar.'); if (valor === null) return; const motivo = window.prompt('Motivo del ajuste:'); if (motivo === null) return; operar(elegido.lote.id, 'ajustar', { almacenId: elegido.existencia.almacen.id, cantidad: Number(valor), motivo }); },
+          trasladar: () => { const elegido = seleccionar(p); if (!elegido) return; const destino = window.prompt('Destino: escribe TIENDA o ALMACEN.'); if (destino === null) return; const valor = window.prompt('Cantidad a trasladar:'); if (valor === null) return; operar(elegido.lote.id, 'trasladar', { origenId: elegido.existencia.almacen.id, destino: destino.trim().toUpperCase(), cantidad: Number(valor) }); },
           lots: sortedLots.map((l) => {
             const sellNow = l.status === 'Activo';
             if (sellNow) ord += 1;
             const first = sellNow && ord === 1;
-            return { code: l.code, supplier: l.supplier, date: l.date, qty: String(l.qty), left: String(l.left), cost: money(l.cost), loc: l.loc, warranty: l.warranty,
+            return { code: l.code, supplier: l.supplier, date: l.date, qty: String(l.qty), left: String(l.left), cost: money(l.cost), loc: l.loc, warranty: l.warranty, pendiente: l.estadoReal === 'en_revision', aprobar: () => operar(l.id, 'aprobar'),
               w: Math.round((l.left / l.qty) * 100) + '%', status: first ? 'Se vende primero' : l.status,
               sBg: first ? '#FFE7D6' : LS[l.status][0], sFg: first ? '#8A3B0A' : LS[l.status][1], dot: first ? '#E8701F' : LS[l.status][2],
               ord: sellNow ? String(ord) : '—', ordBg: first ? '#E8701F' : (sellNow ? '#111111' : '#E9E9E6'), ordFg: sellNow ? '#FFFFFF' : '#6B6B6B',
@@ -138,8 +182,8 @@ class Component extends DesignLogic {
         };
       }),
       locs: LOCS.map((n, i) => ({ name: n, pressed: i === st.loc ? 'true' : 'false', bg: i === st.loc ? '#111111' : '#FFFFFF', fg: i === st.loc ? '#FFFFFF' : '#111111', pick: () => this.setState({ loc: i }) })),
-      moveCount: moves.length + ' movimientos',
-      moves: moves.map((m) => ({ title: m[0], qty: m[1], sub: m[2], bg: m[3], fg: m[4], icon: m[5], qtyC: m[6] })),
+      moveCount: productosConectados ? 'Sin historial conectado' : moves.length + ' movimientos',
+      moves: (productosConectados ? [] : moves).map((m) => ({ title: m[0], qty: m[1], sub: m[2], bg: m[3], fg: m[4], icon: m[5], qtyC: m[6] })),
       menu: [
         MI('Panel', '/dashboard', 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z'),
         MI('Pedidos', '/pedidos', 'M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0'),
@@ -188,6 +232,10 @@ export default function Inventario(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
+                <DesignLink href={"/producto/editar"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "minHeight": "52px", "padding": "0 22px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700", "whiteSpace": "nowrap" }}>
+                  <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}><path d={"M12 5v14M5 12h14"}></path></svg>
+                  {"Crear producto"}
+                </DesignLink>
                 <button onClick={lookup(v, "focusForm")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
@@ -210,7 +258,10 @@ export default function Inventario(props) {
                   <input type={"search"} placeholder={"Producto, SKU o lote…"} style={{ "width": "170px", "border": "none", "background": "transparent", "fontFamily": "inherit", "fontSize": "13px", "outline": "none" }} />
                 </label>
               </div>
-              <div style={{ "display": "flex", "alignItems": "flex-end", "gap": "24px", "flexWrap": "wrap" }}>
+      <div style={{ "display": "flex", "alignItems": "flex-end", "gap": "24px", "flexWrap": "wrap" }}>
+                {lookup(v, "apiProductosAdminState") === "error" && <p role="alert" style={{ "flexBasis": "100%", "margin": 0, "padding": "12px 16px", "borderRadius": "12px", "background": "#FDE4E2", "color": "#8E1C14" }}>{lookup(v, "apiProductosAdminError") || "No se pudo cargar el inventario."}</p>}
+                {lookup(v, "error") && <p role="alert" style={{ flexBasis: '100%', margin: 0, color: '#8E1C14' }}>{lookup(v, "error")}</p>}
+                {lookup(v, "aviso") && <p role="status" style={{ flexBasis: '100%', margin: 0, color: '#1B5E20' }}>{lookup(v, "aviso")}</p>}
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.12", "minWidth": "300px" }}>
                   <span style={{ "fontSize": "38px", "fontWeight": "600", "letterSpacing": "-0.02em" }}>
                     {"Inventario"}
@@ -576,18 +627,20 @@ export default function Inventario(props) {
                                         <span style={{ "justifySelf": "start", "display": "inline-flex", "alignItems": "center", "gap": "6px", "padding": "4px 10px", "borderRadius": "999px", "background": lookup(l, "sBg"), "color": lookup(l, "sFg"), "fontSize": "11px", "fontWeight": "700", "whiteSpace": "nowrap" }}>
                                           <span style={{ "width": "7px", "height": "7px", "borderRadius": "50%", "background": lookup(l, "dot") }}></span>
                                           {lookup(l, "status")}
+                                          {lookup(l, "pendiente") && <button type="button" onClick={lookup(l, "aprobar")} style={{ border: 0, borderRadius: 999, padding: '5px 9px', cursor: 'pointer', background: '#111111', color: '#FFFFFF', fontWeight: 700 }}>Aprobar</button>}
                                         </span>
                                       </div>
                                     </Fragment>
                                   ))}
                                   <div style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap", "paddingTop": "6px" }}>
-                                    <button onClick={lookup(v, "focusForm")} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "none", "background": "#111111", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
+                                    <DesignLink href={'/producto/editar?id=' + encodeURIComponent(lookup(p, 'id'))} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>Editar producto</DesignLink>
+                                    <button onClick={() => { lookup(v, "setProducto")({ target: { value: lookup(p, "id") } }); lookup(v, "focusForm")(); }} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "none", "background": "#111111", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"+ Nuevo lote de este producto"}
                                     </button>
-                                    <button style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
+                                    <button onClick={lookup(p, "ajustar")} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Ajustar stock"}
                                     </button>
-                                    <button style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
+                                    <button onClick={lookup(p, "trasladar")} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Trasladar"}
                                     </button>
                                     <DesignLink href={"/kardex"} style={{ "display": "inline-flex", "alignItems": "center", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
@@ -610,53 +663,43 @@ export default function Inventario(props) {
                         {"Ingresar lote"}
                       </span>
                       <span style={{ "fontSize": "11px", "fontWeight": "700", "color": "#8C8C8C" }}>
-                        {"L-1103"}
+                        {lookup(v, "codigo") || "Nuevo lote"}
                       </span>
                     </div>
                     {Boolean(lookup(v, "saved")) && (
                       <Fragment>
                         <div role={"status"} style={{ "padding": "12px 14px", "borderRadius": "16px", "background": "#E4F4E7", "color": "#1B5E20", "fontSize": "13px", "fontWeight": "700" }}>
-                          {"✓ Lote L-1103 registrado. Ya suma al stock."}
+                          {"✓ Lote "}{lookup(v, "codigo")}{" registrado."}
                         </div>
                       </Fragment>
                     )}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
-                      {"Producto"}
-                      <select style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }}>
-                        <option>
-                          {"Lámpara de camping recargable"}
-                        </option>
-                        <option>
-                          {"Panel solar monocristalino 100 W"}
-                        </option>
-                        <option>
-                          {"Foco LED 9 W luz cálida"}
-                        </option>
-                        <option>
-                          {"Collar dorado de cadena fina"}
-                        </option>
+                      <span id="registrar-lote">{"Producto"}</span>
+                      <select value={lookup(v, "productoId")} onChange={lookup(v, "setProducto")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }}>
+                        <option value="">Selecciona un producto</option>
+                        {(lookup(v, "productosForm") || []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
                     </label>
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Proveedor"}
-                      <input type={"text"} placeholder={"[PROVEEDOR]"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
+                      <input type={"text"} value={lookup(v, "proveedor")} onChange={lookup(v, "setProveedor")} placeholder={"[PROVEEDOR]"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                     </label>
                     <div style={{ "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "8px" }}>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                         {"Cantidad"}
-                        <input type={"text"} defaultValue={"30"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
+                        <input type={"number"} min="0" value={lookup(v, "cantidad")} onChange={lookup(v, "setCantidad")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                       </label>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                         {"Costo unitario (S/)"}
-                        <input type={"text"} defaultValue={"31.00"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
+                        <input type={"number"} min="0" step="0.01" value={lookup(v, "costo")} onChange={lookup(v, "setCosto")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                       </label>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                         {"Fecha de ingreso"}
-                        <input type={"text"} defaultValue={"24/10/2026"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
+                        <input type={"date"} value={lookup(v, "ingreso")} onChange={lookup(v, "setIngreso")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                       </label>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                         {"Garantía hasta"}
-                        <input type={"text"} defaultValue={"24/10/2027"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
+                        <input type={"date"} value={lookup(v, "garantia")} onChange={lookup(v, "setGarantia")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                       </label>
                     </div>
                     <span style={{ "fontSize": "12px", "fontWeight": "700" }}>
@@ -672,10 +715,11 @@ export default function Inventario(props) {
                       ))}
                     </div>
                     <label style={{ "display": "flex", "alignItems": "center", "gap": "10px", "fontSize": "12px", "fontWeight": "600" }}>
-                      <input type={"checkbox"} defaultChecked style={{ "width": "18px", "height": "18px", "accentColor": "#E8701F" }} />
+                      <input type={"checkbox"} checked={lookup(v, "revisar")} onChange={lookup(v, "setRevisar")} style={{ "width": "18px", "height": "18px", "accentColor": "#E8701F" }} />
                       {"Revisar calidad antes de vender"}
                     </label>
-                    <button onClick={lookup(v, "saveLot")} style={{ "height": "48px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
+                    {lookup(v, "error") && <p role="alert">{lookup(v, "error")}</p>}
+                    <button disabled={lookup(v, "saving")} onClick={lookup(v, "saveLot")} style={{ "height": "48px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
                       {"Registrar lote"}
                     </button>
                   </div>

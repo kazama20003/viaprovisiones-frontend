@@ -30,11 +30,18 @@ class Component extends DesignLogic {
       ['Set de cocina para campamento', 'Camping', 129, 0, 'a5d2725814df1e3e53351e1060258c0c', 15, 'olla'],
       ['Mochila de trekking 45 L', 'Camping', 179, 0, '270fef37ab257fc6383d3c904a7f2911', 18, 'bolso']
     ];
+    const catalogoConectado = this.props.apiCatalogState === 'success';
+    const productosApi = Array.isArray(this.props.apiProductos) ? this.props.apiProductos : [];
+    const catalogoEnConsulta = ['success', 'pending', 'error'].includes(this.props.apiCatalogState);
+    const productos = catalogoConectado
+      ? productosApi.map((p) => [p.nombre, p.categoria || 'Otros', Number(p.precio), 0,
+          p.imagen || 'a58999411e32d7481815ba8cdc175e97', Number(p.stockDisponible), p.descripcion || ''])
+      : catalogoEnConsulta ? [] : ALL;
     const RANGES = [['Todo', 0, 1e9], ['Hasta S/ 50', 0, 50], ['S/ 50 – 150', 50, 150], ['Más de S/ 150', 150, 1e9]];
     const money = (n) => 'S/ ' + n.toFixed(2);
     const q = norm(st.q.trim());
     const words = q.split(/\s+/).filter(Boolean);
-    const match = ALL.filter((p) => { const hay = norm(p[0] + ' ' + p[1] + ' ' + p[6]); return words.every((w) => hay.indexOf(w) !== -1); });
+    const match = productos.filter((p) => { const hay = norm(p[0] + ' ' + p[1] + ' ' + p[6]); return words.every((w) => hay.indexOf(w) !== -1); });
     const rg = RANGES[st.price];
     let list = match.filter((p) => (st.cat === 'Todas' || p[1] === st.cat) && p[2] >= rg[1] && p[2] < rg[2] && (!st.stockOnly || p[5] > 0) && (!st.offersOnly || p[3] > 0));
     if (st.sort === 'asc') list = list.slice().sort((a, b) => a[2] - b[2]);
@@ -49,9 +56,12 @@ class Component extends DesignLogic {
       clear: () => this.setState({ q: '', cat: 'Todas' }),
       suggest: ['lámpara recargable', 'linterna de cabeza', 'panel solar'].map((t) => ({ t, pick: () => this.setState({ q: t, cat: 'Todas' }) })),
       hasResults: match.length > 0,
-      noResults: match.length === 0,
+      noResults: match.length === 0 && !['pending', 'error'].includes(this.props.apiCatalogState),
       filteredEmpty: match.length > 0 && list.length === 0,
       resultLabel: list.length + (list.length === 1 ? ' producto' : ' productos') + (st.q.trim() ? ' para “' + st.q.trim() + '”' : ''),
+      catalogMessage: this.props.apiCatalogState === 'error'
+        ? (this.props.apiCatalogError || 'No se pudo conectar con el catálogo.')
+        : this.props.apiCatalogState === 'pending' ? 'Cargando catálogo…' : '',
       cats: catNames.map((name) => ({
         name, count: String(name === 'Todas' ? match.length : match.filter((p) => p[1] === name).length),
         pressed: st.cat === name ? 'true' : 'false', bg: st.cat === name ? accent : '#FFFFFF',
@@ -69,7 +79,7 @@ class Component extends DesignLogic {
         const n = st.added[p[0]] || 0;
         const badge = p[3] ? 'Oferta' : (p[5] > 0 && p[5] <= 5 ? 'Pocas unidades' : '');
         return {
-          name: p[0], cat: p[1], price: money(p[2]), was: p[3] ? money(p[3]) : '', img: B + p[4],
+          name: p[0], cat: p[1], price: money(p[2]), was: p[3] ? money(p[3]) : '', img: p[4].startsWith('http') || p[4].startsWith('/') ? p[4] : B + p[4],
           badge, badgeBg: accent, badgeFg: '#111111',
           stock: out ? '✕ Agotado' : (p[5] <= 5 ? '! Quedan ' + p[5] : '✓ En stock'),
           stockFg: out ? '#B42318' : (p[5] <= 5 ? '#8A5300' : '#1B5E20'),
@@ -196,6 +206,7 @@ export default function Busqueda(props) {
                   <span style={{ "fontFamily": "'Roboto Mono', monospace", "fontSize": "14px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {lookup(v, "resultLabel")}
                   </span>
+                  {Boolean(lookup(v, "catalogMessage")) && <p role="status">{lookup(v, "catalogMessage")}</p>}
                   <label style={{ "display": "flex", "alignItems": "center", "gap": "10px", "fontFamily": "'Roboto Mono', monospace", "fontSize": "13px", "fontWeight": "700", "textTransform": "uppercase" }}>
                     {"Ordenar\n"}
                     <select onChange={lookup(v, "onSort")} style={{ "height": "44px", "border": "2px solid #111111", "borderRadius": "999px", "padding": "0 16px", "fontFamily": "Roboto, sans-serif", "fontSize": "15px", "background": "#FFFFFF" }}>

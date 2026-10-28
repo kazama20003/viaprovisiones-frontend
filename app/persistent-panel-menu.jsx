@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import MenuPanel from "./design-views/MenuPanel";
 import { viewForPath } from "./view-map";
 
-const panelNames = new Set(["Dashboard", "Ajustes", "Banners", "Caja", "Clientes", "Compras", "Comprobantes", "Cotizaciones", "Devoluciones", "Gastos", "Inventario", "Kardex", "Notificaciones", "Ofertas", "PedidoDetalle", "Pedidos", "ProductoEditar", "PuntoVenta", "Reportes", "Traslados"]);
-const activeNames = { Dashboard: "Panel", Kardex: "Inventario", ProductoEditar: "Inventario", PedidoDetalle: "Pedidos" };
+const panelNames = new Set(["Dashboard", "Ajustes", "Banners", "Caja", "Clientes", "Compras", "Comprobantes", "Cotizaciones", "Devoluciones", "Gastos", "Inventario", "CategoriasAdmin", "Kardex", "Notificaciones", "Ofertas", "PedidoDetalle", "Pedidos", "ProductoEditar", "PuntoVenta", "Reportes", "Traslados"]);
+const activeNames = { Dashboard: "Panel", Kardex: "Inventario", PedidoDetalle: "Pedidos" };
 const subscribe = (callback) => {
   window.addEventListener("via-menu-pin-change", callback);
   window.addEventListener("storage", callback);
