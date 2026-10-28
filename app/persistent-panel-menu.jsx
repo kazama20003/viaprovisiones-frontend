@@ -4,6 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import MenuPanel from "./design-views/MenuPanel";
 import { viewForPath } from "./view-map";
+import { isPopupOpen, subscribePopup } from "./panel-menu-state";
 
 const panelNames = new Set(["Dashboard", "Ajustes", "Banners", "Caja", "Clientes", "Compras", "Comprobantes", "Cotizaciones", "Devoluciones", "Gastos", "Inventario", "CategoriasAdmin", "Kardex", "Notificaciones", "Ofertas", "PedidoDetalle", "Pedidos", "ProductoEditar", "PuntoVenta", "Reportes", "Traslados"]);
 const activeNames = { Dashboard: "Panel", Kardex: "Inventario", PedidoDetalle: "Pedidos" };
@@ -17,8 +18,9 @@ const getPinned = () => { try { return localStorage.getItem("via-menu-pinned") =
 export default function PersistentPanelMenu() {
   const pathname = usePathname();
   const pinned = useSyncExternalStore(subscribe, getPinned, () => false);
+  const popupOpen = useSyncExternalStore(subscribePopup, isPopupOpen, () => false);
   const name = viewForPath(pathname || "/")?.name;
-  const visible = pinned && panelNames.has(name);
+  const visible = pinned && !popupOpen && panelNames.has(name);
 
   useEffect(() => {
     document.body.classList.toggle("via-pinned-panel", visible);
