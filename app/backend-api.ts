@@ -53,7 +53,7 @@ async function request<T>(ruta: string, init: RequestInit = {}): Promise<T> {
 export function listarProductos(signal?: AbortSignal) {
   return request<ListaProductos>("/tienda/productos", { signal });
 }
-export type DetalleTienda = { id: string; nombre: string; sku: string; marca: string | null; descripcion: string | null; categoria: { nombre: string } | null; imagenes: { url: string; textoAlternativo: string | null; esPrincipal: boolean }[]; precios: { precioUnitario: number; cantidadMinima: number }[] };
+export type DetalleTienda = { id: string; nombre: string; sku: string; marca: string | null; descripcion: string | null; categoria: { nombre: string } | null; imagenes: { url: string; textoAlternativo: string | null; esPrincipal: boolean }[]; precios: { precioUnitario: number; cantidadMinima: number }[]; variantes: Variante[] };
 export function obtenerProductoTienda(id: string, signal?: AbortSignal) { return request<{ datos: DetalleTienda }>(`/tienda/productos/${encodeURIComponent(id)}`, { signal }); }
 
 export function iniciarSesion(credenciales: Credenciales) {
@@ -80,8 +80,9 @@ export function listarProductosAdministracion(signal?: AbortSignal) {
   return request<{ datos: ProductoAdmin[] }>("/productos", { signal });
 }
 
-export type DetallesProducto = { peso: string; medidas: string; garantia: string; tipoEnvio: string; etiquetas: string[]; colores: string[]; capacidades: string[] };
-export type ProductoAdmin = { id: string; sku: string; nombre: string; descripcion: string | null; marca: string | null; codigoBarras: string | null; estado: string; categoria: string | null; categoriaId: string | null; precio: number; precios: Record<string, number>; datosAdicionales: Partial<DetallesProducto>; variantes: { sku: string; atributos: { color?: string; capacidad?: string }; stock: number }[]; historial: { accion: string; creadoEn: string }[]; imagen: string | null; archivos: ArchivoProducto[]; stockDisponible: number; stockMinimo: number; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; lotes: { id: string; codigo: string; costoUnitario: number; fechaIngreso: string; garantiaHasta: string | null; estado: string; proveedor: { nombre: string } | null; existencias: { cantidadFisica: number; cantidadReservada: number; almacen: { id: string; nombre: string; codigo: string } }[] }[] };
+export type DetallesProducto = { peso: string; medidas: string; garantia: string; tipoEnvio: string; etiquetas: string[]; colores: string[]; capacidades: string[]; atributosVariantes?: { nombre:string; valores:string[] }[] };
+export type Variante = { id:string; sku:string; atributos:Record<string,string>; precioPublico:number | null; stock:number };
+export type ProductoAdmin = { id: string; sku: string; nombre: string; descripcion: string | null; marca: string | null; codigoBarras: string | null; estado: string; categoria: string | null; categoriaId: string | null; precio: number; precios: Record<string, number>; datosAdicionales: Partial<DetallesProducto>; variantes: Variante[]; historial: { accion: string; creadoEn: string }[]; imagen: string | null; archivos: ArchivoProducto[]; stockDisponible: number; stockMinimo: number; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; lotes: { id: string; codigo: string; varianteId: string | null; costoUnitario: number; fechaIngreso: string; garantiaHasta: string | null; estado: string; proveedor: { nombre: string } | null; existencias: { cantidadFisica: number; cantidadReservada: number; almacen: { id: string; nombre: string; codigo: string } }[] }[] };
 export type CategoriaAdmin = { id: string; nombre: string; descripcion: string | null; activa: boolean; categoriaPadreId: string | null; _count: { productos: number } };
 export function listarCategorias(signal?: AbortSignal) { return request<{ datos: CategoriaAdmin[] }>('/categorias', { signal }); }
 export type MarcaAdmin = { id: string; nombre: string; activa: boolean };
@@ -96,11 +97,11 @@ export function subirArchivoProducto(id: string, archivo: File) {
 export function elegirImagenPrincipal(productoId: string, id: string) {
   return request(`/productos/${encodeURIComponent(productoId)}/archivos/${encodeURIComponent(id)}/principal`, { method: 'POST' });
 }
-export type ProductoGuardar = { nombre: string; sku: string; descripcion: string; marca: string; codigoBarras: string; estado: string; categoriaId: string | null; datosAdicionales: DetallesProducto; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; stockMinimo: number; precios: Record<string, number> };
+export type ProductoGuardar = { nombre: string; sku: string; descripcion: string; marca: string; codigoBarras: string; estado: string; categoriaId: string | null; datosAdicionales: DetallesProducto; preciosVariantes?: Record<string, number | null>; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; stockMinimo: number; precios: Record<string, number> };
 export function guardarProducto(id: string | null, datos: ProductoGuardar) {
   return request<{ datos: { id: string } }>(id ? `/productos/${encodeURIComponent(id)}` : '/productos', { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) });
 }
-export type LoteGuardar = { productoId: string; proveedor: string; cantidad: number; costoUnitario: number; fechaIngreso: string; garantiaHasta: string; ubicacion: string; revisar: boolean };
+export type LoteGuardar = { productoId: string; varianteId?: string | null; proveedor: string; cantidad: number; costoUnitario: number; fechaIngreso: string; garantiaHasta: string; ubicacion: string; revisar: boolean };
 export function registrarLote(datos: LoteGuardar) {
   return request<{ datos: { id: string; codigo: string; estado: string } }>('/inventario/lotes', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) });
 }

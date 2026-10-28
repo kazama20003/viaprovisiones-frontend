@@ -160,7 +160,7 @@ function ConnectedView({ name }) {
     </main>;
   }
   if (name === 'ProductoEditar' && productoId && productosAdmin.isPending) return <main className="design-frame-shell" aria-busy="true" />;
-  if (name === 'ProductoEditar' && productoId && productosAdmin.isError) return <main role="alert" style={{ padding: 32 }}>No se pudo cargar el producto. <button type="button" onClick={() => productosAdmin.refetch()}>Reintentar</button></main>;
+  if (name === 'ProductoEditar' && productoId && productosAdmin.isError) return <main role="alert" style={{ padding: 32 }}>No se pudo cargar el producto. {productosAdmin.error?.message} <button type="button" onClick={() => productosAdmin.refetch()}>Reintentar</button></main>;
   if (name === 'ProductoEditar' && productoId && !productosAdmin.data?.datos.some(p => p.id === productoId)) return <main role="alert" style={{ padding: 32 }}>No se encontró el producto. <Link href="/inventario">Volver al inventario</Link></main>;
   if (productoPublicoId) return <ProductoPublico key={productoPublicoId} producto={productoPublico.data?.datos || null} estado={productoPublico.status} error={productoPublico.error?.message} reintentar={() => productoPublico.refetch()} />;
   return <div style={{ display: "contents" }} onClickCapture={(event) => {
