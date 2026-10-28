@@ -3,21 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { DesignImport } from "../native-view";
+import { opcionesCategoria, rutaCategoria } from '../categoria-jerarquia';
 
 export default function CategoriasAdmin({ categorias = [], estado, error, guardarCategoria, pendiente, reintentar }) {
   const [menu, setMenu] = useState(false);
   const [editing, setEditing] = useState(null);
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [padre, setPadre] = useState('');
   const [message, setMessage] = useState('');
   const [failure, setFailure] = useState('');
   const [filter, setFilter] = useState('');
-  const reset = () => { setEditing(null); setNombre(''); setDescripcion(''); setFailure(''); };
+  const reset = () => { setEditing(null); setNombre(''); setDescripcion(''); setPadre(''); setFailure(''); };
   const submit = async (event) => {
     event.preventDefault();
     if (!nombre.trim()) { setFailure('Escribe el nombre de la categoría.'); return; }
     setFailure(''); setMessage('');
-    try { await guardarCategoria(editing, { nombre: nombre.trim(), descripcion: descripcion.trim() }); setMessage(editing ? 'Categoría actualizada.' : 'Categoría creada.'); reset(); }
+    try { await guardarCategoria(editing, { nombre: nombre.trim(), descripcion: descripcion.trim(), categoriaPadreId: padre || null }); setMessage(editing ? 'Categoría actualizada.' : 'Categoría creada.'); reset(); }
     catch (err) { setFailure(err.message || 'No se pudo guardar la categoría.'); }
   };
   const toggle = async (categoria) => {
@@ -26,7 +28,7 @@ export default function CategoriasAdmin({ categorias = [], estado, error, guarda
     catch (err) { setFailure(err.message || 'No se pudo cambiar el estado.'); }
   };
   const pin = () => { const next = localStorage.getItem('via-menu-pinned') !== '1'; localStorage.setItem('via-menu-pinned', next ? '1' : '0'); window.dispatchEvent(new CustomEvent('via-menu-pin-change', { detail: next })); setMenu(false); };
-  const rows = categorias.filter(c => c.nombre.toLocaleLowerCase('es').includes(filter.trim().toLocaleLowerCase('es')));
+  const rows = opcionesCategoria(categorias).filter(c => rutaCategoria(categorias, c.id).toLocaleLowerCase('es').includes(filter.trim().toLocaleLowerCase('es')));
   return <div className="ca-page">
     <style>{`
       .ca-page{min-height:100vh;background:#f4f4f2;border-radius:40px;color:#111;font-family:Manrope,system-ui,sans-serif;overflow:hidden;position:relative}
@@ -56,9 +58,9 @@ export default function CategoriasAdmin({ categorias = [], estado, error, guarda
         {estado === 'success' && rows.length === 0 && <p style={{ color:'#6b6b6b',fontSize:14 }}>{filter ? 'No hay categorías que coincidan.' : 'Aún no hay categorías. Crea la primera para organizar tus productos.'}</p>}
         {rows.map(c => <div className="ca-row" key={c.id}>
           <span style={{ width:40,height:40,borderRadius:14,background:'#fff1e6',display:'grid',placeItems:'center',color:'#c2410c',fontWeight:800 }}>#</span>
-          <span className="ca-row-copy"><strong style={{ display:'block',fontSize:14 }}>{c.nombre}</strong><span style={{ fontSize:12,color:'#8c8c8c' }}>{c.descripcion || 'Sin descripción'} · {c._count.productos} productos</span></span>
+          <span className="ca-row-copy"><strong style={{ display:'block',fontSize:14 }}>{rutaCategoria(categorias, c.id)}</strong><span style={{ fontSize:12,color:'#8c8c8c' }}>{c.descripcion || 'Sin descripción'} · {c._count.productos} productos</span></span>
           <span style={{ borderRadius:999,padding:'5px 10px',fontSize:11,fontWeight:700,background:c.activa?'#e4f4e7':'#efefec',color:c.activa?'#1b5e20':'#6b6b6b' }}>{c.activa ? 'Activa' : 'Inactiva'}</span>
-          <button className="ca-button ca-secondary" disabled={pendiente} onClick={() => { setEditing(c.id); setNombre(c.nombre); setDescripcion(c.descripcion || ''); setFailure(''); setMessage(''); }}>Editar</button>
+          <button className="ca-button ca-secondary" disabled={pendiente} onClick={() => { setEditing(c.id); setNombre(c.nombre); setDescripcion(c.descripcion || ''); setPadre(c.categoriaPadreId || ''); setFailure(''); setMessage(''); }}>Editar</button>
           <button className="ca-button ca-secondary" disabled={pendiente} onClick={() => toggle(c)}>{c.activa ? 'Desactivar' : 'Activar'}</button>
         </div>)}
       </section>
@@ -69,6 +71,7 @@ export default function CategoriasAdmin({ categorias = [], estado, error, guarda
         {failure && <p role="alert" style={{ color:'#8e1c14',fontSize:13 }}>{failure}</p>}
         <form onSubmit={submit}>
           <label className="ca-label" htmlFor="ca-nombre">Nombre</label><input id="ca-nombre" className="ca-input" maxLength={120} value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Ej.: Iluminación" required />
+          <label className="ca-label" htmlFor="ca-padre">Categoría superior (opcional)</label><select id="ca-padre" className="ca-input" value={padre} onChange={e => setPadre(e.target.value)}><option value="">Ninguna — categoría principal</option>{opcionesCategoria(categorias).filter(c => c.activa && c.id !== editing).map(c => <option key={c.id} value={c.id}>{rutaCategoria(categorias, c.id)}</option>)}</select>
           <label className="ca-label" htmlFor="ca-descripcion">Descripción (opcional)</label><textarea id="ca-descripcion" className="ca-input" maxLength={300} rows={3} value={descripcion} onChange={e => setDescripcion(e.target.value)} placeholder="Describe esta categoría" />
           <div style={{ display:'flex',gap:8,marginTop:18,flexWrap:'wrap' }}><button className="ca-button" disabled={pendiente} type="submit" style={{ background:'#e8701f' }}>{pendiente ? 'Guardando…' : editing ? 'Guardar cambios' : 'Crear categoría'}</button>{editing && <button className="ca-button ca-secondary" type="button" onClick={reset}>Cancelar</button>}</div>
         </form>
