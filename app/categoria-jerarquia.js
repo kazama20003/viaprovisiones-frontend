@@ -28,3 +28,14 @@ export function nivelCategoria(categorias, id) {
   }
   return nivel;
 }
+
+export function perteneceACategoria(categorias, categoriaId, seleccionadaId) {
+  const mapa = new Map(categorias.map(c => [c.id, c]));
+  const vistos = new Set();
+  while (categoriaId && !vistos.has(categoriaId)) {
+    if (categoriaId === seleccionadaId) return true;
+    vistos.add(categoriaId);
+    categoriaId = mapa.get(categoriaId)?.categoriaPadreId;
+  }
+  return false;
+}

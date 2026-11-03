@@ -5,6 +5,7 @@ import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 import { nombreVariante } from '../variantes';
+import { opcionesCategoria, perteneceACategoria, rutaCategoria } from '../categoria-jerarquia';
 
 class Component extends DesignLogic {
   constructor(props) {
@@ -44,7 +45,7 @@ class Component extends DesignLogic {
     const productosConectados = ['success', 'pending', 'error'].includes(this.props.apiProductosAdminState);
     const PROD = this.props.apiProductosAdminState === 'success'
       ? (this.props.apiProductosAdmin || []).map((p) => ({
-          id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Otros', variantes: p.variantes || [],
+          id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Sin categoría', categoriaId: p.categoriaId || null, variantes: p.variantes || [],
           price: Number(p.precio || 0), min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
           lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, [l.proveedor?.nombre || 'Sin proveedor', l.variante && nombreVariante(l.variante.atributos)].filter(Boolean).join(' · '), new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', ({ disponible: 'Activo', en_revision: 'En revisión', agotado: 'Agotado', bloqueado: 'En revisión' })[l.estado] || 'En revisión'), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
           stockDisponible: Number(p.stockDisponible || 0),
@@ -70,9 +71,10 @@ class Component extends DesignLogic {
       'En revisión': ['#FFF4D6', '#7A4A00', '#F2A100'], Agotado: ['#EFEFEC', '#6B6B6B', '#BDBDBD']
     };
     const FILTERS = [['Todos', () => true], ['Stock bajo', (p) => p.state === 'Stock bajo'], ['Agotados', (p) => p.state === 'Agotado'], ['En tránsito', (p) => p.transit]];
-    const CATS = ['Todas', 'Focos', 'Solar', 'Cables', 'Extensiones', 'Llaveros', 'Camping', 'Bisutería'];
+    const categorias = this.props.categorias || [];
+    const CATS = [{ id: 'Todas', nombre: 'Todas' }, ...opcionesCategoria(categorias).map(c => ({ id: c.id, nombre: rutaCategoria(categorias, c.id) + (c.activa ? '' : ' (inactiva)') })), { id: 'sin-categoria', nombre: 'Sin categoría' }];
     const fFn = (FILTERS.find((f) => f[0] === st.filter) || FILTERS[0])[1];
-    const list = enrich.filter(fFn).filter((p) => st.cat === 'Todas' || p.cat === st.cat);
+    const list = enrich.filter(fFn).filter((p) => st.cat === 'Todas' || (st.cat === 'sin-categoria' ? !p.categoriaId : perteneceACategoria(categorias, p.categoriaId, st.cat)));
     const totalUnits = enrich.reduce((a, p) => a + p.units, 0);
     const allLots = PROD.flatMap((p) => p.lots);
     const totalValue = enrich.reduce((a, p) => a + p.value, 0);
@@ -155,7 +157,8 @@ class Component extends DesignLogic {
       rotation: (productosConectados ? [] : [['Focos', 18], ['Cables', 24], ['Llaveros', 31], ['Camping', 42], ['Solar', 67]]).map((r, i) => ({ name: r[0], d: r[1] + ' d', w: Math.round((r[1] / 67) * 100) + '%', o: (1 - i * 0.15).toFixed(2) })),
       lotStates: ['Activo', 'En tránsito', 'En revisión', 'Agotado'].map((k) => ({ name: k === 'Activo' ? 'Activos' : k === 'Agotado' ? 'Agotados' : k, n: String(allLots.filter((l) => l.status === k).length), fg: LS[k][1], dot: LS[k][2] })),
       filters: FILTERS.map((f) => ({ name: f[0], count: String(enrich.filter(f[1]).length), pressed: st.filter === f[0] ? 'true' : 'false', bg: st.filter === f[0] ? '#111111' : '#FFFFFF', fg: st.filter === f[0] ? '#FFFFFF' : '#111111', border: st.filter === f[0] ? '#111111' : '#E4E4E0', pick: () => this.setState({ filter: f[0] }) })),
-      cats: CATS.map((c) => ({ name: c, pressed: st.cat === c ? 'true' : 'false', bg: st.cat === c ? '#E8701F' : '#FFFFFF', fg: st.cat === c ? '#FFFFFF' : '#111111', pick: () => this.setState({ cat: c }) })),
+      cats: CATS.map((c) => ({ name: c.nombre, pressed: st.cat === c.id ? 'true' : 'false', bg: st.cat === c.id ? '#E8701F' : '#FFFFFF', fg: st.cat === c.id ? '#FFFFFF' : '#111111', pick: () => this.setState({ cat: c.id }) })),
+      categoriasEstado: this.props.estado, categoriasError: this.props.error,
       rows: list.map((p) => {
         const open = st.open === p.id;
         const active = p.lots.filter((l) => l.status !== 'Agotado');
@@ -475,6 +478,8 @@ export default function Inventario(props) {
                       </Fragment>
                     ))}
                   </div>
+                  {lookup(v, 'categoriasEstado') === 'pending' && <p role="status" style={{ fontSize:12,color:'#6B6B6B' }}>Cargando categorías…</p>}
+                  {lookup(v, 'categoriasEstado') === 'error' && <p role="alert" style={{ fontSize:12,color:'#8E1C14' }}>{lookup(v, 'categoriasError') || 'No se pudieron cargar las categorías.'} <button type="button" onClick={props.reintentar}>Reintentar</button></p>}
                   <div className={"noscroll"} style={{ "overflowX": "auto" }}>
                     <div style={{ "minWidth": "820px", "display": "flex", "flexDirection": "column", "gap": "8px" }}>
                       <div aria-hidden={"true"} style={{ "display": "grid", "gridTemplateColumns": "minmax(0, 2.4fr) 1fr 1.3fr 0.9fr 0.9fr 0.8fr 1fr 36px", "gap": "12px", "padding": "0 16px", "fontSize": "11px", "fontWeight": "700", "color": "#8C8C8C" }}>
@@ -501,6 +506,7 @@ export default function Inventario(props) {
                         </span>
                         <span></span>
                       </div>
+                      {lookup(v, 'apiProductosAdminState') === 'success' && (lookup(v, 'rows') || []).length === 0 && <p role="status" style={{ padding:'18px 12px',color:'#6B6B6B',fontSize:13 }}>No hay productos para los filtros seleccionados.</p>}
                       {(lookup(v, "rows") || []).map((p, index9) => (
                         <Fragment key={index9}>
                           <div style={{ "background": "#FFFFFF", "borderRadius": "22px", "border": "1px solid " + String(lookup(p, "border") ?? ""), "overflow": "hidden" }}>

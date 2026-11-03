@@ -105,7 +105,7 @@ function ConnectedView({ name }) {
   const pedidos = useQuery({ queryKey: ["pedidos"], queryFn: ({ signal }) => listarPedidos(signal), enabled: name === "Pedidos" });
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
   const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario"].includes(name) });
-  const categorias = useQuery({ queryKey: ['categorias', 'admin'], queryFn: ({ signal }) => listarCategorias(signal), enabled: ['CategoriasAdmin', 'ProductoEditar'].includes(name) });
+  const categorias = useQuery({ queryKey: ['categorias', 'admin'], queryFn: ({ signal }) => listarCategorias(signal), enabled: ['CategoriasAdmin', 'ProductoEditar', 'Inventario'].includes(name) });
   const marcas = useQuery({ queryKey: ['marcas', 'admin'], queryFn: ({ signal }) => listarMarcas(signal), enabled: ['MarcasAdmin', 'ProductoEditar'].includes(name) });
   const productoPublico = useQuery({ queryKey: ['tienda', 'producto', productoPublicoId], queryFn: ({ signal }) => obtenerProductoTienda(productoPublicoId, signal), enabled: !!productoPublicoId });
   const productos = useQuery({
