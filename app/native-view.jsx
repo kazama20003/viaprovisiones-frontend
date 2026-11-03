@@ -150,7 +150,7 @@ function ConnectedView({ name }) {
   const loteMutation = useMutation({ mutationFn: registrarLote, onSuccess: actualizarInventario });
   const operarLoteMutation = useMutation({ mutationFn: ({ id, accion, datos }) => operarLote(id, accion, datos), onSuccess: actualizarInventario });
   const ubicacionMutation = useMutation({mutationFn:({tipo,id,datos})=>guardarUbicacion(tipo,id,datos),onSuccess:actualizarInventario});
-  const trasladoMutation = useMutation({mutationFn:({id,accion,datos})=>id?accionarTraslado(id,accion):crearTraslado(datos),onSuccess:actualizarInventario});
+  const trasladoMutation = useMutation({mutationFn:({id,accion,datos})=>id?accionarTraslado(id,accion,datos):crearTraslado(datos),onSuccess:actualizarInventario});
   const actualizarArchivos = async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); };
   useEffect(() => {
     if (sesion.error?.status === 401) router.replace("/admin/login");
@@ -202,7 +202,7 @@ function ConnectedView({ name }) {
     guardarUbicacion={(tipo,id,datos)=>ubicacionMutation.mutateAsync({tipo,id,datos})} ubicacionPendiente={ubicacionMutation.isPending}
     movimientos={movimientos.data?.datos || []} movimientosEstado={movimientos.status} movimientosError={movimientos.error?.message || ''}
     traslados={traslados.data?.datos || []} trasladosEstado={traslados.status} trasladosError={traslados.error?.message || ''} reintentarTraslados={()=>traslados.refetch()}
-    crearTraslado={(datos)=>trasladoMutation.mutateAsync({datos})} accionarTraslado={(id,accion)=>trasladoMutation.mutateAsync({id,accion})} trasladoPendiente={trasladoMutation.isPending}
+    crearTraslado={(datos)=>trasladoMutation.mutateAsync({datos})} accionarTraslado={(id,accion,datos)=>trasladoMutation.mutateAsync({id,accion,datos})} trasladoPendiente={trasladoMutation.isPending}
     pedidoError={transicionarPedido.error?.message ?? ""}
     onAvanzarPedido={(id, estado) => transicionarPedido.mutate({ id, estado })}
     productoActual={productosAdmin.data?.datos.find(p => p.id === productoId) || null}
