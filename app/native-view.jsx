@@ -107,7 +107,7 @@ function ConnectedView({ name }) {
   const pedidos = useQuery({ queryKey: ["pedidos"], queryFn: ({ signal }) => listarPedidos(signal), enabled: name === "Pedidos" });
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
   const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario", "Traslados"].includes(name) });
-  const almacenes = useQuery({queryKey:['inventario','almacenes'],queryFn:({signal})=>listarAlmacenes(signal),enabled:['Inventario','UbicacionesAdmin','Traslados'].includes(name)});
+  const almacenes = useQuery({queryKey:['inventario','almacenes'],queryFn:({signal})=>listarAlmacenes(signal),enabled:['Inventario','UbicacionesAdmin','Traslados','Kardex'].includes(name)});
   const sucursales = useQuery({queryKey:['inventario','sucursales'],queryFn:({signal})=>listarSucursales(signal),enabled:name==='UbicacionesAdmin'});
   const movimientos = useQuery({queryKey:['inventario','movimientos'],queryFn:({signal})=>listarMovimientos(signal),enabled:name==='Inventario'});
   const traslados = useQuery({queryKey:['inventario','traslados'],queryFn:({signal})=>listarTraslados(signal),enabled:['Inventario','Traslados'].includes(name)});
@@ -194,6 +194,7 @@ function ConnectedView({ name }) {
     apiPedidosState={pedidos.status}
     apiResumen={resumen.data?.datos ?? null}
     apiResumenState={resumen.status}
+    kardexProductoId={name === 'Kardex' ? searchParams.get('productoId') || '' : ''}
     apiProductosAdmin={productosAdmin.data?.datos ?? []}
     apiProductosAdminState={productosAdmin.status}
     apiProductosAdminError={productosAdmin.error?.message ?? ""}

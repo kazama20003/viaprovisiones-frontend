@@ -656,7 +656,7 @@ export default function Inventario(props) {
                                     <button onClick={lookup(p, "trasladar")} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Trasladar"}
                                     </button>
-                                    <DesignLink href={"/kardex"} style={{ "display": "inline-flex", "alignItems": "center", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                                    <DesignLink href={"/kardex?productoId=" + encodeURIComponent(lookup(p, "id"))} style={{ "display": "inline-flex", "alignItems": "center", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Ver kardex"}
                                     </DesignLink>
                                   </div>

@@ -135,3 +135,10 @@ export function avanzarPedido(id: string, estado: string) {
     body: JSON.stringify({ estado }),
   });
 }
+
+export type ExistenciaConteo = { id:string; loteId:string; almacenId:string; cantidadFisica:number; cantidadReservada:number; almacen:{id:string;nombre:string;activo:boolean}; lote:{id:string;codigo:string;varianteId:string|null;producto:{id:string;nombre:string;sku:string};variante:{atributos:Record<string,string>;sku:string}|null} };
+export type FiltrosKardex = {productoId?:string;varianteId?:string;loteId?:string;almacenId?:string;tipo?:string;pagina?:number};
+export function consultarKardex(f:FiltrosKardex,signal?:AbortSignal) { const q=new URLSearchParams(); Object.entries(f).forEach(([k,v])=>{if(v)q.set(k,String(v));});return request<{datos:(MovimientoStock & {productoId:string;loteId:string;almacenId:string;lote:MovimientoStock['lote'] & {varianteId:string|null}})[];total:number;pagina:number}>(`/inventario/kardex?${q}`,{signal}); }
+export function buscarExistencias(buscar:string,signal?:AbortSignal) {return request<{datos:ExistenciaConteo[];hayMas:boolean}>(`/inventario/existencias?buscar=${encodeURIComponent(buscar)}`,{signal});}
+export function listarConteos(signal?:AbortSignal) {return request<{datos:{id:string;loteId:string;almacenId:string;stockAnterior:number;stockReservado:number;stockContado:number;diferencia:number;motivo:string|null;creadoEn:string;lote:{codigo:string;producto:{nombre:string};variante:{atributos:Record<string,string>}|null};almacen:{nombre:string};usuario:{nombre:string}}[]}>(`/inventario/conteos`,{signal});}
+export function registrarConteo(datos:{loteId:string;almacenId:string;stockEsperado:number;reservadoEsperado:number;contado:number;motivo:string}) {return request<{datos:{id:string;diferencia:number}}>(`/inventario/conteos`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
