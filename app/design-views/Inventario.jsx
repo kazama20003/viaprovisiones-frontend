@@ -10,7 +10,7 @@ import { opcionesCategoria, perteneceACategoria, rutaCategoria } from '../catego
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', filtroLoc: '', loc: '', saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '' };
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', filtroLoc: '', loc: '', saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '', ajusteProducto:'', ajusteExistencia:'', ajusteCantidad:'', ajusteMotivo:'', ajusteError:'', ajusteAviso:'', ajustando:false };
   }
   renderVals() {
     const B = 'img/';
@@ -93,23 +93,9 @@ class Component extends DesignLogic {
       ['Ajuste por daño', '−2', 'Cable USB-C · L-0901 · empaque roto', '#FFF4D6', '#7A4A00', 'M12 7v6M12 17h.01', '#7A4A00'],
       ['Venta #1042', '−2', 'Lámpara de camping · lote L-0915', '#FFE7D6', '#8A3B0A', 'M12 5v14M5 12l7 7 7-7', '#8A3B0A']
     ];
-    const operar = async (id, accion, datos = {}) => {
-      try { await this.props.onOperarLote(id, accion, datos); this.setState({ error: '', aviso: accion === 'aprobar' ? 'Lote aprobado y disponible.' : accion === 'ajustar' ? 'Stock ajustado correctamente.' : 'Traslado registrado.' }); }
-      catch (error) { this.setState({ error: error.message || 'No se pudo completar la operación.', aviso: '' }); }
-    };
-    const seleccionar = (p) => {
-      const disponibles = p.lots.filter(l => l.id && l.existencias?.length);
-      if (!disponibles.length) { this.setState({ error: 'Este producto no tiene lotes con existencias.' }); return null; }
-      const codigo = window.prompt('Indica el código del lote:\n' + disponibles.map(l => l.code).join('\n'), disponibles.length === 1 ? disponibles[0].code : '');
-      if (codigo === null) return null;
-      const lote = disponibles.find(l => l.code.toLowerCase() === codigo.trim().toLowerCase());
-      if (!lote) { this.setState({ error: 'No se encontró ese lote.' }); return null; }
-      const ubicaciones = lote.existencias;
-      const nombre = ubicaciones.length === 1 ? ubicaciones[0].almacen.nombre : window.prompt('Indica la ubicación:\n' + ubicaciones.map(x => x.almacen.nombre).join('\n'));
-      if (nombre === null) return null;
-      const existencia = ubicaciones.find(x => x.almacen.nombre.toLowerCase() === nombre.trim().toLowerCase());
-      if (!existencia) { this.setState({ error: 'No se encontró esa ubicación.' }); return null; }
-      return { lote, existencia };
+    const operar = async (id, accion, datos = {}, productoId = '') => {
+      try { await this.props.onOperarLote(id, accion, datos); this.setState({ accionProducto:productoId, accionError:'', accionAviso: accion === 'aprobar' ? 'Lote aprobado y disponible.' : 'Operación registrada.' }); }
+      catch (error) { this.setState({ accionProducto:productoId, accionError:error.message || 'No se pudo completar la operación.', accionAviso:'' }); }
     };
     return {
       accent,
@@ -122,7 +108,7 @@ class Component extends DesignLogic {
       togglePin: () => { const p = !this.state.pinned; try { localStorage.setItem('via-menu-pinned', p ? '1' : '0'); } catch (e) {} this.setState({ pinned: p, menu: false }); },
       apiProductosAdminState: this.props.apiProductosAdminState,
       apiProductosAdminError: this.props.apiProductosAdminError || '',
-      focusForm: () => { this.setState({ formHi: true, saved: false }); document.getElementById('registrar-lote')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
+      focusForm: () => { this.setState({ formHi: true, saved: false, error: '' }); const target=document.getElementById('registrar-lote'); target?.scrollIntoView({ behavior: 'smooth', block: 'center' }); window.setTimeout(() => document.getElementById('producto-lote')?.focus({ preventScroll:true }), 150); },
       formBg: st.formHi ? '#FFF1E6' : '#F4F4F2',
       saved: st.saved, codigo: st.codigo, error: st.error, aviso: st.aviso, saving: st.saving,
       productosForm: PROD.map(p => ({ id: p.id, name: p.name })),
@@ -166,6 +152,7 @@ class Component extends DesignLogic {
         const active = p.lots.filter((l) => l.status !== 'Agotado');
         let ord = 0;
         const sortedLots = [...p.lots];
+        const opcionesAjuste = p.lots.flatMap(l => (l.existencias || []).filter(x => LOCS.some(a => a.id === x.almacen.id)).map(x => ({ key: `${l.id}|${x.almacen.id}`, loteId:l.id, almacenId:x.almacen.id, label:`${l.code} · ${l.supplier} · ${x.almacen.nombre} · físico ${x.cantidadFisica} · reservado ${x.cantidadReservada}` })));
         return {
           id: p.id,
           name: p.name, sku: p.sku, cat: p.cat, img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
@@ -175,13 +162,27 @@ class Component extends DesignLogic {
           status: p.state, sBg: SS[p.state][0], sFg: SS[p.state][1], sIcon: SS[p.state][2],
           border: open ? '#E8701F' : '#FFFFFF', open, expanded: open ? 'true' : 'false', chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
           toggle: () => this.setState({ open: open ? null : p.id }),
-          ajustar: () => { const elegido = seleccionar(p); if (!elegido) return; const valor = window.prompt('Cantidad a ajustar: usa un número positivo para añadir o negativo para retirar.'); if (valor === null) return; const motivo = window.prompt('Motivo del ajuste:'); if (motivo === null) return; operar(elegido.lote.id, 'ajustar', { almacenId: elegido.existencia.almacen.id, cantidad: Number(valor), motivo }); },
-          trasladar: () => { const elegido = seleccionar(p); if (!elegido) return; const opciones = LOCS.filter(x => x.id !== elegido.existencia.almacen.id); if (!opciones.length) { this.setState({ error:'Crea otra ubicación activa para trasladar.' }); return; } const codigo = window.prompt('Código del destino:\n' + opciones.map(x => `${x.codigo} · ${x.nombre}`).join('\n')); if (codigo === null) return; const destino = opciones.find(x => x.codigo.toLowerCase() === codigo.trim().toLowerCase()); if (!destino) { this.setState({ error:'No se encontró el destino.' }); return; } const valor = window.prompt('Cantidad a trasladar:'); if (valor === null) return; operar(elegido.lote.id, 'trasladar', { origenId: elegido.existencia.almacen.id, destinoId: destino.id, cantidad: Number(valor) }); },
+          sinLotes: p.lots.length === 0,
+          accionError: st.accionProducto === p.id ? st.accionError : '', accionAviso: st.accionProducto === p.id ? st.accionAviso : '',
+          tieneExistencias: opcionesAjuste.length > 0,
+          ajusteAbierto: st.ajusteProducto === p.id,
+          opcionesAjuste, ajusteExistencia:st.ajusteExistencia, ajusteCantidad:st.ajusteCantidad, ajusteMotivo:st.ajusteMotivo, ajusteError:st.ajusteError, ajusteAviso:st.ajusteAviso, ajustando:st.ajustando,
+          ajustar: () => this.setState({ ajusteProducto:p.id, ajusteExistencia:opcionesAjuste.length === 1 ? opcionesAjuste[0].key : '', ajusteCantidad:'', ajusteMotivo:'', ajusteError:opcionesAjuste.length ? '' : 'Este producto no tiene lotes con existencias en una ubicación activa. Registra primero un lote.', ajusteAviso:'' }),
+          cerrarAjuste: () => this.setState({ ajusteProducto:'', ajusteError:'', ajusteAviso:'' }),
+          campoAjuste: campo => e => this.setState({ [campo]:e.target.value, ajusteError:'', ajusteAviso:'' }),
+          guardarAjuste: async e => {
+            e.preventDefault(); if(this.state.ajustando) return;
+            const actual=this.state, elegido=opcionesAjuste.find(x=>x.key===actual.ajusteExistencia), valor=Number(actual.ajusteCantidad);
+            if(!elegido || !actual.ajusteCantidad.trim() || !Number.isFinite(valor) || valor===0 || Math.abs(valor)>999999 || Math.abs(valor*1000-Math.round(valor*1000))>0.000001 || !actual.ajusteMotivo.trim()) { this.setState({ajusteError:'Selecciona lote y ubicación, indica una cantidad distinta de cero y escribe el motivo.'}); return; }
+            this.setState({ajustando:true,ajusteError:'',ajusteAviso:''});
+            try { await this.props.onOperarLote(elegido.loteId,'ajustar',{almacenId:elegido.almacenId,cantidad:valor,motivo:actual.ajusteMotivo.trim()}); this.setState({ajustando:false,ajusteCantidad:'',ajusteMotivo:'',ajusteAviso:'Stock ajustado correctamente.'}); }
+            catch(error) { this.setState({ajustando:false,ajusteError:error.message || 'No se pudo ajustar el stock.'}); }
+          },
           lots: sortedLots.map((l) => {
             const sellNow = l.status === 'Activo';
             if (sellNow) ord += 1;
             const first = sellNow && ord === 1;
-            return { code: l.code, supplier: l.supplier, date: l.date, qty: String(l.qty), left: String(l.left), cost: money(l.cost), loc: l.loc, warranty: l.warranty, pendiente: l.estadoReal === 'en_revision', aprobar: () => operar(l.id, 'aprobar'),
+            return { code: l.code, supplier: l.supplier, date: l.date, qty: String(l.qty), left: String(l.left), cost: money(l.cost), loc: l.loc, warranty: l.warranty, pendiente: l.estadoReal === 'en_revision', aprobar: () => operar(l.id, 'aprobar', {}, p.id),
               w: Math.round((l.left / l.qty) * 100) + '%', status: first ? 'Se vende primero' : l.status,
               sBg: first ? '#FFE7D6' : LS[l.status][0], sFg: first ? '#8A3B0A' : LS[l.status][1], dot: first ? '#E8701F' : LS[l.status][2],
               ord: sellNow ? String(ord) : '—', ordBg: first ? '#E8701F' : (sellNow ? '#111111' : '#E9E9E6'), ordFg: sellNow ? '#FFFFFF' : '#6B6B6B',
@@ -645,6 +646,9 @@ export default function Inventario(props) {
                                       </div>
                                     </Fragment>
                                   ))}
+                                  {lookup(p, 'sinLotes') && <p style={{margin:'4px 0',fontSize:12,color:'#6B6B6B'}}>Este producto aún no tiene lotes. Ingresa el primer lote para registrar su stock.</p>}
+                                  {lookup(p, 'accionError') && <p role="alert" style={{margin:0,color:'#8E1C14',fontSize:12}}>{lookup(p, 'accionError')}</p>}
+                                  {lookup(p, 'accionAviso') && <p role="status" style={{margin:0,color:'#1B5E20',fontSize:12}}>{lookup(p, 'accionAviso')}</p>}
                                   <div style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap", "paddingTop": "6px" }}>
                                     <DesignLink href={'/producto/editar?id=' + encodeURIComponent(lookup(p, 'id'))} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>Editar producto</DesignLink>
                                     <button onClick={() => { lookup(v, "setProducto")({ target: { value: lookup(p, "id") } }); lookup(v, "focusForm")(); }} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "none", "background": "#111111", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
@@ -653,13 +657,25 @@ export default function Inventario(props) {
                                     <button onClick={lookup(p, "ajustar")} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Ajustar stock"}
                                     </button>
-                                    <button onClick={lookup(p, "trasladar")} style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
+                                    <DesignLink href="/traslados" style={{ "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "display":"inline-flex", "alignItems":"center", "textDecoration":"none", "fontFamily": "Manrope, sans-serif", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Trasladar"}
-                                    </button>
+                                    </DesignLink>
                                     <DesignLink href={"/kardex?productoId=" + encodeURIComponent(lookup(p, "id"))} style={{ "display": "inline-flex", "alignItems": "center", "height": "38px", "padding": "0 16px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                                       {"Ver kardex"}
                                     </DesignLink>
                                   </div>
+                                  {lookup(p,'ajusteAbierto') && <div style={{padding:'14px',borderRadius:18,background:'#F4F4F2',display:'flex',flexDirection:'column',gap:10,fontSize:12}}>
+                                    <strong>Ajustar stock de {lookup(p,'name')}</strong>
+                                    {lookup(p,'ajusteError') && <p role="alert" style={{margin:0,color:'#8E1C14'}}>{lookup(p,'ajusteError')}</p>}
+                                    {lookup(p,'ajusteAviso') && <p role="status" style={{margin:0,color:'#1B5E20'}}>{lookup(p,'ajusteAviso')}</p>}
+                                    {lookup(p,'tieneExistencias') && <form onSubmit={lookup(p,'guardarAjuste')} style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'end'}}>
+                                      <label style={{flex:'2 1 220px'}}>Lote y ubicación<select aria-label="Lote y ubicación del ajuste" value={lookup(p,'ajusteExistencia')} onChange={lookup(p,'campoAjuste')('ajusteExistencia')} style={{display:'block',width:'100%',height:40,border:'1px solid #E4E4E0',borderRadius:12,background:'#fff',padding:'0 10px',marginTop:5}}><option value="">Selecciona lote y ubicación</option>{lookup(p,'opcionesAjuste').map(x=><option key={x.key} value={x.key}>{x.label}</option>)}</select></label>
+                                      <label style={{flex:'1 1 120px'}}>Cantidad (+ o −)<input aria-label="Cantidad de ajuste" type="number" step="0.001" value={lookup(p,'ajusteCantidad')} onChange={lookup(p,'campoAjuste')('ajusteCantidad')} style={{display:'block',boxSizing:'border-box',width:'100%',height:40,border:'1px solid #E4E4E0',borderRadius:12,padding:'0 10px',marginTop:5}} /></label>
+                                      <label style={{flex:'2 1 180px'}}>Motivo<input aria-label="Motivo del ajuste" maxLength={250} value={lookup(p,'ajusteMotivo')} onChange={lookup(p,'campoAjuste')('ajusteMotivo')} style={{display:'block',boxSizing:'border-box',width:'100%',height:40,border:'1px solid #E4E4E0',borderRadius:12,padding:'0 10px',marginTop:5}} /></label>
+                                      <button type="submit" disabled={lookup(p,'ajustando')} style={{height:40,padding:'0 16px',border:0,borderRadius:999,background:'#E8701F',color:'#fff',fontWeight:700,cursor:'pointer'}}>{lookup(p,'ajustando')?'Guardando…':'Guardar ajuste'}</button>
+                                    </form>}
+                                    <button type="button" onClick={lookup(p,'cerrarAjuste')} style={{alignSelf:'flex-start',border:0,background:'transparent',padding:0,textDecoration:'underline',cursor:'pointer'}}>Cerrar</button>
+                                  </div>}
                                 </div>
                               </Fragment>
                             )}
@@ -686,9 +702,10 @@ export default function Inventario(props) {
                         </div>
                       </Fragment>
                     )}
+                    {lookup(v,'formBg') === '#FFF1E6' && <p role="status" style={{margin:0,fontSize:12,color:'#8A3B0A'}}>Completa los datos y pulsa «Registrar lote» para guardar el stock.</p>}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       <span id="registrar-lote">{"Producto"}</span>
-                      <select value={lookup(v, "productoId")} onChange={lookup(v, "setProducto")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }}>
+                      <select id="producto-lote" value={lookup(v, "productoId")} onChange={lookup(v, "setProducto")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }}>
                         <option value="">Selecciona un producto</option>
                         {(lookup(v, "productosForm") || []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
