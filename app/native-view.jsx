@@ -25,12 +25,13 @@ import ProductoEditar from "./design-views/ProductoEditar";
 import PuntoVenta from "./design-views/PuntoVenta";
 import Reportes from "./design-views/Reportes";
 import Traslados from "./design-views/Traslados";
+import UbicacionesAdmin from "./design-views/UbicacionesAdmin";
 
 import { Suspense, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { pinPanelMenu, registerPopup } from "./panel-menu-state";
-import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion } from "./backend-api";
+import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
 
 const views = {
   Admin: dynamic(() => import("./design-views/Admin"), { ssr: false }),
@@ -78,8 +79,9 @@ const views = {
   Seguimiento: dynamic(() => import("./design-views/Seguimiento"), { ssr: false }),
   TiendaMovil: dynamic(() => import("./design-views/TiendaMovil"), { ssr: false }),
   Traslados,
+  UbicacionesAdmin,
 };
-const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","CategoriasAdmin","MarcasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
+const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","UbicacionesAdmin","CategoriasAdmin","MarcasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
 const mobileViews = new Set(["AdminMovil","MovilAlmacen","MovilFinanzas","MovilMarketing","TiendaMovil"]);
 
 function PanelMenuPopup({ View, ...props }) {
@@ -104,7 +106,11 @@ function ConnectedView({ name }) {
   const clientes = useQuery({ queryKey: ["clientes"], queryFn: ({ signal }) => listarClientes(signal), enabled: name === "Clientes" });
   const pedidos = useQuery({ queryKey: ["pedidos"], queryFn: ({ signal }) => listarPedidos(signal), enabled: name === "Pedidos" });
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
-  const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario"].includes(name) });
+  const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario", "Traslados"].includes(name) });
+  const almacenes = useQuery({queryKey:['inventario','almacenes'],queryFn:({signal})=>listarAlmacenes(signal),enabled:['Inventario','UbicacionesAdmin','Traslados'].includes(name)});
+  const sucursales = useQuery({queryKey:['inventario','sucursales'],queryFn:({signal})=>listarSucursales(signal),enabled:name==='UbicacionesAdmin'});
+  const movimientos = useQuery({queryKey:['inventario','movimientos'],queryFn:({signal})=>listarMovimientos(signal),enabled:name==='Inventario'});
+  const traslados = useQuery({queryKey:['inventario','traslados'],queryFn:({signal})=>listarTraslados(signal),enabled:['Inventario','Traslados'].includes(name)});
   const categorias = useQuery({ queryKey: ['categorias', 'admin'], queryFn: ({ signal }) => listarCategorias(signal), enabled: ['CategoriasAdmin', 'ProductoEditar', 'Inventario'].includes(name) });
   const marcas = useQuery({ queryKey: ['marcas', 'admin'], queryFn: ({ signal }) => listarMarcas(signal), enabled: ['MarcasAdmin', 'ProductoEditar'].includes(name) });
   const productoPublico = useQuery({ queryKey: ['tienda', 'producto', productoPublicoId], queryFn: ({ signal }) => obtenerProductoTienda(productoPublicoId, signal), enabled: !!productoPublicoId });
@@ -140,8 +146,11 @@ function ConnectedView({ name }) {
   const productoMutation = useMutation({ mutationFn: ({ id, datos }) => guardarProducto(id, datos), onSuccess: async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); } });
   const categoriaMutation = useMutation({ mutationFn: ({ id, datos }) => guardarCategoria(id, datos), onSuccess: async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['categorias'] }), queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); } });
   const marcaMutation = useMutation({ mutationFn: ({ id, datos }) => guardarMarca(id, datos), onSuccess: async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['marcas'] }), queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda'] })]); } });
-  const loteMutation = useMutation({ mutationFn: registrarLote, onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['productos'] }); queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] }); } });
-  const operarLoteMutation = useMutation({ mutationFn: ({ id, accion, datos }) => operarLote(id, accion, datos), onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['productos'] }); queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] }); } });
+  const actualizarInventario = () => Promise.all([queryClient.invalidateQueries({queryKey:['productos']}),queryClient.invalidateQueries({queryKey:['inventario']}),queryClient.invalidateQueries({queryKey:['tienda']})]);
+  const loteMutation = useMutation({ mutationFn: registrarLote, onSuccess: actualizarInventario });
+  const operarLoteMutation = useMutation({ mutationFn: ({ id, accion, datos }) => operarLote(id, accion, datos), onSuccess: actualizarInventario });
+  const ubicacionMutation = useMutation({mutationFn:({tipo,id,datos})=>guardarUbicacion(tipo,id,datos),onSuccess:actualizarInventario});
+  const trasladoMutation = useMutation({mutationFn:({id,accion,datos})=>id?accionarTraslado(id,accion):crearTraslado(datos),onSuccess:actualizarInventario});
   const actualizarArchivos = async () => { await Promise.all([queryClient.invalidateQueries({ queryKey: ['productos'] }), queryClient.invalidateQueries({ queryKey: ['tienda', 'productos'] })]); };
   useEffect(() => {
     if (sesion.error?.status === 401) router.replace("/admin/login");
@@ -188,6 +197,12 @@ function ConnectedView({ name }) {
     apiProductosAdmin={productosAdmin.data?.datos ?? []}
     apiProductosAdminState={productosAdmin.status}
     apiProductosAdminError={productosAdmin.error?.message ?? ""}
+    almacenes={almacenes.data?.datos || []} almacenesEstado={almacenes.status} almacenesError={almacenes.error?.message || ''} reintentarAlmacenes={()=>almacenes.refetch()}
+    sucursales={sucursales.data?.datos || []} sucursalesEstado={sucursales.status} sucursalesError={sucursales.error?.message || ''} reintentarSucursales={()=>sucursales.refetch()}
+    guardarUbicacion={(tipo,id,datos)=>ubicacionMutation.mutateAsync({tipo,id,datos})} ubicacionPendiente={ubicacionMutation.isPending}
+    movimientos={movimientos.data?.datos || []} movimientosEstado={movimientos.status} movimientosError={movimientos.error?.message || ''}
+    traslados={traslados.data?.datos || []} trasladosEstado={traslados.status} trasladosError={traslados.error?.message || ''} reintentarTraslados={()=>traslados.refetch()}
+    crearTraslado={(datos)=>trasladoMutation.mutateAsync({datos})} accionarTraslado={(id,accion)=>trasladoMutation.mutateAsync({id,accion})} trasladoPendiente={trasladoMutation.isPending}
     pedidoError={transicionarPedido.error?.message ?? ""}
     onAvanzarPedido={(id, estado) => transicionarPedido.mutate({ id, estado })}
     productoActual={productosAdmin.data?.datos.find(p => p.id === productoId) || null}

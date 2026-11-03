@@ -10,7 +10,7 @@ import { opcionesCategoria, perteneceACategoria, rutaCategoria } from '../catego
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', loc: 0, saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '' };
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', filtroLoc: '', loc: '', saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '' };
   }
   renderVals() {
     const B = 'img/';
@@ -58,7 +58,7 @@ class Component extends DesignLogic {
       const valued = p.lots.filter((l) => l.status !== 'En tránsito' && l.status !== 'Agotado');
       const avg = valued.length ? valued.reduce((a, l) => a + l.left * l.cost, 0) / Math.max(1, units) : (p.lots[p.lots.length - 1]?.cost || 0);
       const state = stock === 0 ? 'Agotado' : stock < p.min ? 'Stock bajo' : 'Disponible';
-      const transit = p.lots.some((l) => l.status === 'En tránsito');
+      const transit = (this.props.traslados || []).some(t => t.estado === 'en_camino' && t.lineas.some(x => p.lots.some(l => l.id === x.loteId)));
       return { ...p, stock, units, avg, state, transit, value: units * avg };
     });
     const SS = {
@@ -76,14 +76,15 @@ class Component extends DesignLogic {
     const fFn = (FILTERS.find((f) => f[0] === st.filter) || FILTERS[0])[1];
     const list = enrich.filter(fFn).filter((p) => st.cat === 'Todas' || (st.cat === 'sin-categoria' ? !p.categoriaId : perteneceACategoria(categorias, p.categoriaId, st.cat)));
     const totalUnits = enrich.reduce((a, p) => a + p.units, 0);
-    const allLots = PROD.flatMap((p) => p.lots);
+    const allLots = enrich.flatMap((p) => p.lots);
+    const lotesEnCamino = new Set((this.props.traslados || []).filter(t => t.estado === 'en_camino').flatMap(t => t.lineas.map(l => l.loteId))).size;
     const totalValue = enrich.reduce((a, p) => a + p.value, 0);
     const retail = enrich.reduce((a, p) => a + p.units * p.price, 0);
     const catVals = {};
     enrich.forEach((p) => { catVals[p.cat] = (catVals[p.cat] || 0) + p.value; });
     const catArr = Object.entries(catVals).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const counts = { Disponible: enrich.filter((p) => p.state === 'Disponible').length, 'Stock bajo': enrich.filter((p) => p.state === 'Stock bajo').length, Agotado: enrich.filter((p) => p.state === 'Agotado').length };
-    const LOCS = ['Tienda Dean Valdivia', 'Almacén', 'En tránsito'];
+    const LOCS = (this.props.almacenes || []).filter(a => a.activo);
     const MI = (label, href, icon, on) => ({ label, href, icon, bg: on ? '#F4F4F2' : 'transparent', iconBg: on ? '#E8701F' : '#F4F4F2', iconFg: on ? '#FFFFFF' : '#111111' });
     const moves = [
       ['Entrada de lote', '+120', 'Foco LED 9 W · L-1020 · Almacén', '#E4F4E7', '#1B5E20', 'M12 19V5M5 12l7-7 7 7', '#1B5E20'],
@@ -132,10 +133,11 @@ class Component extends DesignLogic {
       saveLot: async () => {
         if (this.state.saving) return;
         if (!st.productoId || !st.cantidad || !st.costo || !st.ingreso) { this.setState({ error: 'Completa el producto, la cantidad, el costo y la fecha de ingreso.' }); return; }
+        if (!st.loc || !LOCS.some(l => l.id === st.loc)) { this.setState({ error:'Selecciona una ubicación activa.' }); return; }
         if ((PROD.find(p => p.id === st.productoId)?.variantes || []).length && !st.varianteId) { this.setState({ error:'Selecciona la variante del lote.' }); return; }
         this.setState({ saving: true, saved: false, error: '' });
         try {
-          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedor: st.proveedor, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, ubicacion: LOCS[st.loc], revisar: st.revisar });
+          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedor: st.proveedor, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, almacenId: st.loc, revisar: st.revisar });
           this.setState({ saving: false, saved: true, codigo: result.datos.codigo, formHi: false, cantidad: '', costo: '' });
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo registrar el lote.' }); }
       },
@@ -145,7 +147,7 @@ class Component extends DesignLogic {
         { v: productosConectados ? String(enrich.length) : '291', k1: 'Productos', k2: 'en catálogo', bg: '#FFFFFF', fg: '#111111' },
         { v: String(counts['Stock bajo']), k1: 'Con stock', k2: 'bajo', bg: '#FFF4D6', fg: '#7A4A00' },
         { v: String(counts.Agotado), k1: 'Productos', k2: 'agotados', bg: '#FDE4E2', fg: '#8E1C14' },
-        { v: String(allLots.filter((l) => l.status === 'En tránsito').length), k1: 'Lotes', k2: 'en camino', bg: '#111111', fg: '#FFFFFF' }
+        { v: String(lotesEnCamino), k1: 'Lotes', k2: 'en camino', bg: '#111111', fg: '#FFFFFF' }
       ],
       stockValue: totalValue.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       retailValue: retail.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
@@ -155,7 +157,7 @@ class Component extends DesignLogic {
         note: k === 'Disponible' ? 'Sobre el mínimo' : k === 'Stock bajo' ? 'Por debajo del mínimo' : 'Sin unidades para vender',
         pick: () => this.setState({ filter: k === 'Disponible' ? 'Todos' : k === 'Agotado' ? 'Agotados' : 'Stock bajo' }) })),
       rotation: (productosConectados ? [] : [['Focos', 18], ['Cables', 24], ['Llaveros', 31], ['Camping', 42], ['Solar', 67]]).map((r, i) => ({ name: r[0], d: r[1] + ' d', w: Math.round((r[1] / 67) * 100) + '%', o: (1 - i * 0.15).toFixed(2) })),
-      lotStates: ['Activo', 'En tránsito', 'En revisión', 'Agotado'].map((k) => ({ name: k === 'Activo' ? 'Activos' : k === 'Agotado' ? 'Agotados' : k, n: String(allLots.filter((l) => l.status === k).length), fg: LS[k][1], dot: LS[k][2] })),
+      lotStates: ['Activo', 'En tránsito', 'En revisión', 'Agotado'].map((k) => ({ name: k === 'Activo' ? 'Activos' : k === 'Agotado' ? 'Agotados' : k, n: String(k === 'En tránsito' ? lotesEnCamino : allLots.filter((l) => l.status === k).length), fg: LS[k][1], dot: LS[k][2] })),
       filters: FILTERS.map((f) => ({ name: f[0], count: String(enrich.filter(f[1]).length), pressed: st.filter === f[0] ? 'true' : 'false', bg: st.filter === f[0] ? '#111111' : '#FFFFFF', fg: st.filter === f[0] ? '#FFFFFF' : '#111111', border: st.filter === f[0] ? '#111111' : '#E4E4E0', pick: () => this.setState({ filter: f[0] }) })),
       cats: CATS.map((c) => ({ name: c.nombre, pressed: st.cat === c.id ? 'true' : 'false', bg: st.cat === c.id ? '#E8701F' : '#FFFFFF', fg: st.cat === c.id ? '#FFFFFF' : '#111111', pick: () => this.setState({ cat: c.id }) })),
       categoriasEstado: this.props.estado, categoriasError: this.props.error,
@@ -174,7 +176,7 @@ class Component extends DesignLogic {
           border: open ? '#E8701F' : '#FFFFFF', open, expanded: open ? 'true' : 'false', chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
           toggle: () => this.setState({ open: open ? null : p.id }),
           ajustar: () => { const elegido = seleccionar(p); if (!elegido) return; const valor = window.prompt('Cantidad a ajustar: usa un número positivo para añadir o negativo para retirar.'); if (valor === null) return; const motivo = window.prompt('Motivo del ajuste:'); if (motivo === null) return; operar(elegido.lote.id, 'ajustar', { almacenId: elegido.existencia.almacen.id, cantidad: Number(valor), motivo }); },
-          trasladar: () => { const elegido = seleccionar(p); if (!elegido) return; const destino = window.prompt('Destino: escribe TIENDA o ALMACEN.'); if (destino === null) return; const valor = window.prompt('Cantidad a trasladar:'); if (valor === null) return; operar(elegido.lote.id, 'trasladar', { origenId: elegido.existencia.almacen.id, destino: destino.trim().toUpperCase(), cantidad: Number(valor) }); },
+          trasladar: () => { const elegido = seleccionar(p); if (!elegido) return; const opciones = LOCS.filter(x => x.id !== elegido.existencia.almacen.id); if (!opciones.length) { this.setState({ error:'Crea otra ubicación activa para trasladar.' }); return; } const codigo = window.prompt('Código del destino:\n' + opciones.map(x => `${x.codigo} · ${x.nombre}`).join('\n')); if (codigo === null) return; const destino = opciones.find(x => x.codigo.toLowerCase() === codigo.trim().toLowerCase()); if (!destino) { this.setState({ error:'No se encontró el destino.' }); return; } const valor = window.prompt('Cantidad a trasladar:'); if (valor === null) return; operar(elegido.lote.id, 'trasladar', { origenId: elegido.existencia.almacen.id, destinoId: destino.id, cantidad: Number(valor) }); },
           lots: sortedLots.map((l) => {
             const sellNow = l.status === 'Activo';
             if (sellNow) ord += 1;
@@ -187,9 +189,10 @@ class Component extends DesignLogic {
           })
         };
       }),
-      locs: LOCS.map((n, i) => ({ name: n, pressed: i === st.loc ? 'true' : 'false', bg: i === st.loc ? '#111111' : '#FFFFFF', fg: i === st.loc ? '#FFFFFF' : '#111111', pick: () => this.setState({ loc: i }) })),
-      moveCount: productosConectados ? 'Sin historial conectado' : moves.length + ' movimientos',
-      moves: (productosConectados ? [] : moves).map((m) => ({ title: m[0], qty: m[1], sub: m[2], bg: m[3], fg: m[4], icon: m[5], qtyC: m[6] })),
+      locs: LOCS.map(n => ({ name: n.nombre, pressed: n.id === st.loc ? 'true' : 'false', bg: n.id === st.loc ? '#111111' : '#FFFFFF', fg: n.id === st.loc ? '#FFFFFF' : '#111111', pick: () => this.setState({ loc: n.id }) })),
+      almacenesEstado:this.props.almacenesEstado, almacenesError:this.props.almacenesError, movimientosEstado:this.props.movimientosEstado, movimientosError:this.props.movimientosError,
+      moveCount: this.props.movimientosEstado === 'pending' ? 'Cargando…' : this.props.movimientosEstado === 'error' ? 'No disponible' : (this.props.movimientos || []).length + ' movimientos',
+      moves: (this.props.movimientos || []).slice(0,8).map(m => ({title:({recepcion:'Ingreso de lote',ajuste:'Ajuste',traslado_salida:'Traslado enviado',traslado_entrada:'Traslado recibido',venta:'Venta',devolucion:'Devolución'})[m.tipo] || m.tipo,qty:(m.sentido==='entrada'?'+':'−')+m.cantidad,sub:`${m.producto.nombre} · ${m.lote.codigo} · ${m.almacen.nombre}${m.traslado ? ' · '+m.traslado.numero : ''}${m.motivo ? ' · '+m.motivo : ''}`,bg:m.sentido==='entrada'?'#E4F4E7':'#FFE7D6',fg:m.sentido==='entrada'?'#1B5E20':'#8A3B0A',icon:m.sentido==='entrada'?'M12 19V5M5 12l7-7 7 7':'M12 5v14M5 12l7 7 7-7',qtyC:m.sentido==='entrada'?'#1B5E20':'#8A3B0A'})),
       menu: [
         MI('Panel', '/dashboard', 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z'),
         MI('Pedidos', '/pedidos', 'M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0'),
@@ -384,7 +387,7 @@ export default function Inventario(props) {
                   </div>
                   <span style={{ "display": "flex", "alignItems": "baseline", "gap": "8px" }}>
                     <span style={{ "fontSize": "34px", "fontWeight": "800" }}>
-                      {"38"}
+                      {"—"}
                     </span>
                     <span style={{ "fontSize": "13px", "color": "#6B6B6B" }}>
                       {"días promedio para vender un lote"}
@@ -406,7 +409,7 @@ export default function Inventario(props) {
                     </Fragment>
                   ))}
                   <span style={{ "fontSize": "11px", "color": "#6B6B6B" }}>
-                    {"Menos días = se vende más rápido."}
+                    {"Todavía no hay datos de rotación calculados."}
                   </span>
                 </div>
                 <div style={{ "flex": "1 1 260px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
@@ -436,10 +439,10 @@ export default function Inventario(props) {
                     </span>
                     <span style={{ "display": "flex", "flexDirection": "column", "fontSize": "12px" }}>
                       <span style={{ "fontWeight": "700" }}>
-                        {"Próximo en llegar · 28 oct"}
+                        {"Consulta tus traslados"}
                       </span>
                       <span style={{ "color": "#6B6B6B" }}>
-                        {"Panel solar 100 W · 12 und. · L-1102"}
+                        {"Revisa los envíos y recepciones registrados."}
                       </span>
                     </span>
                   </div>
@@ -478,6 +481,7 @@ export default function Inventario(props) {
                       </Fragment>
                     ))}
                   </div>
+                  <label style={{fontSize:12,fontWeight:700}}>Ubicación <select aria-label="Filtrar stock por ubicación" value={lookup(v,'filtroLoc')} onChange={lookup(v,'setFiltroLoc')} style={{marginLeft:8,padding:'8px 12px',borderRadius:14,border:'1px solid #ddd',background:'#fff'}}><option value="">Todas las ubicaciones</option>{(lookup(v,'ubicacionesFiltro')||[]).map(a=><option key={a.id} value={a.id}>{a.nombre}{a.activo?'':' (inactiva)'}</option>)}</select></label>
                   {lookup(v, 'categoriasEstado') === 'pending' && <p role="status" style={{ fontSize:12,color:'#6B6B6B' }}>Cargando categorías…</p>}
                   {lookup(v, 'categoriasEstado') === 'error' && <p role="alert" style={{ fontSize:12,color:'#8E1C14' }}>{lookup(v, 'categoriasError') || 'No se pudieron cargar las categorías.'} <button type="button" onClick={props.reintentar}>Reintentar</button></p>}
                   <div className={"noscroll"} style={{ "overflowX": "auto" }}>
@@ -724,6 +728,10 @@ export default function Inventario(props) {
                         </Fragment>
                       ))}
                     </div>
+                    {lookup(v, 'almacenesEstado') === 'pending' && <span role="status">Cargando ubicaciones…</span>}
+                    {lookup(v, 'almacenesEstado') === 'error' && <span role="alert">{lookup(v, 'almacenesError')} <button type="button" onClick={props.reintentarAlmacenes}>Reintentar</button></span>}
+                    {lookup(v, 'almacenesEstado') === 'success' && !(lookup(v, 'locs') || []).length && <span>No hay ubicaciones activas.</span>}
+                    <DesignLink href="/ubicaciones" style={{fontSize:12,fontWeight:700,color:'#c2410c'}}>Administrar almacenes y sucursales ›</DesignLink>
                     <label style={{ "display": "flex", "alignItems": "center", "gap": "10px", "fontSize": "12px", "fontWeight": "600" }}>
                       <input type={"checkbox"} checked={lookup(v, "revisar")} onChange={lookup(v, "setRevisar")} style={{ "width": "18px", "height": "18px", "accentColor": "#E8701F" }} />
                       {"Revisar calidad antes de vender"}
@@ -736,12 +744,13 @@ export default function Inventario(props) {
                   <div style={{ "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
                     <div style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center" }}>
                       <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
-                        {"Movimientos de hoy"}
+                        {"Movimientos recientes"}
                       </span>
                       <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
                         {lookup(v, "moveCount")}
                       </span>
                     </div>
+                    {lookup(v, 'movimientosEstado') === 'error' && <span role="alert">{lookup(v, 'movimientosError') || 'No se pudieron cargar los movimientos.'}</span>}
                     {(lookup(v, "moves") || []).map((m, index12) => (
                       <Fragment key={index12}>
                         <div style={{ "display": "flex", "gap": "12px", "alignItems": "flex-start" }}>

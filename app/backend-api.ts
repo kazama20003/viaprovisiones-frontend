@@ -101,7 +101,18 @@ export type ProductoGuardar = { nombre: string; sku: string; descripcion: string
 export function guardarProducto(id: string | null, datos: ProductoGuardar) {
   return request<{ datos: { id: string } }>(id ? `/productos/${encodeURIComponent(id)}` : '/productos', { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) });
 }
-export type LoteGuardar = { productoId: string; varianteId?: string | null; proveedor: string; cantidad: number; costoUnitario: number; fechaIngreso: string; garantiaHasta: string; ubicacion: string; revisar: boolean };
+export type Sucursal = { id:string; codigo:string; nombre:string; direccion:string|null; activa:boolean };
+export type Almacen = { id:string; codigo:string; nombre:string; direccion:string|null; tipo:'tienda'|'almacen'; activo:boolean; sucursalId:string|null; sucursal?:{id:string;nombre:string}|null };
+export type MovimientoStock = { id:string; tipo:string; sentido:'entrada'|'salida'; cantidad:number; motivo:string|null; creadoEn:string; producto:{nombre:string;sku:string}; lote:{codigo:string;variante:{atributos:Record<string,string>}|null}; almacen:{nombre:string}; traslado:{numero:string}|null };
+export type TrasladoStock = { id:string; numero:string; estado:'preparando'|'en_camino'|'recibido'|'cancelado'; creadoEn:string; observaciones:string|null; almacenOrigen:{id:string;nombre:string}; almacenDestino:{id:string;nombre:string}; lineas:{id:string;loteId:string;cantidadEnviada:number;cantidadRecibida:number;producto:{nombre:string;sku:string};lote:{codigo:string;variante:{atributos:Record<string,string>;sku:string}|null}}[] };
+export function listarSucursales(signal?:AbortSignal) { return request<{datos:Sucursal[]}>('/inventario/sucursales',{signal}); }
+export function listarAlmacenes(signal?:AbortSignal) { return request<{datos:Almacen[]}>('/inventario/almacenes',{signal}); }
+export function guardarUbicacion(tipo:'sucursales'|'almacenes',id:string|null,datos:Record<string,unknown>) { return request(`/inventario/${tipo}${id?'/'+encodeURIComponent(id):''}`,{method:id?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)}); }
+export function listarMovimientos(signal?:AbortSignal) { return request<{datos:MovimientoStock[]}>('/inventario/movimientos',{signal}); }
+export function listarTraslados(signal?:AbortSignal) { return request<{datos:TrasladoStock[]}>('/inventario/traslados',{signal}); }
+export function crearTraslado(datos:{origenId:string;destinoId:string;lineas:{loteId:string;cantidad:number}[];observaciones:string}) { return request<{datos:{id:string;numero:string}} >('/inventario/traslados',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)}); }
+export function accionarTraslado(id:string,accion:'enviar'|'recibir'|'cancelar') { return request(`/inventario/traslados/${encodeURIComponent(id)}/${accion}`,{method:'POST'}); }
+export type LoteGuardar = { productoId: string; varianteId?: string | null; almacenId:string; proveedor: string; cantidad: number; costoUnitario: number; fechaIngreso: string; garantiaHasta: string; revisar: boolean };
 export function registrarLote(datos: LoteGuardar) {
   return request<{ datos: { id: string; codigo: string; estado: string } }>('/inventario/lotes', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) });
 }
