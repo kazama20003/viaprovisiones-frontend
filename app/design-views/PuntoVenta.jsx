@@ -35,7 +35,8 @@ export default function PuntoVenta(props) {
   return <DesignHost key={almacenId} Logic={Component} defaults={defaults} componentProps={{...props,data,caja,sales,reload}} render={(v) => (
     <Fragment>
       <style>{"\nbody{margin:0;background:#E9E9E7}\na{color:#111111}\n.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}\n.pv-card{transition:transform .12s ease, box-shadow .12s ease}\n.pv-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(17,17,17,0.08)}\n"}</style>
-    <div style={{ "minHeight": "100vh", "background": "#E9E9E7", "padding": "0", "boxSizing": "border-box", "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
+      <style>{"\n.pv-shell{--pv-orange:#e8701f}.pv-shell button,.pv-shell a,.pv-shell input,.pv-shell select{transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease}.pv-shell button:focus-visible,.pv-shell a:focus-visible,.pv-shell input:focus-visible,.pv-shell select:focus-visible{outline:3px solid #ffad75;outline-offset:2px}.pv-shell button:not(:disabled):active{transform:scale(.98)}\n.pv-caja{margin:0 20px 16px;padding:18px 22px;background:#fff;border-radius:26px;display:flex;align-items:end;gap:12px;flex-wrap:wrap}.pv-caja-intro{display:flex;align-items:center;gap:12px;min-width:210px;margin-right:auto}.pv-caja-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#fff1e6;color:#d65d10;flex:none}.pv-caja-title{font-size:14px;font-weight:800}.pv-caja-subtitle{font-size:12px;color:#858585;margin-top:3px}.pv-field{display:flex;flex-direction:column;gap:6px;color:#686868;font-size:11px;font-weight:700}.pv-field select,.pv-field input,.pv-input{height:42px;box-sizing:border-box;border:1px solid #e4e4e1;border-radius:14px;background:#f8f8f6;padding:0 14px;font:600 13px Manrope,system-ui,sans-serif;color:#111}.pv-field select{min-width:180px}.pv-field input{width:142px}.pv-field select:focus,.pv-field input:focus,.pv-input:focus{border-color:#e8701f;background:#fff;outline:none;box-shadow:0 0 0 3px #ff914c26}.pv-caja-action{height:42px;padding:0 20px;border:0;border-radius:14px;background:#111;color:#fff;font:700 13px Manrope,system-ui,sans-serif;cursor:pointer}.pv-caja-action:not(:disabled):hover{background:#e8701f}.pv-caja-action:disabled{opacity:.5;cursor:not-allowed}.pv-message{flex-basis:100%;font-size:13px}.pv-catalog-title{display:flex;justify-content:space-between;gap:12px;align-items:center}.pv-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:#df6b1d}.pv-catalog-title h1{font-size:21px;letter-spacing:-.03em;line-height:1.2;margin:4px 0 0}.pv-catalog-caption{font-size:12px;color:#8c8c8c;text-align:right}.pv-search:focus-within{box-shadow:0 0 0 2px #ff914c80}.pv-empty{min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:24px;background:#f8f8f6;border:1px dashed #dededb;border-radius:22px;text-align:center}.pv-empty-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#fff1e6;color:#e8701f}.pv-empty strong{font-size:14px}.pv-empty span:last-child{font-size:12px;line-height:1.5;color:#858585;max-width:300px}.pv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}.pv-ticket{box-shadow:0 8px 30px #17171708}.pv-ticket .pv-input{width:100%;background:#fff}.pv-client-grid,.pv-doc-grid{grid-template-columns:minmax(0,1fr)!important}.pv-client-grid button,.pv-doc-grid button{text-align:left;padding:0 16px}.pv-sales-empty{border-top:1px solid #f0f0ed;padding:15px 0 3px;color:#969696;font-size:12px}.pv-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px #11111114}.pv-shell button[aria-pressed=true]{box-shadow:0 3px 8px #11111112}\n@media(max-width:850px){.pv-ticket{max-width:none!important;flex-basis:100%!important}.pv-caja-intro{flex-basis:100%}.pv-caja{margin:0 14px 14px}.pv-grid{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}@media(max-width:520px){.pv-stat{gap:6px!important}.pv-stat>span:first-child{min-width:48px!important;height:48px!important;padding:0 8px!important;font-size:12px!important}.pv-stat>span:last-child{font-size:10px!important}.pv-search-hint{display:none!important}.pv-caja{padding:16px}.pv-field{flex:1;min-width:130px}.pv-field input,.pv-field select{width:100%;min-width:0}.pv-caja-action{width:100%}.pv-catalog-caption{display:none}.pv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pv-ticket{padding:16px!important}.pv-shell .pv-payment{grid-template-columns:repeat(3,minmax(0,1fr))!important}}@media(prefers-reduced-motion:reduce){.pv-shell *{transition:none!important;animation:none!important}}\n"}</style>
+    <div className="pv-shell" style={{ "minHeight": "100vh", "background": "#E9E9E7", "padding": "0", "boxSizing": "border-box", "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       <div style={{ "position": "relative", "width": "100%", "maxWidth": "none", "minHeight": "100vh", "margin": "0 auto", "background": "#F4F4F2", "borderRadius": "40px", "overflow": "hidden" }}>
         <div>
           <div>
@@ -60,15 +61,15 @@ export default function PuntoVenta(props) {
                   <span style={{ "fontSize": "16px", "fontWeight": "700" }}>
                     {"Punto de venta"}
                   </span>
-                  <DesignLink href={"#controles-caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontSize": "14px", "fontWeight": "600", "color": "#1B5E20", "textDecoration": "none" }}>
-                    <span style={{ "width": "8px", "height": "8px", "borderRadius": "50%", "background": "#34C759" }}></span>
+                  <DesignLink href={"#controles-caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontSize": "14px", "fontWeight": "600", "color": caja ? "#1B5E20" : "#8C8C8C", "textDecoration": "none" }}>
+                    <span style={{ "width": "8px", "height": "8px", "borderRadius": "50%", "background": caja ? "#34C759" : "#B8B8B3" }}></span>
                     {caja ? "Caja abierta · " + caja.almacen.nombre : "Caja cerrada"}
                   </DesignLink>
                 </span>
                 <span style={{ "flex": "1" }}></span>
                 {(lookup(v, "headStats") || []).map((h, index1) => (
                   <Fragment key={index1}>
-                    <span style={{ "display": "flex", "alignItems": "center", "gap": "10px" }}>
+                    <span className="pv-stat" style={{ "display": "flex", "alignItems": "center", "gap": "10px" }}>
                       <span style={{ "minWidth": "64px", "height": "64px", "padding": "0 14px", "boxSizing": "border-box", "borderRadius": "999px", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "17px", "fontWeight": "700", "background": lookup(h, "bg"), "color": lookup(h, "fg") }}>
                         {lookup(h, "v")}
                       </span>
@@ -94,11 +95,18 @@ export default function PuntoVenta(props) {
                 </span>
               </div>
             </div>
-            <div id="controles-caja" style={{display:'flex',gap:10,flexWrap:'wrap',alignItems:'center',padding:'0 32px 18px'}}><label>Ubicación <select value={almacenId} onChange={e=>{setAlmacenId(e.target.value);setNotice('')}} style={{border:'1px solid #ddd',borderRadius:20,padding:10}}><option value="">Selecciona ubicación</option>{almacenes.map(a=><option key={a.id} value={a.id}>{a.nombre}</option>)}</select></label><label>{caja?'Efectivo contado':'Monto de apertura'} <input type="number" min="0" step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} style={{width:100,border:'1px solid #ddd',borderRadius:20,padding:10}} /></label><button disabled={busy||!almacenId} onClick={operate} style={{border:0,borderRadius:20,padding:'11px 18px',background:'#111',color:'white',cursor:'pointer'}}>{caja?'Cerrar caja':'Abrir caja'}</button>{notice&&<span role="status">{notice}</span>}{error&&<span role="alert" style={{color:'#b3261e'}}>{error}</span>}</div>
+            <div id="controles-caja" className="pv-caja">
+              <div className="pv-caja-intro"><span className="pv-caja-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18v12H3zM3 10h18M12 15h.01" /></svg></span><div><div className="pv-caja-title">Caja de venta</div><div className="pv-caja-subtitle">{caja ? 'Registra el efectivo al cerrar' : 'Abre una caja para comenzar'}</div></div></div>
+              <label className="pv-field">Ubicación<select value={almacenId} onChange={e=>{setAlmacenId(e.target.value);setNotice('')}}><option value="">Selecciona ubicación</option>{almacenes.map(a=><option key={a.id} value={a.id}>{a.nombre}</option>)}</select></label>
+              <label className="pv-field">{caja?'Efectivo contado':'Monto de apertura'}<input type="number" min="0" step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="S/ 0.00" /></label>
+              <button className="pv-caja-action" disabled={busy||!almacenId} onClick={operate}>{busy?'Procesando…':caja?'Cerrar caja':'Abrir caja'}</button>
+              {notice&&<span className="pv-message" role="status">{notice}</span>}{error&&<span className="pv-message" role="alert" style={{color:'#b3261e'}}>{error}</span>}
+            </div>
             <div style={{ "padding": "0 20px 24px", "display": "flex", "gap": "16px", "flexWrap": "wrap", "alignItems": "flex-start" }}>
               <div style={{ "flex": "999 1 620px", "minWidth": "0", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                 <div style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "20px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
-                  <label style={{ "display": "flex", "alignItems": "center", "gap": "14px", "height": "64px", "padding": "0 10px 0 22px", "borderRadius": "999px", "background": "#F4F4F2", "boxSizing": "border-box" }}>
+                  <div className="pv-catalog-title"><div><div className="pv-kicker">Punto de venta</div><h1>Productos</h1></div><span className="pv-catalog-caption">Selecciona un producto para agregarlo al ticket</span></div>
+                  <label className="pv-search" style={{ "display": "flex", "alignItems": "center", "gap": "14px", "height": "64px", "padding": "0 10px 0 22px", "borderRadius": "999px", "background": "#F4F4F2", "boxSizing": "border-box" }}>
                     <svg width={"22"} height={"22"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#111111"} strokeWidth={"1.9"} strokeLinecap={"round"} aria-hidden={"true"} style={{ "flex": "none" }}>
                       <path d={"M3 7V4h3M18 4h3v3M21 17v3h-3M6 20H3v-3M7 8v8M10 8v8M13 8v8M16 8v8"}></path>
                     </svg>
@@ -106,7 +114,7 @@ export default function PuntoVenta(props) {
                       {"Buscar producto"}
                     </span>
                     <input type={"search"} onChange={lookup(v, "onSearch")} placeholder={"Busca por nombre o SKU…"} style={{ "flex": "1", "minWidth": "0", "border": "none", "background": "transparent", "fontFamily": "inherit", "fontSize": "18px", "fontWeight": "600", "outline": "none" }} />
-                    <span style={{ "height": "44px", "padding": "0 16px", "borderRadius": "999px", "background": "#FFFFFF", "fontSize": "13px", "fontWeight": "700", "color": "#6B6B6B", "display": "flex", "alignItems": "center" }}>
+                    <span className="pv-search-hint" style={{ "height": "44px", "padding": "0 16px", "borderRadius": "999px", "background": "#FFFFFF", "fontSize": "13px", "fontWeight": "700", "color": "#6B6B6B", "display": "flex", "alignItems": "center" }}>
                       {"Buscar"}
                     </span>
                   </label>
@@ -121,12 +129,10 @@ export default function PuntoVenta(props) {
                   </div>
                   {Boolean(lookup(v, "noProducts")) && (
                     <Fragment>
-                      <div style={{ "padding": "32px", "borderRadius": "24px", "background": "#F4F4F2", "fontSize": "15px", "color": "#6B6B6B", "textAlign": "center" }}>
-                        {"No hay productos disponibles para esta ubicación o búsqueda."}
-                      </div>
+                      <div className="pv-empty"><span className="pv-empty-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></span><strong>No encontramos productos</strong><span>Prueba con otro nombre o SKU, o revisa los productos de esta ubicación.</span></div>
                     </Fragment>
                   )}
-                  <div style={{ "display": "grid", "gridTemplateColumns": "repeat(4, minmax(0, 1fr))", "gap": "12px" }}>
+                  <div className="pv-grid">
                     {(lookup(v, "products") || []).map((p, index3) => (
                       <Fragment key={index3}>
                         <button onClick={lookup(p, "add")} className={lookup(p, "cls")} aria-label={lookup(p, "aria")} style={{ "display": "flex", "flexDirection": "column", "gap": "10px", "padding": "10px 10px 14px", "borderRadius": "24px", "border": "2px solid " + String(lookup(p, "border") ?? ""), "background": "#F4F4F2", "cursor": lookup(p, "cursor"), "opacity": lookup(p, "o"), "fontFamily": "inherit", "textAlign": "left", "color": "#111111", "position": "relative" }}>
@@ -184,6 +190,7 @@ export default function PuntoVenta(props) {
                       {"Operaciones registradas"}
                     </span>
                   </div>
+                  {!(lookup(v, "sales") || []).length && <div className="pv-sales-empty">Las ventas registradas en esta caja aparecerán aquí.</div>}
                   {(lookup(v, "sales") || []).map((s, index4) => (
                     <Fragment key={index4}>
                       <div style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "10px 12px", "borderRadius": "18px", "background": "#F4F4F2" }}>
@@ -212,7 +219,7 @@ export default function PuntoVenta(props) {
                   ))}
                 </div>
               </div>
-              <div style={{ "flex": "1 1 400px", "maxWidth": "460px", "minWidth": "0", "borderRadius": "30px", "background": "#FFFFFF", "padding": "20px", "boxSizing": "border-box", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
+              <div className="pv-ticket" style={{ "flex": "1 1 400px", "maxWidth": "460px", "minWidth": "0", "borderRadius": "30px", "background": "#FFFFFF", "padding": "20px", "boxSizing": "border-box", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                 {Boolean(lookup(v, "done")) && (
                   <Fragment>
                     <div role={"status"} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "14px", "padding": "36px 20px", "textAlign": "center" }}>
@@ -242,14 +249,6 @@ export default function PuntoVenta(props) {
                           </span>
                         </Fragment>
                       )}
-                      <div style={{ "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "8px", "width": "100%", "marginTop": "6px" }}>
-                        <button style={{ "height": "50px", "borderRadius": "999px", "border": "none", "background": "#F4F4F2", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700" }}>
-                          {"Imprimir"}
-                        </button>
-                        <DesignLink href={"#whatsapp"} style={{ "height": "50px", "borderRadius": "999px", "background": "#F4F4F2", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
-                          {"Enviar por WhatsApp"}
-                        </DesignLink>
-                      </div>
                       <button onClick={lookup(v, "newSale")} style={{ "width": "100%", "height": "60px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "17px", "fontWeight": "800" }}>
                         {"Nueva venta"}
                       </button>
@@ -267,7 +266,7 @@ export default function PuntoVenta(props) {
                       </span>
                     </div>
                     <div style={{ "display": "flex", "flexDirection": "column", "gap": "8px" }}>
-                      <div style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "6px", "padding": "4px", "borderRadius": "999px", "background": "#F4F4F2" }}>
+                      <div className="pv-client-grid" style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "6px", "padding": "4px", "borderRadius": "999px", "background": "#F4F4F2" }}>
                         {(lookup(v, "clients") || []).map((c, index5) => (
                           <Fragment key={index5}>
                             <button onClick={lookup(c, "pick")} aria-pressed={lookup(c, "pressed")} style={{ "height": "40px", "borderRadius": "999px", "border": "none", "background": lookup(c, "bg"), "color": lookup(c, "fg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700" }}>
@@ -406,7 +405,7 @@ export default function PuntoVenta(props) {
                       <span style={{ "fontSize": "12px", "fontWeight": "600", "color": "#8C8C8C" }}>
                         {"Método de pago"}
                       </span>
-                      <div style={{ "display": "grid", "gridTemplateColumns": "repeat(5, minmax(0, 1fr))", "gap": "6px" }}>
+                      <div className="pv-payment" style={{ "display": "grid", "gridTemplateColumns": "repeat(5, minmax(0, 1fr))", "gap": "6px" }}>
                         {(lookup(v, "methods") || []).map((m, index8) => (
                           <Fragment key={index8}>
                             <button onClick={lookup(m, "pick")} aria-pressed={lookup(m, "pressed")} style={{ "display": "flex", "flexDirection": "column", "alignItems": "center", "gap": "4px", "padding": "10px 4px", "borderRadius": "18px", "border": "none", "background": lookup(m, "bg"), "color": lookup(m, "fg"), "cursor": "pointer", "fontFamily": "inherit", "fontSize": "11px", "fontWeight": "700" }}>
@@ -429,7 +428,7 @@ export default function PuntoVenta(props) {
                                 {lookup(v, "receivedText")}
                               </span>
                             </span>
-                            <input type="number" min="0" step="0.01" aria-label="Efectivo recibido" onChange={lookup(v,"onReceived")} placeholder="Otro monto recibido" />
+                            <input className="pv-input" type="number" min="0" step="0.01" aria-label="Efectivo recibido" onChange={lookup(v,"onReceived")} placeholder="Otro monto recibido" />
                             <div style={{ "display": "grid", "gridTemplateColumns": "repeat(4, minmax(0, 1fr))", "gap": "6px" }}>
                               {(lookup(v, "quick") || []).map((q, index9) => (
                                 <Fragment key={index9}>
@@ -453,7 +452,7 @@ export default function PuntoVenta(props) {
                           </div>
                         </Fragment>
                       )}
-                      {!lookup(v,"isCash") && <input aria-label="Referencia del pago" placeholder="Referencia del pago recibido" onChange={lookup(v,"onReference")} />}
+                      {!lookup(v,"isCash") && <input className="pv-input" aria-label="Referencia del pago" placeholder="Referencia del pago recibido" onChange={lookup(v,"onReference")} />}
                       <span style={{ "fontSize": "12px", "fontWeight": "600", "color": "#8C8C8C" }}>
                         {"Documento interno (no es comprobante SUNAT)"}
                       </span>
