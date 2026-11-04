@@ -158,7 +158,7 @@ export type CuentaProveedor={id:string;ordenCompraId:string;proveedorId:string;m
 export function listarCuentasProveedor(signal?:AbortSignal){return request<{datos:CuentaProveedor[]}>(`/finanzas/cuentas-por-pagar`,{signal});}
 export function crearCuentaProveedor(datos:Record<string,unknown>){return request(`/finanzas/cuentas-por-pagar`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
 export function registrarOperacionProveedor(id:string,tipo:'pagos'|'notas-credito',datos:Record<string,unknown>){return request(`/finanzas/cuentas-por-pagar/${encodeURIComponent(id)}/${tipo}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
-export type CatalogoMostrador = { datos: {productoId:string; varianteId:string|null; nombre:string; sku:string; categoria:string; imagen:string|null; precio:number|null; tasaIgv:number; stock:number; primerLote:string|null}[]; preciosIncluyenIgv:boolean; tasaIgv:number };
+export type CatalogoMostrador = { datos: {productoId:string; varianteId:string|null; nombre:string; sku:string; skuProducto:string; codigoBarras:string|null; estadoProducto:'borrador'|'publicado'|'oculto'; categoria:string; imagen:string|null; precio:number|null; tasaIgv:number; stock:number; primerLote:string|null}[]; preciosIncluyenIgv:boolean; tasaIgv:number };
 export type CajaMostrador = {id:string; almacenId:string; montoApertura:number; almacen:{nombre:string}};
 export type VentaMostrador = {id:string; numero:string; estado:string; monto:number; medioPago:string; recibidoEn:string};
 export function listarCajasMostrador(signal?:AbortSignal){return request<{datos:CajaMostrador[]}>('/ventas/mostrador/cajas',{signal});}

@@ -46,7 +46,7 @@ class Component extends DesignLogic {
     const productosConectados = ['success', 'pending', 'error'].includes(this.props.apiProductosAdminState);
     const PROD = this.props.apiProductosAdminState === 'success'
       ? (this.props.apiProductosAdmin || []).map((p) => ({
-          id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Sin categoría', categoriaId: p.categoriaId || null, variantes: p.variantes || [],
+          id: p.id, estadoProducto: p.estado, name: p.nombre, sku: p.sku, cat: p.categoria || 'Sin categoría', categoriaId: p.categoriaId || null, variantes: p.variantes || [],
           price: Number(p.precio || 0), min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
           lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, [l.proveedor?.nombre || 'Sin proveedor', l.variante && nombreVariante(l.variante.atributos)].filter(Boolean).join(' · '), new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', estadoLote(l.estado, l.existencias.reduce((n,x) => n + Number(x.cantidadFisica), 0), l.existencias.reduce((n,x) => n + Number(x.cantidadReservada), 0))), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
           stockDisponible: Number(p.stockDisponible || 0),
@@ -159,7 +159,7 @@ class Component extends DesignLogic {
         const opcionesAjuste = p.lots.flatMap(l => (l.existencias || []).filter(x => LOCS.some(a => a.id === x.almacen.id)).map(x => ({ key: `${l.id}|${x.almacen.id}`, loteId:l.id, almacenId:x.almacen.id, label:`${l.code} · ${l.supplier} · ${x.almacen.nombre} · físico ${x.cantidadFisica} · reservado ${x.cantidadReservada}` })));
         return {
           id: p.id,
-          name: p.name, sku: p.sku, cat: p.cat, img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
+          name: p.name, sku: p.sku, cat: p.cat, enBorrador:p.estadoProducto === 'borrador', img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
           lotsActive: String(active.length), lotsNote: 'disponibles',
           stock: String(p.stock), min: String(p.min), w: (p.min ? Math.min(100, Math.round((p.stock / (p.min * 3)) * 100)) : (p.stock ? 100 : 0)) + '%', barC: SS[p.state][3],
           cost: p.stock > 0 ? money(p.avg) : '—', price: money(p.price), margin: p.stock > 0 && p.price ? Math.round(((p.price - p.avg) / p.price) * 100) + '%' : '—',
@@ -524,6 +524,7 @@ export default function Inventario(props) {
                                   <span style={{ "fontSize": "14px", "fontWeight": "700", "whiteSpace": "nowrap", "overflow": "hidden", "textOverflow": "ellipsis" }}>
                                     {lookup(p, "name")}
                                   </span>
+                                  {lookup(p,"enBorrador") && <span style={{fontSize:11,fontWeight:700,color:'#a35710'}}>Borrador · no se puede vender</span>}
                                   <span style={{ "fontSize": "11px", "color": "#8C8C8C" }}>
                                     {lookup(p, "sku")}
                                     {" · "}
