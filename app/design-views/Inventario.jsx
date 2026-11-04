@@ -5,6 +5,7 @@ import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 import { nombreVariante } from '../variantes';
+import { estadoLote } from '../inventario-lotes.mjs';
 import { opcionesCategoria, perteneceACategoria, rutaCategoria } from '../categoria-jerarquia';
 
 class Component extends DesignLogic {
@@ -47,7 +48,7 @@ class Component extends DesignLogic {
       ? (this.props.apiProductosAdmin || []).map((p) => ({
           id: p.id, name: p.nombre, sku: p.sku, cat: p.categoria || 'Sin categoría', categoriaId: p.categoriaId || null, variantes: p.variantes || [],
           price: Number(p.precio || 0), min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
-          lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, [l.proveedor?.nombre || 'Sin proveedor', l.variante && nombreVariante(l.variante.atributos)].filter(Boolean).join(' · '), new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', ({ disponible: 'Activo', en_revision: 'En revisión', agotado: 'Agotado', bloqueado: 'En revisión' })[l.estado] || 'En revisión'), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
+          lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, [l.proveedor?.nombre || 'Sin proveedor', l.variante && nombreVariante(l.variante.atributos)].filter(Boolean).join(' · '), new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', estadoLote(l.estado, l.existencias.reduce((n,x) => n + Number(x.cantidadFisica), 0), l.existencias.reduce((n,x) => n + Number(x.cantidadReservada), 0))), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
           stockDisponible: Number(p.stockDisponible || 0),
         }))
       : productosConectados ? [] : PRODDemo;
@@ -56,7 +57,9 @@ class Component extends DesignLogic {
       const stock = p.stockDisponible ?? p.lots.filter(sellable).reduce((a, l) => a + l.left, 0);
       const units = p.stockDisponible ?? p.lots.filter((l) => l.status !== 'En tránsito' && l.status !== 'Agotado').reduce((a, l) => a + l.left, 0);
       const valued = p.lots.filter((l) => l.status !== 'En tránsito' && l.status !== 'Agotado');
-      const avg = valued.length ? valued.reduce((a, l) => a + l.left * l.cost, 0) / Math.max(1, units) : (p.lots[p.lots.length - 1]?.cost || 0);
+      const availableLots = valued.filter(sellable);
+      const availableUnits = availableLots.reduce((n, l) => n + l.left, 0);
+      const avg = availableUnits > 0 ? availableLots.reduce((n, l) => n + l.left * l.cost, 0) / availableUnits : 0;
       const state = stock === 0 ? 'Agotado' : stock < p.min ? 'Stock bajo' : 'Disponible';
       const transit = (this.props.traslados || []).some(t => t.estado === 'en_camino' && t.lineas.some(x => p.lots.some(l => l.id === x.loteId)));
       return { ...p, stock, units, avg, state, transit, value: units * avg };
@@ -68,7 +71,7 @@ class Component extends DesignLogic {
     };
     const LS = {
       Activo: ['#E4F4E7', '#1B5E20', '#2E9E4F'], 'En tránsito': ['#E3F1FF', '#0B4A8A', '#2F7BD8'],
-      'En revisión': ['#FFF4D6', '#7A4A00', '#F2A100'], Agotado: ['#EFEFEC', '#6B6B6B', '#BDBDBD']
+      'En revisión': ['#FFF4D6', '#7A4A00', '#F2A100'], Reservado: ['#E3F1FF', '#0B4A8A', '#2F7BD8'], Bloqueado: ['#FDE4E2', '#8E1C14', '#E5483B'], Agotado: ['#EFEFEC', '#6B6B6B', '#BDBDBD']
     };
     const FILTERS = [['Todos', () => true], ['Stock bajo', (p) => p.state === 'Stock bajo'], ['Agotados', (p) => p.state === 'Agotado'], ['En tránsito', (p) => p.transit]];
     const categorias = this.props.categorias || [];
@@ -95,7 +98,7 @@ class Component extends DesignLogic {
       ['Venta #1042', '−2', 'Lámpara de camping · lote L-0915', '#FFE7D6', '#8A3B0A', 'M12 5v14M5 12l7 7 7-7', '#8A3B0A']
     ];
     const operar = async (id, accion, datos = {}, productoId = '') => {
-      try { await this.props.onOperarLote(id, accion, datos); this.setState({ accionProducto:productoId, accionError:'', accionAviso: accion === 'aprobar' ? 'Lote aprobado y disponible.' : 'Operación registrada.' }); }
+      try { await this.props.onOperarLote(id, accion, datos); this.setState({ accionProducto:productoId, accionError:'', accionAviso: accion === 'aprobar' ? 'Lote aprobado. Se podrán vender las unidades que estén disponibles.' : 'Operación registrada.' }); }
       catch (error) { this.setState({ accionProducto:productoId, accionError:error.message || 'No se pudo completar la operación.', accionAviso:'' }); }
     };
     return {
@@ -130,7 +133,7 @@ class Component extends DesignLogic {
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo registrar el lote.' }); }
       },
       totalUnits: totalUnits.toLocaleString('es-PE'),
-      lotCount: String(allLots.filter((l) => l.status !== 'Agotado').length),
+      lotCount: String(allLots.length),
       headStats: [
         { v: productosConectados ? String(enrich.length) : '291', k1: 'Productos', k2: 'en catálogo', bg: '#FFFFFF', fg: '#111111' },
         { v: String(counts['Stock bajo']), k1: 'Con stock', k2: 'bajo', bg: '#FFF4D6', fg: '#7A4A00' },
@@ -145,22 +148,21 @@ class Component extends DesignLogic {
         note: k === 'Disponible' ? 'Sobre el mínimo' : k === 'Stock bajo' ? 'Por debajo del mínimo' : 'Sin unidades para vender',
         pick: () => this.setState({ filter: k === 'Disponible' ? 'Todos' : k === 'Agotado' ? 'Agotados' : 'Stock bajo' }) })),
       rotation: (productosConectados ? [] : [['Focos', 18], ['Cables', 24], ['Llaveros', 31], ['Camping', 42], ['Solar', 67]]).map((r, i) => ({ name: r[0], d: r[1] + ' d', w: Math.round((r[1] / 67) * 100) + '%', o: (1 - i * 0.15).toFixed(2) })),
-      lotStates: ['Activo', 'En tránsito', 'En revisión', 'Agotado'].map((k) => ({ name: k === 'Activo' ? 'Activos' : k === 'Agotado' ? 'Agotados' : k, n: String(k === 'En tránsito' ? lotesEnCamino : allLots.filter((l) => l.status === k).length), fg: LS[k][1], dot: LS[k][2] })),
+      lotStates: ['Activo', 'En tránsito', 'En revisión', 'Reservado', 'Bloqueado', 'Agotado'].map((k) => ({ name: k === 'Activo' ? 'Activos' : k === 'Agotado' ? 'Agotados' : k, n: String(k === 'En tránsito' ? lotesEnCamino : allLots.filter((l) => l.status === k).length), fg: LS[k][1], dot: LS[k][2] })),
       filters: FILTERS.map((f) => ({ name: f[0], count: String(enrich.filter(f[1]).length), pressed: st.filter === f[0] ? 'true' : 'false', bg: st.filter === f[0] ? '#111111' : '#FFFFFF', fg: st.filter === f[0] ? '#FFFFFF' : '#111111', border: st.filter === f[0] ? '#111111' : '#E4E4E0', pick: () => this.setState({ filter: f[0] }) })),
       cats: CATS.map((c) => ({ name: c.nombre, pressed: st.cat === c.id ? 'true' : 'false', bg: st.cat === c.id ? '#E8701F' : '#FFFFFF', fg: st.cat === c.id ? '#FFFFFF' : '#111111', pick: () => this.setState({ cat: c.id }) })),
       categoriasEstado: this.props.estado, categoriasError: this.props.error,
       rows: list.map((p) => {
         const open = st.open === p.id;
-        const active = p.lots.filter((l) => l.status !== 'Agotado');
-        let ord = 0;
+        const active = p.lots.filter((l) => l.status === 'Activo');
         const sortedLots = [...p.lots];
         const opcionesAjuste = p.lots.flatMap(l => (l.existencias || []).filter(x => LOCS.some(a => a.id === x.almacen.id)).map(x => ({ key: `${l.id}|${x.almacen.id}`, loteId:l.id, almacenId:x.almacen.id, label:`${l.code} · ${l.supplier} · ${x.almacen.nombre} · físico ${x.cantidadFisica} · reservado ${x.cantidadReservada}` })));
         return {
           id: p.id,
           name: p.name, sku: p.sku, cat: p.cat, img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
-          lotsActive: String(active.length), lotsNote: p.lots.length > active.length ? '+' + (p.lots.length - active.length) + ' cerrado' : (p.transit ? '1 en camino' : 'activos'),
+          lotsActive: String(active.length), lotsNote: 'disponibles',
           stock: String(p.stock), min: String(p.min), w: (p.min ? Math.min(100, Math.round((p.stock / (p.min * 3)) * 100)) : (p.stock ? 100 : 0)) + '%', barC: SS[p.state][3],
-          cost: money(p.avg), price: money(p.price), margin: Math.round(((p.price - p.avg) / p.price) * 100) + '%',
+          cost: p.stock > 0 ? money(p.avg) : '—', price: money(p.price), margin: p.stock > 0 && p.price ? Math.round(((p.price - p.avg) / p.price) * 100) + '%' : '—',
           status: p.state, sBg: SS[p.state][0], sFg: SS[p.state][1], sIcon: SS[p.state][2],
           border: open ? '#E8701F' : '#FFFFFF', open, expanded: open ? 'true' : 'false', chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
           toggle: () => this.setState({ open: open ? null : p.id }),
@@ -181,14 +183,12 @@ class Component extends DesignLogic {
             catch(error) { this.setState({ajustando:false,ajusteError:error.message || 'No se pudo ajustar el stock.'}); }
           },
           lots: sortedLots.map((l) => {
-            const sellNow = l.status === 'Activo';
-            if (sellNow) ord += 1;
-            const first = sellNow && ord === 1;
-            return { code: l.code, supplier: l.supplier, date: l.date, qty: String(l.qty), left: String(l.left), cost: money(l.cost), loc: l.loc, warranty: l.warranty, pendiente: l.estadoReal === 'en_revision', aprobar: () => operar(l.id, 'aprobar', {}, p.id),
-              w: Math.round((l.left / l.qty) * 100) + '%', status: first ? 'Se vende primero' : l.status,
-              sBg: first ? '#FFE7D6' : LS[l.status][0], sFg: first ? '#8A3B0A' : LS[l.status][1], dot: first ? '#E8701F' : LS[l.status][2],
-              ord: sellNow ? String(ord) : '—', ordBg: first ? '#E8701F' : (sellNow ? '#111111' : '#E9E9E6'), ordFg: sellNow ? '#FFFFFF' : '#6B6B6B',
-              rowBg: first ? '#FFF6EF' : '#F7F7F5', op: l.status === 'Agotado' ? '0.6' : '1' };
+            const qty=Number(l.qty)||0, left=Math.max(0,Number(l.left)||0);
+            return { code:l.code, supplier:l.supplier, date:l.date, qty:String(qty), left:String(left), cost:money(l.cost), loc:l.loc, warranty:l.warranty,
+              pendiente:l.estadoReal === 'en_revision' && qty > 0, aprobar:()=>operar(l.id, 'aprobar', {}, p.id),
+              w:(qty > 0 ? Math.min(100,Math.round(left / qty * 100)) : 0)+'%', status:l.status,
+              sBg:LS[l.status][0], sFg:LS[l.status][1], dot:LS[l.status][2],
+              ord:'—', ordBg:'#E9E9E6', ordFg:'#6B6B6B', rowBg:'#F7F7F5', op:l.status === 'Agotado' ? '0.7' : '1' };
           })
         };
       }),
@@ -459,7 +459,7 @@ export default function Inventario(props) {
                         {"Productos y lotes"}
                       </span>
                       <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                        {"Toca un producto para ver sus lotes. Se vende primero el lote más antiguo (PEPS)."}
+                        {"Toca un producto para ver sus lotes. Al vender se usa el lote más antiguo disponible para la variante y ubicación."}
                       </span>
                     </span>
                     <div style={{ "display": "flex", "gap": "6px", "flexWrap": "wrap" }}>
@@ -588,7 +588,7 @@ export default function Inventario(props) {
                                       {"Ingreso"}
                                     </span>
                                     <span>
-                                      {"Restante"}
+                                      {"Disponible / físico"}
                                     </span>
                                     <span style={{ "textAlign": "right" }}>
                                       {"Costo"}
@@ -626,7 +626,7 @@ export default function Inventario(props) {
                                             {lookup(l, "left")}
                                             {" "}
                                             <span style={{ "fontWeight": "500", "color": "#8C8C8C" }}>
-                                              {"de "}
+                                              {"/ "}
                                               {lookup(l, "qty")}
                                             </span>
                                           </span>
