@@ -113,6 +113,7 @@ class Component extends DesignLogic {
       saved: st.saved, codigo: st.codigo, error: st.error, aviso: st.aviso, saving: st.saving,
       productosForm: PROD.map(p => ({ id: p.id, name: p.name })),
       variantesForm: (PROD.find(p => p.id === st.productoId)?.variantes || []).map(v => ({ id:v.id, nombre:`${nombreVariante(v.atributos)} · ${v.sku}` })), varianteId: st.varianteId,
+      proveedores: (this.props.proveedoresInventario || []).filter(p=>p.activo), proveedoresEstado: this.props.proveedoresInventarioEstado, proveedoresError: this.props.proveedoresInventarioError,
       productoId: st.productoId, proveedor: st.proveedor, cantidad: st.cantidad, costo: st.costo, ingreso: st.ingreso, garantia: st.garantia, revisar: st.revisar,
       field: (key) => (e) => this.setState({ [key]: e.target.value, saved: false }),
       setProducto: (e) => this.setState({ productoId: e.target.value, varianteId:'', saved: false }), setVariante: e => this.setState({ varianteId:e.target.value, saved:false }), setProveedor: (e) => this.setState({ proveedor: e.target.value }), setCantidad: (e) => this.setState({ cantidad: e.target.value }), setCosto: (e) => this.setState({ costo: e.target.value }), setIngreso: (e) => this.setState({ ingreso: e.target.value }), setGarantia: (e) => this.setState({ garantia: e.target.value }), setRevisar: (e) => this.setState({ revisar: e.target.checked }),
@@ -123,7 +124,7 @@ class Component extends DesignLogic {
         if ((PROD.find(p => p.id === st.productoId)?.variantes || []).length && !st.varianteId) { this.setState({ error:'Selecciona la variante del lote.' }); return; }
         this.setState({ saving: true, saved: false, error: '' });
         try {
-          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedor: st.proveedor, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, almacenId: st.loc, revisar: st.revisar });
+          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedorId: st.proveedor || null, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, almacenId: st.loc, revisar: st.revisar });
           this.setState({ saving: false, saved: true, codigo: result.datos.codigo, formHi: false, cantidad: '', costo: '' });
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo registrar el lote.' }); }
       },
@@ -702,6 +703,7 @@ export default function Inventario(props) {
                         </div>
                       </Fragment>
                     )}
+                    <div style={{padding:'12px 14px',borderRadius:16,background:'#fff',fontSize:12,lineHeight:1.5,color:'#555'}}>¿El lote viene de una orden de compra? <DesignLink href="/compras" style={{color:'#c2410c',fontWeight:700}}>Recíbela en Compras</DesignLink>; el lote se crea con sus datos y se actualiza el stock. Usa este formulario para ingresos manuales.</div>
                     {lookup(v,'formBg') === '#FFF1E6' && <p role="status" style={{margin:0,fontSize:12,color:'#8A3B0A'}}>Completa los datos y pulsa «Registrar lote» para guardar el stock.</p>}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       <span id="registrar-lote">{"Producto"}</span>
@@ -713,7 +715,10 @@ export default function Inventario(props) {
                     {(lookup(v, 'variantesForm') || []).length > 0 && <label style={{ display:'flex',flexDirection:'column',gap:6,fontSize:12,fontWeight:700 }}>Variante<select value={lookup(v, 'varianteId')} onChange={lookup(v, 'setVariante')} style={{ height:44,border:'none',borderRadius:14,padding:'0 12px',background:'#fff',fontFamily:'inherit',fontSize:13 }}><option value="">Selecciona una variante</option>{lookup(v, 'variantesForm').map(x => <option key={x.id} value={x.id}>{x.nombre}</option>)}</select></label>}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       {"Proveedor"}
-                      <input type={"text"} value={lookup(v, "proveedor")} onChange={lookup(v, "setProveedor")} placeholder={"[PROVEEDOR]"} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
+                      <select value={lookup(v, "proveedor")} onChange={lookup(v, "setProveedor")} disabled={lookup(v, 'proveedoresEstado') !== 'success'} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }}><option value="">Sin proveedor (opcional)</option>{(lookup(v, 'proveedores') || []).map(p => <option key={p.id} value={p.id}>{p.nombre}{p.numeroDocumento ? ' · ' + p.numeroDocumento : ''}</option>)}</select>
+                      {lookup(v,'proveedoresEstado') === 'pending' && <span role="status" style={{fontWeight:400,color:'#777'}}>Cargando proveedores…</span>}
+                      {lookup(v,'proveedoresEstado') === 'error' && <span role="alert" style={{fontWeight:400,color:'#8e1c14'}}>No se pudieron cargar los proveedores. <button type="button" onClick={props.reintentarProveedoresInventario}>Reintentar</button></span>}
+                      {lookup(v,'proveedoresEstado') === 'success' && !(lookup(v,'proveedores') || []).length && <span style={{fontWeight:400,color:'#777'}}>No hay proveedores activos. Crea uno en Compras.</span>}
                     </label>
                     <div style={{ "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "8px" }}>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>

@@ -112,7 +112,7 @@ export function listarMovimientos(signal?:AbortSignal) { return request<{datos:M
 export function listarTraslados(signal?:AbortSignal) { return request<{datos:TrasladoStock[]}>('/inventario/traslados',{signal}); }
 export function crearTraslado(datos:{origenId:string;destinoId:string;lineas:{loteId:string;cantidad:number}[];observaciones:string}) { return request<{datos:{id:string;numero:string}} >('/inventario/traslados',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)}); }
 export function accionarTraslado(id:string,accion:'enviar'|'recibir'|'cancelar'|'cerrar-con-diferencia'|'resolver-diferencia',datos?:{lineas?:{lineaId:string;cantidad:number}[];motivo?:string;lineaId?:string;tipo?:string;cantidad?:number;claveIdempotencia?:string}) { return request(`/inventario/traslados/${encodeURIComponent(id)}/${accion}`,{method:'POST',...(datos?{headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)}:{})}); }
-export type LoteGuardar = { productoId: string; varianteId?: string | null; almacenId:string; proveedor: string; cantidad: number; costoUnitario: number; fechaIngreso: string; garantiaHasta: string; revisar: boolean };
+export type LoteGuardar = { productoId: string; varianteId?: string | null; almacenId:string; proveedorId?: string | null; cantidad: number; costoUnitario: number; fechaIngreso: string; garantiaHasta: string; revisar: boolean };
 export function registrarLote(datos: LoteGuardar) {
   return request<{ datos: { id: string; codigo: string; estado: string } }>('/inventario/lotes', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) });
 }

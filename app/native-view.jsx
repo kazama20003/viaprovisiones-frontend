@@ -32,7 +32,7 @@ import { Suspense, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { pinPanelMenu, registerPopup } from "./panel-menu-state";
-import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
+import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarProveedoresCompra, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
 
 const views = {
   Admin: dynamic(() => import("./design-views/Admin"), { ssr: false }),
@@ -109,6 +109,7 @@ function ConnectedView({ name }) {
   const pedidos = useQuery({ queryKey: ["pedidos"], queryFn: ({ signal }) => listarPedidos(signal), enabled: name === "Pedidos" });
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
   const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario", "Traslados"].includes(name) });
+  const proveedoresInventario = useQuery({queryKey:['compras','proveedores'],queryFn:({signal})=>listarProveedoresCompra(signal),enabled:name==='Inventario'});
   const almacenes = useQuery({queryKey:['inventario','almacenes'],queryFn:({signal})=>listarAlmacenes(signal),enabled:['Inventario','UbicacionesAdmin','Traslados','Kardex'].includes(name)});
   const sucursales = useQuery({queryKey:['inventario','sucursales'],queryFn:({signal})=>listarSucursales(signal),enabled:name==='UbicacionesAdmin'});
   const movimientos = useQuery({queryKey:['inventario','movimientos'],queryFn:({signal})=>listarMovimientos(signal),enabled:name==='Inventario'});
@@ -200,6 +201,7 @@ function ConnectedView({ name }) {
     apiProductosAdmin={productosAdmin.data?.datos ?? []}
     apiProductosAdminState={productosAdmin.status}
     apiProductosAdminError={productosAdmin.error?.message ?? ""}
+    proveedoresInventario={proveedoresInventario.data?.datos || []} proveedoresInventarioEstado={proveedoresInventario.status} proveedoresInventarioError={proveedoresInventario.error?.message || ''} reintentarProveedoresInventario={()=>proveedoresInventario.refetch()}
     almacenes={almacenes.data?.datos || []} almacenesEstado={almacenes.status} almacenesError={almacenes.error?.message || ''} reintentarAlmacenes={()=>almacenes.refetch()}
     sucursales={sucursales.data?.datos || []} sucursalesEstado={sucursales.status} sucursalesError={sucursales.error?.message || ''} reintentarSucursales={()=>sucursales.refetch()}
     guardarUbicacion={(tipo,id,datos)=>ubicacionMutation.mutateAsync({tipo,id,datos})} ubicacionPendiente={ubicacionMutation.isPending}
