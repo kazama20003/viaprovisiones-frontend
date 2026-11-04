@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
+import { useUbicacionTrabajo } from "../ubicacion-trabajo";
 import { listarAlmacenes, listarCajasMostrador, catalogoMostrador, ventasMostrador, abrirCajaMostrador, cerrarCajaMostrador, venderMostrador } from "../backend-api";
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
@@ -27,8 +28,10 @@ const defaults = {"accent": "#FF914C", "menuAbierto": false};
 
 export default function PuntoVenta(props) {
   const [almacenes,setAlmacenes]=useState([]),[cajas,setCajas]=useState([]),[almacenId,setAlmacenId]=useState(''),[data,setData]=useState(null),[sales,setSales]=useState([]),[error,setError]=useState(''),[amount,setAmount]=useState(''),[busy,setBusy]=useState(false),[version,setVersion]=useState(0),[notice,setNotice]=useState('');
+  const ubicacionTrabajo=useUbicacionTrabajo();
   const reload=()=>setVersion(n=>n+1);
-  useEffect(()=>{const ac=new AbortController();Promise.all([listarAlmacenes(ac.signal),listarCajasMostrador(ac.signal)]).then(([a,c])=>{const active=a.datos.filter(x=>x.activo);setAlmacenes(active);setCajas(c.datos);setAlmacenId(id=>active.some(x=>x.id===id)?id:active[0]?.id||'');setError('')}).catch(e=>{if(e.name!=='AbortError')setError(e.message)});return()=>ac.abort()},[version]);
+  useEffect(()=>{setAlmacenId(ubicacionTrabajo.actual?.id || '');},[ubicacionTrabajo.actual?.id]);
+  useEffect(()=>{const ac=new AbortController();Promise.all([listarAlmacenes(ac.signal),listarCajasMostrador(ac.signal)]).then(([a,c])=>{const active=a.datos.filter(x=>x.activo);setAlmacenes(active);setCajas(c.datos);setAlmacenId(id=>active.some(x=>x.id===id)?id:'');setError('')}).catch(e=>{if(e.name!=='AbortError')setError(e.message)});return()=>ac.abort()},[version]);
   const caja=cajas.find(c=>c.almacenId===almacenId);
   useEffect(()=>{const ac=new AbortController();setData(null);setSales([]);if(almacenId)catalogoMostrador(almacenId,ac.signal).then(setData).catch(e=>{if(e.name!=='AbortError')setError(e.message)});if(caja)ventasMostrador(caja.id,ac.signal).then(r=>setSales(r.datos)).catch(e=>{if(e.name!=='AbortError')setError(e.message)});return()=>ac.abort()},[almacenId,caja?.id,version]);
   const operate=async()=>{if(!almacenId||amount.trim()===''||!Number.isFinite(Number(amount))||Number(amount)<0){setError('Indica un monto válido.');return}setBusy(true);setError('');try{if(caja){const r=await cerrarCajaMostrador(caja.id,Number(amount));setNotice('Caja cerrada. Efectivo esperado: S/ '+r.datos.esperado.toFixed(2)+' · diferencia: S/ '+r.datos.diferencia.toFixed(2))}else{await abrirCajaMostrador(almacenId,Number(amount));setNotice('Caja abierta.')}setAmount('');reload()}catch(e){setError(e.message)}finally{setBusy(false)}};
@@ -97,7 +100,7 @@ export default function PuntoVenta(props) {
             </div>
             <div id="controles-caja" className="pv-caja">
               <div className="pv-caja-intro"><span className="pv-caja-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18v12H3zM3 10h18M12 15h.01" /></svg></span><div><div className="pv-caja-title">Caja de venta</div><div className="pv-caja-subtitle">{caja ? 'Registra el efectivo al cerrar' : 'Abre una caja para comenzar'}</div></div></div>
-              <label className="pv-field">Ubicación<select value={almacenId} onChange={e=>{setAlmacenId(e.target.value);setNotice('')}}><option value="">Selecciona ubicación</option>{almacenes.map(a=><option key={a.id} value={a.id}>{a.nombre}</option>)}</select></label>
+              <label className="pv-field">Ubicación<select value={almacenId} onChange={e=>{setNotice('');ubicacionTrabajo.cambiar(e.target.value||null).catch(err=>setError(err.message))}}><option value="">Selecciona ubicación</option>{almacenes.map(a=><option key={a.id} value={a.id}>{a.nombre}</option>)}</select></label>
               <label className="pv-field">{caja?'Efectivo contado':'Monto de apertura'}<input type="number" min="0" step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="S/ 0.00" /></label>
               <button className="pv-caja-action" disabled={busy||!almacenId} onClick={operate}>{busy?'Procesando…':caja?'Cerrar caja':'Abrir caja'}</button>
               {notice&&<span className="pv-message" role="status">{notice}</span>}{error&&<span className="pv-message" role="alert" style={{color:'#b3261e'}}>{error}</span>}

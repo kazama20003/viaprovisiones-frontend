@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useUbicacionTrabajo } from "./ubicacion-trabajo";
 import Link from "next/link";
 import Ajustes from "./design-views/Ajustes";
 import Banners from "./design-views/Banners";
@@ -103,6 +104,7 @@ function ConnectedView({ name }) {
   const productoId = name === 'ProductoEditar' ? searchParams.get('id') : null;
   const productoPublicoId = name === 'Producto' ? searchParams.get('id') : null;
   const queryClient = useQueryClient();
+  const ubicacionTrabajo = useUbicacionTrabajo();
   const cargaCatalogo = ["Main", "Categoria", "Busqueda"].includes(name);
   const requiereSesion = panelViews.has(name) && name !== "AdminLogin";
   const clientes = useQuery({ queryKey: ["clientes"], queryFn: ({ signal }) => listarClientes(signal), enabled: name === "Clientes" });
@@ -198,6 +200,7 @@ function ConnectedView({ name }) {
     apiResumen={resumen.data?.datos ?? null}
     apiResumenState={resumen.status}
     kardexProductoId={name === 'Kardex' ? searchParams.get('productoId') || '' : ''}
+    ubicacionTrabajoId={ubicacionTrabajo.actual?.id || ""}
     apiProductosAdmin={productosAdmin.data?.datos ?? []}
     apiProductosAdminState={productosAdmin.status}
     apiProductosAdminError={productosAdmin.error?.message ?? ""}

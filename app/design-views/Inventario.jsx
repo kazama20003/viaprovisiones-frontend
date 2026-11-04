@@ -10,7 +10,7 @@ import { opcionesCategoria, perteneceACategoria, rutaCategoria } from '../catego
 class Component extends DesignLogic {
   constructor(props) {
     super(props);
-    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', filtroLoc: '', loc: '', saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '', ajusteProducto:'', ajusteExistencia:'', ajusteCantidad:'', ajusteMotivo:'', ajusteError:'', ajusteAviso:'', ajustando:false };
+    this.state = { menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), open: null, filter: 'Todos', cat: 'Todas', filtroLoc: '', loc: null, saved: false, formHi: false, productoId: '', varianteId: '', proveedor: '', cantidad: '', costo: '', ingreso: '', garantia: '', revisar: true, saving: false, error: '', codigo: '', ajusteProducto:'', ajusteExistencia:'', ajusteCantidad:'', ajusteMotivo:'', ajusteError:'', ajusteAviso:'', ajustando:false };
   }
   renderVals() {
     const B = 'img/';
@@ -85,6 +85,7 @@ class Component extends DesignLogic {
     const catArr = Object.entries(catVals).sort((a, b) => b[1] - a[1]).slice(0, 5);
     const counts = { Disponible: enrich.filter((p) => p.state === 'Disponible').length, 'Stock bajo': enrich.filter((p) => p.state === 'Stock bajo').length, Agotado: enrich.filter((p) => p.state === 'Agotado').length };
     const LOCS = (this.props.almacenes || []).filter(a => a.activo);
+    const loc = st.loc === null ? (this.props.ubicacionTrabajoId || '') : st.loc;
     const MI = (label, href, icon, on) => ({ label, href, icon, bg: on ? '#F4F4F2' : 'transparent', iconBg: on ? '#E8701F' : '#F4F4F2', iconFg: on ? '#FFFFFF' : '#111111' });
     const moves = [
       ['Entrada de lote', '+120', 'Foco LED 9 W · L-1020 · Almacén', '#E4F4E7', '#1B5E20', 'M12 19V5M5 12l7-7 7 7', '#1B5E20'],
@@ -120,11 +121,11 @@ class Component extends DesignLogic {
       saveLot: async () => {
         if (this.state.saving) return;
         if (!st.productoId || !st.cantidad || !st.costo || !st.ingreso) { this.setState({ error: 'Completa el producto, la cantidad, el costo y la fecha de ingreso.' }); return; }
-        if (!st.loc || !LOCS.some(l => l.id === st.loc)) { this.setState({ error:'Selecciona una ubicación activa.' }); return; }
+        if (!loc || !LOCS.some(l => l.id === loc)) { this.setState({ error:'Selecciona una ubicación activa.' }); return; }
         if ((PROD.find(p => p.id === st.productoId)?.variantes || []).length && !st.varianteId) { this.setState({ error:'Selecciona la variante del lote.' }); return; }
         this.setState({ saving: true, saved: false, error: '' });
         try {
-          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedorId: st.proveedor || null, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, almacenId: st.loc, revisar: st.revisar });
+          const result = await this.props.onRegistrarLote({ productoId: st.productoId, varianteId: st.varianteId || null, proveedorId: st.proveedor || null, cantidad: Number(st.cantidad), costoUnitario: Number(st.costo), fechaIngreso: st.ingreso, garantiaHasta: st.garantia, almacenId: loc, revisar: st.revisar });
           this.setState({ saving: false, saved: true, codigo: result.datos.codigo, formHi: false, cantidad: '', costo: '' });
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo registrar el lote.' }); }
       },
@@ -191,7 +192,7 @@ class Component extends DesignLogic {
           })
         };
       }),
-      locs: LOCS.map(n => ({ name: n.nombre, pressed: n.id === st.loc ? 'true' : 'false', bg: n.id === st.loc ? '#111111' : '#FFFFFF', fg: n.id === st.loc ? '#FFFFFF' : '#111111', pick: () => this.setState({ loc: n.id }) })),
+      locs: LOCS.map(n => ({ name: n.nombre, pressed: n.id === loc ? 'true' : 'false', bg: n.id === loc ? '#111111' : '#FFFFFF', fg: n.id === loc ? '#FFFFFF' : '#111111', pick: () => this.setState({ loc: n.id }) })),
       almacenesEstado:this.props.almacenesEstado, almacenesError:this.props.almacenesError, movimientosEstado:this.props.movimientosEstado, movimientosError:this.props.movimientosError,
       moveCount: this.props.movimientosEstado === 'pending' ? 'Cargando…' : this.props.movimientosEstado === 'error' ? 'No disponible' : (this.props.movimientos || []).length + ' movimientos',
       moves: (this.props.movimientos || []).slice(0,8).map(m => ({title:({recepcion:'Ingreso de lote',ajuste:'Ajuste',traslado_salida:'Traslado enviado',traslado_entrada:'Traslado recibido',venta:'Venta',devolucion:'Devolución'})[m.tipo] || m.tipo,qty:(m.sentido==='entrada'?'+':'−')+m.cantidad,sub:`${m.producto.nombre} · ${m.lote.codigo} · ${m.almacen.nombre}${m.traslado ? ' · '+m.traslado.numero : ''}${m.motivo ? ' · '+m.motivo : ''}`,bg:m.sentido==='entrada'?'#E4F4E7':'#FFE7D6',fg:m.sentido==='entrada'?'#1B5E20':'#8A3B0A',icon:m.sentido==='entrada'?'M12 19V5M5 12l7-7 7 7':'M12 5v14M5 12l7 7 7-7',qtyC:m.sentido==='entrada'?'#1B5E20':'#8A3B0A'})),
@@ -251,7 +252,7 @@ export default function Inventario(props) {
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
                   </svg>
-                  {"Ingresar lote"}
+                  {"Ingreso manual de lote"}
                 </button>
                 <span style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontWeight": "800" }}>
                   {"BC"}
@@ -690,7 +691,7 @@ export default function Inventario(props) {
                   <div style={{ "borderRadius": "30px", "background": lookup(v, "formBg"), "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
                     <div style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center" }}>
                       <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
-                        {"Ingresar lote"}
+                        {"Ingreso manual de lote"}
                       </span>
                       <span style={{ "fontSize": "11px", "fontWeight": "700", "color": "#8C8C8C" }}>
                         {lookup(v, "codigo") || "Nuevo lote"}
@@ -704,7 +705,7 @@ export default function Inventario(props) {
                       </Fragment>
                     )}
                     <div style={{padding:'12px 14px',borderRadius:16,background:'#fff',fontSize:12,lineHeight:1.5,color:'#555'}}>¿El lote viene de una orden de compra? <DesignLink href="/compras" style={{color:'#c2410c',fontWeight:700}}>Recíbela en Compras</DesignLink>; el lote se crea con sus datos y se actualiza el stock. Usa este formulario para ingresos manuales.</div>
-                    {lookup(v,'formBg') === '#FFF1E6' && <p role="status" style={{margin:0,fontSize:12,color:'#8A3B0A'}}>Completa los datos y pulsa «Registrar lote» para guardar el stock.</p>}
+                    {lookup(v,'formBg') === '#FFF1E6' && <p role="status" style={{margin:0,fontSize:12,color:'#8A3B0A'}}>Solo para stock sin orden de compra. Completa los datos y pulsa «Registrar lote».</p>}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       <span id="registrar-lote">{"Producto"}</span>
                       <select id="producto-lote" value={lookup(v, "productoId")} onChange={lookup(v, "setProducto")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }}>

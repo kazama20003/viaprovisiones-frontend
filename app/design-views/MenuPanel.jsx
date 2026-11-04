@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import SelectorUbicacion from "../ubicacion-trabajo";
 import Link from "next/link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
@@ -167,7 +168,7 @@ class Component extends DesignLogic {
         ['Nuevo pedido', '/pedidos', IC.pedidos, '#2A2A2A'],
         ['Crear producto', '/producto/editar', 'M12 5v14M5 12h14', '#2A2A2A'],
         ['Cotización', '/cotizaciones', IC.cotiz, '#2A2A2A'],
-        ['Ingresar lote', '/inventario', IC.inv, '#2A2A2A'],
+        ['Ingreso manual de lote', '/inventario', IC.inv, '#2A2A2A'],
         ['Orden de compra', '/compras', IC.compras, '#2A2A2A']
       ].map((a) => ({ label: a[0], href: a[1], icon: a[2], bg: a[3] }))
     };
@@ -243,6 +244,7 @@ export default function MenuPanel(props) {
                 </svg>
               </button>
             </div>
+            <SelectorUbicacion />
             <div style={{ "display": "flex", "gap": "14px", "alignItems": "stretch", "flexWrap": "wrap" }}>
               <div style={{ "flex": "1 1 220px", "maxWidth": "250px", "borderRadius": "26px", "background": "#F4F4F2", "padding": "8px", "display": "flex", "flexDirection": "column", "gap": "2px" }}>
                 {(lookup(v, "groups") || []).map((g, index1) => (
@@ -394,6 +396,7 @@ export default function MenuPanel(props) {
                   </Fragment>
                 ))}
               </div>
+              <SelectorUbicacion compacto />
               <button className="mp-pin" onClick={lookup(v, "pin")} aria-label={"Soltar el menú"} title={"Soltar el menú"} style={{ "width": "46px", "height": "46px", "borderRadius": "50%", "border": "none", "background": "#111111", "cursor": "pointer", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                 <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"#E8701F"} stroke={"#FFFFFF"} strokeWidth={"1.9"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                   <path d={"M9 3h6l-1 6 4 4H6l4-4zM12 13v8"}></path>
