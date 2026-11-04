@@ -173,6 +173,7 @@ export default function ProductoEditar(props) {
   return <DesignHost Logic={Component} defaults={defaults} componentProps={props} render={(v) => (
     <Fragment>
       <style>{"\nbody{margin:0;background:#E9E9E7}\na{color:#111111}\n.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}\n.pe-in{height:46px;border:1px solid #E4E4E0;border-radius:14px;padding:0 14px;background:#FFFFFF;font-family:inherit;font-size:14px;color:#111111;box-sizing:border-box;width:100%;outline:none}\n.pe-in:focus{border-color:#111111}\n.pe-lab{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#444444;min-width:0}\n"}</style>
+      <style>{"\n.pe-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,340px);gap:16px;align-items:start}.pe-main,.pe-aside{min-width:0;display:flex;flex-direction:column;gap:16px}.pe-codes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pe-code-card{box-sizing:border-box;min-width:0;border-radius:24px;background:#fff;padding:18px;display:flex;align-items:flex-start;gap:14px}.pe-code-card:only-child{grid-column:1/-1}.pe-code-preview{flex:none;border-radius:16px;background:#f7f7f5;padding:6px;display:grid;place-items:center}.pe-qr-preview svg{display:block;width:104px;height:104px}.pe-code-copy{min-width:0;flex:1}.pe-code-copy strong{font-size:14px}.pe-code-copy p{font-size:12px;color:#777;line-height:1.45;margin:5px 0}.pe-code-copy .pe-code-value{overflow-wrap:anywhere;font-size:11px;color:#9a9a9a}.pe-code-copy .pe-code-notice{color:#a04d10}.pe-code-button{border:0;border-radius:999px;padding:9px 14px;margin-top:6px;background:#111;color:#fff;font:700 12px Manrope,system-ui;cursor:pointer}.pe-code-button:disabled{opacity:.5;cursor:not-allowed}.pe-barcode-preview{margin:8px 0;min-width:0;overflow:hidden}.pe-barcode-preview svg{display:block;max-width:100%;height:auto;max-height:78px}.pe-info-fields,.pe-detail-fields{display:grid;gap:12px}.pe-info-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.pe-detail-fields{grid-template-columns:repeat(4,minmax(0,1fr))}.pe-stat{display:flex;align-items:center;gap:10px}.pe-stat>span:first-child{min-width:58px!important;height:58px!important;font-size:16px!important}.pe-stat>span:last-child{font-size:12px!important}\n@media(max-width:900px){.pe-layout{grid-template-columns:minmax(0,1fr)}.pe-aside{width:100%}.pe-codes{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.pe-layout{padding-left:14px!important;padding-right:14px!important}.pe-codes{grid-template-columns:minmax(0,1fr)}.pe-code-card:only-child{grid-column:auto}.pe-info-fields,.pe-detail-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.pe-stat{flex:1 1 38%;gap:8px}.pe-stat>span:first-child{min-width:50px!important;height:50px!important;padding:0 8px!important;font-size:15px!important}.pe-stat>span:last-child{font-size:11px!important}}@media(max-width:390px){.pe-info-fields{grid-template-columns:minmax(0,1fr)}}\n"}</style>
     <div style={{ "minHeight": "100vh", "background": "#E9E9E7", "padding": "0", "boxSizing": "border-box", "fontFamily": "Manrope, system-ui, sans-serif", "color": "#111111" }}>
       <div style={{ "position": "relative", "width": "100%", "maxWidth": "none", "minHeight": "100vh", "margin": "0 auto", "background": "#F4F4F2", "borderRadius": "40px", "overflow": "hidden" }}>
         <div>
@@ -239,7 +240,7 @@ export default function ProductoEditar(props) {
                 </span>
               </div>
               <div style={{ "display": "flex", "alignItems": "flex-end", "gap": "24px", "flexWrap": "wrap" }}>
-                <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.12", "minWidth": "300px" }}>
+                <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.12", "flex": "1 1 320px", "minWidth": "0" }}>
                   <span style={{ "fontSize": "38px", "fontWeight": "600", "letterSpacing": "-0.02em" }}>
                     {lookup(v, "name")}
                   </span>
@@ -247,10 +248,9 @@ export default function ProductoEditar(props) {
                     {lookup(v, "headline")}
                   </span>
                 </span>
-                <span style={{ "flex": "1" }}></span>
                 {(lookup(v, "headStats") || []).map((h, index2) => (
                   <Fragment key={index2}>
-                    <span style={{ "display": "flex", "alignItems": "center", "gap": "12px" }}>
+                    <span className="pe-stat" style={{ "display": "flex", "alignItems": "center", "gap": "12px" }}>
                       <span style={{ "minWidth": "76px", "height": "76px", "padding": "0 14px", "boxSizing": "border-box", "borderRadius": "999px", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "18px", "fontWeight": "700", "background": lookup(h, "bg"), "color": lookup(h, "fg") }}>
                         {lookup(h, "v")}
                       </span>
@@ -284,8 +284,8 @@ export default function ProductoEditar(props) {
                 </Fragment>
               )}
             </div>
-            <div style={{ "padding": "0 20px 24px", "display": "flex", "gap": "16px", "flexWrap": "wrap", "alignItems": "flex-start" }}>
-              <div style={{ "flex": "999 1 640px", "minWidth": "0", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
+            <div className="pe-layout" style={{ "padding": "0 20px 24px" }}>
+              <div className="pe-main">
                 {lookup(v, "error") && <p role="alert">{lookup(v, "error")}</p>}
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px" }}>
@@ -311,7 +311,7 @@ export default function ProductoEditar(props) {
                     </span>
                     <textarea onChange={lookup(v, "setDesc")} rows={"4"} maxLength={"600"} style={{ "border": "1px solid #E4E4E0", "borderRadius": "14px", "padding": "12px 14px", "fontFamily": "inherit", "fontSize": "14px", "lineHeight": "1.5", "resize": "vertical", "outline": "none", "color": "#111111" }} value={lookup(v, "desc")}></textarea>
                   </label>
-                  <div style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "12px" }}>
+                  <div className="pe-info-fields">
                     <label className={"pe-lab"}>
                       {"Marca"}
                       <select className={"pe-in"} value={lookup(v, "marca")} onChange={lookup(v, "setMarca")} disabled={lookup(v, 'marcasEstado') !== 'success'}><option value="">Sin marca</option>{(lookup(v, 'marcas') || []).map(m => <option key={m.id} value={m.nombre}>{m.nombre}{m.activa ? '' : ' (inactiva)'}</option>)}</select><DesignLink href="/marcas" style={{ fontSize:12,color:'#c2410c',fontWeight:700 }}>Administrar marcas ›</DesignLink>
@@ -335,8 +335,7 @@ export default function ProductoEditar(props) {
                   {lookup(v, 'marcasEstado') === 'error' && <p role="alert" style={{ margin:0,color:'#8e1c14',fontSize:12 }}>{props.marcasError || 'No se pudieron cargar las marcas.'} <button type="button" onClick={props.reintentarMarcas}>Reintentar</button></p>}
                   {truthy(lookup(v, 'scanning')) && <EscanerCodigo onDetectar={lookup(v, 'codigoDetectado')} onCerrar={lookup(v, 'cerrarEscaner')} />}
                 </section>
-                <QrProducto id={lookup(v, 'productoId')} publicado={lookup(v, 'productoPublicado')} visible={lookup(v, 'productoVisible')} />
-                <CodigoBarras valor={lookup(v, 'codigoGuardado')} />
+                {(lookup(v, 'productoId') || lookup(v, 'codigoGuardado')) && <div className="pe-codes"><QrProducto id={lookup(v, 'productoId')} publicado={lookup(v, 'productoPublicado')} visible={lookup(v, 'productoVisible')} /><CodigoBarras valor={lookup(v, 'codigoGuardado')} /></div>}
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px" }}>
                     <span style={{ "fontSize": "18px", "fontWeight": "700" }}>
@@ -557,7 +556,7 @@ export default function ProductoEditar(props) {
                   <span style={{ "fontSize": "18px", "fontWeight": "700" }}>
                     {"Envío y garantía"}
                   </span>
-                  <div style={{ "display": "grid", "gridTemplateColumns": "repeat(4, minmax(0, 1fr))", "gap": "12px" }}>
+                  <div className="pe-detail-fields">
                     <label className={"pe-lab"}>
                       {"Peso (kg)"}
                       <input className={"pe-in"} type="number" min="0" step="0.001" value={lookup(v, "peso")} onChange={lookup(v, "setPeso")} />
@@ -619,7 +618,7 @@ export default function ProductoEditar(props) {
                   </div>
                 </section>
               </div>
-              <div style={{ "flex": "1 1 340px", "maxWidth": "420px", "minWidth": "0", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
+              <div className="pe-aside">
                 <section style={{ "borderRadius": "30px", "background": "#111111", "color": "#FFFFFF", "padding": "20px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>
                   <span style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center" }}>
                     <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
