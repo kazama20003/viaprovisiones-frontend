@@ -705,7 +705,7 @@ export default function Inventario(props) {
                         </div>
                       </Fragment>
                     )}
-                    <div style={{padding:'12px 14px',borderRadius:16,background:'#fff',fontSize:12,lineHeight:1.5,color:'#555'}}>¿El lote viene de una orden de compra? <DesignLink href="/compras" style={{color:'#c2410c',fontWeight:700}}>Recíbela en Compras</DesignLink>; el lote se crea con sus datos y se actualiza el stock. Usa este formulario para ingresos manuales.</div>
+                    <div style={{padding:'14px',borderRadius:16,background:'#fff',fontSize:12,lineHeight:1.55,color:'#555',display:'flex',flexDirection:'column',gap:10}}><div><strong style={{color:'#111'}}>Si ya registraste la compra</strong><br/>Cuando llegue la mercadería, <DesignLink href="/compras" style={{color:'#c2410c',fontWeight:700}}>recíbela en Compras</DesignLink>. El lote se crea automáticamente con el proveedor y costo de la orden.</div><div><strong style={{color:'#111'}}>Usa este formulario si no hay una orden</strong><br/>Por ejemplo, para registrar stock que ya tenías o una entrega cuya compra no registraste en el sistema. Puedes seleccionar al proveedor si lo conoces.</div><div style={{color:'#8a3b0a'}}>No registres las mismas unidades en ambos lugares: se duplicaría el stock.</div></div>
                     {lookup(v,'formBg') === '#FFF1E6' && <p role="status" style={{margin:0,fontSize:12,color:'#8A3B0A'}}>Solo para stock sin orden de compra. Completa los datos y pulsa «Registrar lote».</p>}
                     <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
                       <span id="registrar-lote">{"Producto"}</span>
