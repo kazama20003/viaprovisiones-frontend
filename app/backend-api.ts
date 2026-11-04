@@ -153,3 +153,8 @@ export function crearOrdenCompra(datos:Record<string,unknown>){return request<{d
 export function accionarOrdenCompra(id:string,accion:'enviar'|'cancelar'|'recibir'|'devoluciones',datos?:Record<string,unknown>){return request<{datos:{id:string;numero?:string;estado?:string}}>(`/compras/ordenes/${encodeURIComponent(id)}/${accion}`,{method:'POST',...(datos?{headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)}:{})});}
 
 export function listarProductosCompra(signal?:AbortSignal){return request<{datos:{id:string;nombre:string;sku:string;variantes:{id:string;sku:string;atributos:Record<string,string>}[]}[]}>(`/compras/productos`,{signal});}
+
+export type CuentaProveedor={id:string;ordenCompraId:string;proveedorId:string;montoOriginal:number;saldo:number;fechaEmision:string;fechaVencimiento:string;estado:string;proveedor:{nombre:string};ordenCompra:{numero:string;moneda:string};pagos:{id:string;monto:number;medioPago:string;referencia:string|null;pagadoEn:string}[];notasCredito:{id:string;numero:string;monto:number;fechaEmision:string;devolucion:{numero:string}}[]};
+export function listarCuentasProveedor(signal?:AbortSignal){return request<{datos:CuentaProveedor[]}>(`/finanzas/cuentas-por-pagar`,{signal});}
+export function crearCuentaProveedor(datos:Record<string,unknown>){return request(`/finanzas/cuentas-por-pagar`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
+export function registrarOperacionProveedor(id:string,tipo:'pagos'|'notas-credito',datos:Record<string,unknown>){return request(`/finanzas/cuentas-por-pagar/${encodeURIComponent(id)}/${tipo}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}

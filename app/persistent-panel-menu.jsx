@@ -6,7 +6,7 @@ import MenuPanel from "./design-views/MenuPanel";
 import { viewForPath } from "./view-map";
 import { isPopupOpen, subscribePopup } from "./panel-menu-state";
 
-const panelNames = new Set(["Dashboard", "Ajustes", "Banners", "Caja", "Clientes", "Compras", "Comprobantes", "Cotizaciones", "Devoluciones", "Gastos", "Inventario", "UbicacionesAdmin", "CategoriasAdmin", "MarcasAdmin", "Kardex", "Notificaciones", "Ofertas", "PedidoDetalle", "Pedidos", "ProductoEditar", "PuntoVenta", "Reportes", "Traslados"]);
+const panelNames = new Set(["Dashboard", "Ajustes", "Banners", "Caja", "Clientes", "Compras", "CuentasProveedor", "Comprobantes", "Cotizaciones", "Devoluciones", "Gastos", "Inventario", "UbicacionesAdmin", "CategoriasAdmin", "MarcasAdmin", "Kardex", "Notificaciones", "Ofertas", "PedidoDetalle", "Pedidos", "ProductoEditar", "PuntoVenta", "Reportes", "Traslados"]);
 const activeNames = { Dashboard: "Panel", Kardex: "Inventario", PedidoDetalle: "Pedidos" };
 const subscribe = (callback) => {
   window.addEventListener("via-menu-pin-change", callback);

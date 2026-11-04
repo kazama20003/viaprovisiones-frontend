@@ -10,6 +10,7 @@ import CategoriasAdmin from "./design-views/CategoriasAdmin";
 import MarcasAdmin from "./design-views/MarcasAdmin";
 import ProductoPublico from "./design-views/ProductoPublico";
 import Compras from "./design-views/Compras";
+import CuentasProveedor from "./design-views/CuentasProveedor";
 import Comprobantes from "./design-views/Comprobantes";
 import Cotizaciones from "./design-views/Cotizaciones";
 import Dashboard from "./design-views/Dashboard";
@@ -49,6 +50,7 @@ const views = {
   Checkout: dynamic(() => import("./design-views/Checkout"), { ssr: false }),
   Clientes,
   Compras,
+  CuentasProveedor,
   Comprobantes,
   Cotizaciones,
   Dashboard,
@@ -81,7 +83,7 @@ const views = {
   Traslados,
   UbicacionesAdmin,
 };
-const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","UbicacionesAdmin","CategoriasAdmin","MarcasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
+const panelViews = new Set(["Admin","AdminLogin","Ajustes","Banners","Caja","Clientes","Compras","CuentasProveedor","Comprobantes","Cotizaciones","Dashboard","Devoluciones","Gastos","Inventario","UbicacionesAdmin","CategoriasAdmin","MarcasAdmin","Kardex","Notificaciones","Ofertas","PanelMenuAbierto","PedidoDetalle","Pedidos","ProductoEditar","PuntoVenta","Reportes","Traslados"]);
 const mobileViews = new Set(["AdminMovil","MovilAlmacen","MovilFinanzas","MovilMarketing","TiendaMovil"]);
 
 function PanelMenuPopup({ View, ...props }) {

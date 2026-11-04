@@ -71,6 +71,7 @@ class Component extends DesignLogic {
       kardex: ['', 'Kardex', 'Historial por producto y lote', '/kardex', IC.reportes],
       caja: ['Caja', 'Caja del día', 'Apertura, arqueo y cierre', '/caja', IC.caja, 'Abierta'],
       cobro: ['', 'Cobranzas', 'Cuentas por cobrar', '/clientes', IC.cobro, 'S/ 18k'],
+      cuentasProveedor: ['', 'Cuentas por pagar', 'Deudas y pagos a proveedores', '/cuentas-por-pagar', IC.finanzas],
       gasto: ['Gastos', 'Gastos', 'Luz, alquiler, sueldos', '/gastos', IC.gasto, '2 por pagar', 2, true],
       sunat: ['Comprobantes', 'Comprobantes SUNAT', 'Boletas y facturas', '/comprobantes', IC.sunat, '3 por emitir', 3, true],
       web: ['', 'Tienda web', 'viaprovisiones.com', '/tienda', IC.web],
@@ -87,7 +88,7 @@ class Component extends DesignLogic {
       ['fav', 'Favoritos', 'Lo que más usas', IC.star, ['pos', 'pedidos', 'inv', 'cotiz', 'caja', 'panel']],
       ['ventas', 'Ventas', 'Mostrador, pedidos y clientes', IC.ventas, ['pos', 'pedidos', 'cotiz', 'clientes', 'devol']],
       ['almacen', 'Almacén', 'Stock, lotes y compras', IC.almacen, ['inv', 'nuevoProducto', 'categorias', 'marcas', 'ubicaciones', 'kardex', 'compras', 'prov', 'traslado']],
-      ['finanzas', 'Finanzas', 'Caja, cobros y gastos', IC.finanzas, ['caja', 'cobro', 'gasto', 'sunat']],
+      ['finanzas', 'Finanzas', 'Caja, cobros y gastos', IC.finanzas, ['caja', 'cobro', 'gasto', 'cuentasProveedor', 'sunat']],
       ['tienda', 'Tienda y marketing', 'Canales de venta', IC.tienda, ['web', 'qr', 'cupon', 'banner']],
       ['analisis', 'Análisis', 'Cómo va el negocio', IC.analisis, ['panel', 'reportes']],
       ['cuenta', 'Cuenta', 'Configuración', IC.cuenta, ['notif', 'ajustes', 'roles']]

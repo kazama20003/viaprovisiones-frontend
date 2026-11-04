@@ -22,6 +22,7 @@ export const designViews: DesignView[] = [
   { path: "/pedidos", name: "Pedidos", label: "Pedidos" },
   { path: "/cotizaciones", name: "Cotizaciones", label: "Cotizaciones" },
   { path: "/clientes", name: "Clientes", label: "Clientes" },
+  { path: "/cuentas-por-pagar", name: "CuentasProveedor", label: "Cuentas por pagar" },
   { path: "/compras", name: "Compras", label: "Compras y proveedores" },
   { path: "/reportes", name: "Reportes", label: "Reportes" },
   { path: "/ajustes", name: "Ajustes", label: "Ajustes" },
