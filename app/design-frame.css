@@ -9,3 +9,79 @@ body.via-pinned-panel .native-panel-shell > .native-content > div > div { border
 .via-persistent-menu { position: fixed; z-index: 100; top: 20px; left: 20px; right: 20px; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(0,-16px,0) scale(.98); transform-origin: center top; transition: opacity 300ms ease, transform 560ms cubic-bezier(.22,1,.36,1), visibility 0s linear 560ms; }
 .via-persistent-menu.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translate3d(0,0,0) scale(1); transition-delay: 0s; }
 @media (prefers-reduced-motion: reduce) { .native-panel-shell > .native-content, .via-persistent-menu { transition-duration: .01ms; } }
+/* Detalles comunes del panel: conservan la paleta y las formas de VIA. */
+.native-panel-shell :is(button, a, input, select, textarea) {
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+.native-panel-shell :is(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid #ffad75;
+  outline-offset: 2px;
+}
+.native-panel-shell :is(input, select, textarea) { box-sizing: border-box; max-width: 100%; }
+.native-panel-shell :is(input, select, textarea):focus-visible {
+  border-color: #e8701f;
+  box-shadow: 0 0 0 3px #ff914c24;
+}
+.native-panel-shell :is(.ca-card, .ma-card, .ua-card, .tr-card, .kx-card, .cp-card) {
+  box-shadow: 0 8px 28px #17171708;
+  min-width: 0;
+}
+.native-panel-shell :is(.ca-card, .ma-card, .ua-card, .tr-card, .kx-card, .cp-card) > strong:first-child {
+  display: block;
+  font-size: 16px;
+  letter-spacing: -.02em;
+}
+.native-panel-shell :is(.ca-input, .ma-input, .ua-input, .tr-input, .kx-input) {
+  background: #f8f8f6;
+  min-height: 46px;
+}
+.native-panel-shell :is(.ca-input, .ma-input, .ua-input, .tr-input, .kx-input):focus {
+  background: #fff;
+}
+.native-panel-shell :is(.ca-button, .ma-btn, .ua-btn, .tr-btn, .kx-btn, .cp-btn):not(:disabled):hover {
+  box-shadow: 0 5px 14px #11111116;
+  filter: brightness(.96);
+}
+.native-panel-shell :is(.ma-row, .ua-row, .ca-row, .tr-row, .kx-list, .cp-row) { overflow-wrap: anywhere; }
+.via-empty-state {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px dashed #dededb;
+  border-radius: 20px;
+  background: #f8f8f6;
+  color: #747474;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.via-empty-state::before {
+  content: '↗';
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: #fff1e6;
+  color: #e8701f;
+  font-size: 19px;
+  font-weight: 700;
+}
+.via-empty-state strong { display: block; color: #111; font-size: 13px; }
+@media (max-width: 600px) {
+  .native-panel-shell :is(.ca-card, .ma-card, .ua-card, .tr-card, .kx-card, .cp-card) { padding: 18px; }
+  .native-panel-shell :is(.ca-content, .ma-grid, .ua-grid, .tr-grid, .kx-grid, .cp-grid) { padding-left: 14px; padding-right: 14px; }
+  .native-panel-shell :is(.ca-header, .ma-head, .ua-head, .tr-head, .kx-head, .cp-head) { padding-left: 20px; padding-right: 20px; }
+  .native-panel-shell [style*="grid-template-columns: repeat(4, minmax(0px, 1fr))"],
+  .native-panel-shell [style*="grid-template-columns: repeat(5, minmax(0px, 1fr))"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .native-panel-shell :is(button, a, input, select, textarea) { transition: none; }
+}
+@media (max-width: 600px) {
+  .native-panel-shell .via-panel-stat { flex: 1 1 38%; gap: 8px !important; }
+  .native-panel-shell .via-panel-stat > span:first-child { min-width: 50px !important; height: 50px !important; padding: 0 8px !important; font-size: 15px !important; }
+  .native-panel-shell .via-panel-stat > span:last-child { font-size: 11px !important; }
+}

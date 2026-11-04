@@ -186,7 +186,7 @@ export default function Devoluciones(props) {
                 <span style={{ "flex": "1" }}></span>
                 {(lookup(v, "headStats") || []).map((h, index1) => (
                   <Fragment key={index1}>
-                    <span style={{ "display": "flex", "alignItems": "center", "gap": "12px" }}>
+                    <span className="via-panel-stat" style={{ "display": "flex", "alignItems": "center", "gap": "12px" }}>
                       <span style={{ "minWidth": "76px", "height": "76px", "padding": "0 14px", "boxSizing": "border-box", "borderRadius": "999px", "border": "1px solid #DCDCD8", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontSize": "20px", "fontWeight": "700", "background": lookup(h, "bg"), "color": lookup(h, "fg") }}>
                         {lookup(h, "v")}
                       </span>
