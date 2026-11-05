@@ -257,61 +257,16 @@ export default function Dashboard(props) {
                   </DesignLink>
                 </div>
                 <div style={{ "flex": "1 1 280px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "display": "flex", "flexDirection": "column" }}>
-                  <div style={{ "background": "#FFFFFF", "borderRadius": "30px", "margin": "0", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "16px", "boxShadow": "0 1px 0 #EDEDEA" }}>
-                    <div style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center" }}>
-                      <span style={{ "fontSize": "13px", "fontWeight": "800", "letterSpacing": "0.04em" }}>
-                        {"CAJA DE HOY"}
-                      </span>
-                      <span style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "height": "32px", "padding": "0 12px", "borderRadius": "999px", "border": "1px solid #E4E4E0", "fontSize": "12px", "fontWeight": "600" }}>
-                        {"Yape · Plin · Tarjeta "}
-                        <svg width={"10"} height={"10"} viewBox={"0 0 24 24"} fill={"#111111"} aria-hidden={"true"}>
-                          <path d={"M6 9l6 6 6-6z"}></path>
-                        </svg>
-                      </span>
-                    </div>
-                    <span style={{ "display": "flex", "flexDirection": "column", "gap": "4px" }}>
-                      <span style={{ "fontSize": "12px", "color": "#8C8C8C" }}>
-                        {"Cobrado hoy"}
-                      </span>
-                      <span style={{ "fontSize": "22px", "fontWeight": "700" }}>
-                        <span style={{ "color": "#E8701F" }}>
-                          {"S/"}
-                        </span>
-                        {" 4,410.00"}
-                      </span>
-                    </span>
+                  <div style={{ "background": "#FFFFFF", "borderRadius": "30px", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "16px", "boxShadow": "0 1px 0 #EDEDEA" }}>
+                    <span style={{ "fontSize": "13px", "fontWeight": "800", "letterSpacing": "0.04em" }}>CAJAS Y VENTAS</span>
+                    <span style={{ "fontSize": "18px", "fontWeight": "700" }}>Tu operación por ubicación</span>
+                    <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>Consulta tus cajas y turnos para registrar ventas.</span>
                     <div style={{ "display": "grid", "gridTemplateColumns": "repeat(2, minmax(0, 1fr))", "gap": "8px" }}>
-                      <DesignLink href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
-                        {"Registrar venta"}
-                      </DesignLink>
-                      <DesignLink href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#F4F4F2", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>
-                        {"Cerrar caja"}
-                      </DesignLink>
+                      <DesignLink href="/punto-de-venta" style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>Registrar venta</DesignLink>
+                      <DesignLink href="/caja" style={{ "display": "flex", "alignItems": "center", "justifyContent": "center", "height": "38px", "borderRadius": "999px", "background": "#F4F4F2", "textDecoration": "none", "fontSize": "13px", "fontWeight": "600" }}>Gestionar cajas</DesignLink>
                     </div>
                   </div>
-                  <div style={{ "padding": "16px 22px 20px", "display": "flex", "justifyContent": "space-between", "alignItems": "flex-end", "gap": "10px" }}>
-                    <span style={{ "display": "flex", "flexDirection": "column", "gap": "4px" }}>
-                      <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                        {"Pagos por confirmar"}
-                      </span>
-                      <span style={{ "fontSize": "18px", "fontWeight": "700" }}>
-                        <span style={{ "color": "#E8701F" }}>
-                          {"S/"}
-                        </span>
-                        {" 159.70"}
-                      </span>
-                    </span>
-                    <DesignLink href={"/pedidos"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "fontSize": "12px", "fontWeight": "600", "color": "#C2410C", "textDecoration": "none" }}>
-                      <span style={{ "width": "22px", "height": "22px", "borderRadius": "50%", "background": "#E8701F", "display": "flex", "alignItems": "center", "justifyContent": "center" }}>
-                        <svg width={"11"} height={"11"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#FFFFFF"} strokeWidth={"3"} strokeLinecap={"round"} aria-hidden={"true"}>
-                          <path d={"M5 12l5 5 9-10"}></path>
-                        </svg>
-                      </span>
-                      {"Confirmar"}
-                      <br />
-                      {"pagos"}
-                    </DesignLink>
-                  </div>
+                  <div style={{ "padding": "16px 22px 20px", "fontSize": "12px", "color": "#6B6B6B" }}>Consulta aperturas, cierres y movimientos registrados.</div>
                 </div>
                 <div style={{ "flex": "1 1 260px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "display": "flex", "flexDirection": "column" }}>
                   <div style={{ "background": "#FFFFFF", "borderRadius": "30px", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "14px", "boxShadow": "0 1px 0 #EDEDEA" }}>
