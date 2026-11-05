@@ -68,7 +68,7 @@ export default function PuntoVenta(props) {
                   </span>
                   <DesignLink href={"#controles-caja"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontSize": "14px", "fontWeight": "600", "color": caja ? "#1B5E20" : "#8C8C8C", "textDecoration": "none" }}>
                     <span style={{ "width": "8px", "height": "8px", "borderRadius": "50%", "background": caja ? "#34C759" : "#B8B8B3" }}></span>
-                    {caja ? "Caja abierta · " + caja.nombreCaja : "Caja cerrada"}
+                    {caja ? "Caja seleccionada · " + caja.nombreCaja : "Selecciona una caja"}
                   </DesignLink>
                 </span>
                 <span style={{ "flex": "1" }}></span>
@@ -101,8 +101,8 @@ export default function PuntoVenta(props) {
               </div>
             </div>
             <div id="controles-caja" className="pv-caja">
-              <div className="pv-caja-intro"><span className="pv-caja-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18v12H3zM3 10h18M12 15h.01" /></svg></span><div><div className="pv-caja-title">Caja de venta</div><div className="pv-caja-subtitle">{caja ? caja.nombreCaja+' · '+caja.almacen.nombre : abiertas.length ? 'Selecciona una caja abierta' : 'Abre una caja en la sección Cajas'}</div></div></div>
-              <label className="pv-field">Ubicación<select value={almacenId} onChange={e=>{setNotice('');ubicacionTrabajo.cambiar(e.target.value||null).catch(err=>setError(err.message))}}><option value="">Selecciona ubicación</option>{almacenes.map(a=><option key={a.id} value={a.id}>{a.nombre}</option>)}</select></label>
+              <div className="pv-caja-intro"><span className="pv-caja-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18v12H3zM3 10h18M12 15h.01" /></svg></span><div><div className="pv-caja-title">Caja de venta</div><div className="pv-caja-subtitle">{caja ? caja.nombreCaja+' · '+caja.almacen.nombre : !almacenId ? 'Primero elige la ubicación donde vas a vender' : abiertas.length ? 'Elige la caja abierta con la que vas a cobrar' : 'No hay cajas abiertas aquí. Abre una para vender'}</div></div></div>
+              <label className="pv-field">Ubicación<select value={almacenId} onChange={e=>{setNotice('');ubicacionTrabajo.cambiar(e.target.value||null).catch(err=>setError(err.message))}}><option value="">Selecciona ubicación</option>{almacenes.map(a=><option key={a.id} value={a.id}>{a.sucursal?.nombre?a.sucursal.nombre+" · ":""}{a.nombre}</option>)}</select></label>
               <label className="pv-field">Caja<select value={cajaId} onChange={e=>setCajaId(e.target.value)}><option value="">Selecciona caja abierta</option>{abiertas.map(c=><option key={c.id} value={c.id}>{c.nombreCaja}</option>)}</select></label>
               <DesignLink href="/caja" className="pv-caja-action" style={{display:'inline-flex',alignItems:'center',textDecoration:'none'}}>Gestionar cajas</DesignLink>
               {notice&&<span className="pv-message" role="status">{notice}</span>}{error&&<span className="pv-message" role="alert" style={{color:'#b3261e'}}>{error}</span>}
