@@ -67,7 +67,7 @@ class Component extends DesignLogic {
       ubicaciones: ['UbicacionesAdmin', 'Almacenes y sucursales', 'Administrar ubicaciones', '/ubicaciones', IC.almacen],
       marcas: ['MarcasAdmin', 'Marcas', 'Administrar marcas', '/marcas', IC.inv],
       compras: ['Compras', 'Compras', 'Órdenes de compra', '/compras', IC.compras, '3 en camino'],
-      prov: ['', 'Proveedores', 'Datos y deudas', '/compras', IC.prov],
+      prov: ['', 'Proveedores', 'Administrar proveedores', '/compras?vista=proveedores', IC.prov],
       traslado: ['Traslados', 'Traslados', 'Entre tienda y almacén', '/traslados', IC.traslado],
       kardex: ['', 'Kardex', 'Historial por producto y lote', '/kardex', IC.reportes],
       caja: ['Caja', 'Caja del día', 'Apertura, arqueo y cierre', '/caja', IC.caja, 'Abierta'],
@@ -169,7 +169,7 @@ class Component extends DesignLogic {
         ['Crear producto', '/producto/editar', 'M12 5v14M5 12h14', '#2A2A2A'],
         ['Cotización', '/cotizaciones', IC.cotiz, '#2A2A2A'],
         ['Ingreso manual de lote', '/inventario', IC.inv, '#2A2A2A'],
-        ['Orden de compra', '/compras', IC.compras, '#2A2A2A']
+        ['Orden de compra', '/compras?vista=nueva', IC.compras, '#2A2A2A']
       ].map((a) => ({ label: a[0], href: a[1], icon: a[2], bg: a[3] }))
     };
   }
