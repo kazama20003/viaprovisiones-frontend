@@ -190,3 +190,11 @@ export function modificarCajaRegistrada(id:string,datos:{nombre?:string;activa?:
 export function cajerosReporte(signal?:AbortSignal){return request<{datos:{id:string;nombre:string;activo:boolean}[]}>('/ventas/mostrador/reporte-cajeros',{signal});}
 export type MovimientoReporteCaja={id:string;tipo:string;sentido:'entrada'|'salida';medioPago:string;monto:number;descripcion:string;creadoEn:string;registradoPor:{id:string;nombre:string};sesionCaja:{nombreCaja:string;almacenId:string;cajaRegistradaId:string|null;almacen:{nombre:string;sucursal:{nombre:string}|null}};cobro:{pedido:{numero:string}}|null};
 export function reporteCaja(filtros:Record<string,string>,signal?:AbortSignal){const q=new URLSearchParams(Object.entries(filtros).filter(([,v])=>v));return request<{datos:MovimientoReporteCaja[];truncado:boolean}>('/ventas/mostrador/reporte-caja?'+q.toString(),{signal});}
+export type RolAdministracion={id:string;nombre:string;permisos:{permiso:{id:string;codigo:string;descripcion:string}}[]};
+export type UsuarioAdministracion={id:string;nombre:string;correo:string;activo:boolean;ultimoAccesoEn:string|null;roles:{rol:{id:string;nombre:string}}[]};
+export function administrarUsuarios(signal?:AbortSignal){return request<{datos:UsuarioAdministracion[]}>('/administracion/usuarios',{signal});}
+export function administrarRoles(signal?:AbortSignal){return request<{datos:RolAdministracion[]}>('/administracion/roles',{signal});}
+export function administrarPermisos(signal?:AbortSignal){return request<{datos:{id:string;codigo:string;descripcion:string}[]}>('/administracion/permisos',{signal});}
+export function crearUsuarioAdmin(datos:{nombre:string;correo:string;clave:string;roles:string[]}){return request('/administracion/usuarios',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
+export function actualizarUsuarioAdmin(id:string,activo:boolean){return request('/administracion/usuarios/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({activo})});}
+export function crearRolAdmin(nombre:string,permisos:string[]){return request('/administracion/roles',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,permisos})});}

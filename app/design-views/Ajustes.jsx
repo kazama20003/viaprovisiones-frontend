@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import GestionUsuarios from "./GestionUsuarios";
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
@@ -362,97 +363,7 @@ export default function Ajustes(props) {
                     </div>
                   </Fragment>
                 )}
-                {Boolean(lookup(v, "secUsuarios")) && (
-                  <Fragment>
-                    <div style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "flex-end", "gap": "16px", "flexWrap": "wrap" }}>
-                      <span style={{ "display": "flex", "flexDirection": "column", "gap": "6px" }}>
-                        <span style={{ "fontSize": "22px", "fontWeight": "700" }}>
-                          {"Usuarios y roles"}
-                        </span>
-                        <span style={{ "fontSize": "14px", "color": "#6B6B6B" }}>
-                          {"Quién entra al panel y qué puede hacer cada rol."}
-                        </span>
-                      </span>
-                      <button style={{ "height": "44px", "padding": "0 18px", "borderRadius": "999px", "border": "none", "background": "#111111", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "13px", "fontWeight": "700" }}>
-                        {"Invitar usuario"}
-                      </button>
-                    </div>
-                    <div style={{ "display": "grid", "gridTemplateColumns": "repeat(3, minmax(0, 1fr))", "gap": "12px" }}>
-                      {(lookup(v, "users") || []).map((u, index3) => (
-                        <Fragment key={index3}>
-                          <div style={{ "padding": "18px", "borderRadius": "24px", "background": "#F4F4F2", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
-                            <span style={{ "display": "flex", "alignItems": "center", "gap": "12px" }}>
-                              <span style={{ "width": "44px", "height": "44px", "borderRadius": "50%", "background": lookup(u, "bg"), "color": lookup(u, "fg"), "display": "flex", "alignItems": "center", "justifyContent": "center", "fontWeight": "800", "flex": "none" }}>
-                                {lookup(u, "ini")}
-                              </span>
-                              <span style={{ "display": "flex", "flexDirection": "column", "minWidth": "0" }}>
-                                <span style={{ "fontSize": "14px", "fontWeight": "700" }}>
-                                  {lookup(u, "name")}
-                                </span>
-                                <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                                  {lookup(u, "job")}
-                                </span>
-                              </span>
-                            </span>
-                            <span style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center" }}>
-                              <span style={{ "padding": "6px 12px", "borderRadius": "999px", "background": "#FFFFFF", "fontSize": "12px", "fontWeight": "700" }}>
-                                {lookup(u, "role")}
-                              </span>
-                              <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                                {lookup(u, "last")}
-                              </span>
-                            </span>
-                          </div>
-                        </Fragment>
-                      ))}
-                    </div>
-                    <div style={{ "borderRadius": "24px", "border": "1px solid #E4E4E0", "overflowX": "auto" }} className={"noscroll"}>
-                      <table style={{ "width": "100%", "borderCollapse": "collapse", "fontSize": "14px", "minWidth": "520px" }}>
-                        <thead>
-                          <tr style={{ "background": "#F4F4F2" }}>
-                            <th scope={"col"} style={{ "textAlign": "left", "padding": "14px 18px", "fontSize": "12px", "fontWeight": "700", "color": "#6B6B6B" }}>
-                              {"Permiso"}
-                            </th>
-                            <th scope={"col"} style={{ "padding": "14px", "fontSize": "12px", "fontWeight": "700" }}>
-                              {"Administrador"}
-                            </th>
-                            <th scope={"col"} style={{ "padding": "14px", "fontSize": "12px", "fontWeight": "700" }}>
-                              {"Vendedor"}
-                            </th>
-                            <th scope={"col"} style={{ "padding": "14px", "fontSize": "12px", "fontWeight": "700" }}>
-                              {"Almacén"}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(lookup(v, "perms") || []).map((p, index4) => (
-                            <Fragment key={index4}>
-                              <tr style={{ "borderTop": "1px solid #EFEFEC" }}>
-                                <th scope={"row"} style={{ "textAlign": "left", "padding": "12px 18px", "fontWeight": "600" }}>
-                                  {lookup(p, "name")}
-                                </th>
-                                {(lookup(p, "cells") || []).map((c, index5) => (
-                                  <Fragment key={index5}>
-                                    <td style={{ "padding": "8px", "textAlign": "center" }}>
-                                      <button onClick={lookup(c, "toggle")} aria-pressed={lookup(c, "pressed")} aria-label={lookup(c, "aria")} style={{ "width": "36px", "height": "36px", "borderRadius": "50%", "border": "none", "background": lookup(c, "bg"), "cursor": "pointer", "display": "inline-flex", "alignItems": "center", "justifyContent": "center" }}>
-                                        <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={lookup(c, "fg")} strokeWidth={"2.4"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
-                                          <path d={lookup(c, "icon")}></path>
-                                        </svg>
-                                      </button>
-                                    </td>
-                                  </Fragment>
-                                ))}
-                              </tr>
-                            </Fragment>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                      {"Toca un círculo para dar o quitar el permiso. [Vendedor] y [Almacén] son usuarios de ejemplo."}
-                    </span>
-                  </Fragment>
-                )}
+                {Boolean(lookup(v, "secUsuarios")) && <GestionUsuarios />}
                 {Boolean(lookup(v, "secPagos")) && (
                   <Fragment>
                     <div style={{ "display": "flex", "flexDirection": "column", "gap": "6px" }}>
