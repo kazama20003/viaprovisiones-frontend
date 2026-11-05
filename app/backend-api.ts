@@ -15,7 +15,7 @@ export type ProductoTienda = {
 export type ListaProductos = { datos: ProductoTienda[] };
 export type Credenciales = { correo: string; clave: string; recordarSesion: boolean };
 export type UsuarioSesion = { id: string; nombre: string; correo: string; roles: string[]; permisos: string[] };
-export type ClientePanel = { id: string; nombre: string; tipoCliente: string; razonSocial: string | null; correo: string | null; telefono: string | null; limiteCredito: number; condicionPagoDias: number; tipoDocumento: string; numeroDocumento: string | null };
+export type ClientePanel = { id: string; nombre: string; tipoCliente: string; razonSocial: string | null; correo: string | null; telefono: string | null; activo: boolean; limiteCredito: number; condicionPagoDias: number; tipoDocumento: string; numeroDocumento: string | null };
 export type PedidoPanel = { id: string; numero: string; estado: string; estadoPago: string; canal: string; creadoEn: string; total: number; cliente: { nombre: string; tipoCliente: string }; lineas: { id: string; sku: string; descripcion: string; cantidad: number; precioUnitario: number; totalLinea: number }[] };
 export type ResumenPanel = { productos: number; clientes: number; pedidos: number; pedidosHoy: number; ventasHoy: number };
 
@@ -166,7 +166,7 @@ export function catalogoMostrador(id:string,signal?:AbortSignal){return request<
 export function ventasMostrador(id:string,signal?:AbortSignal){return request<{datos:VentaMostrador[]}>('/ventas/mostrador/ventas?cajaId='+encodeURIComponent(id),{signal});}
 export function abrirCajaMostrador(almacenId:string,montoApertura:number,nombreCaja?:string){return request('/ventas/mostrador/cajas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({almacenId,montoApertura,nombreCaja})});}
 export function cerrarCajaMostrador(id:string,montoContado:number){return request<{datos:{esperado:number;contado:number;diferencia:number}}>('/ventas/mostrador/cajas/'+encodeURIComponent(id)+'/cerrar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({montoContado})});}
-export function venderMostrador(datos:{cajaId:string;claveIdempotencia:string;lineas:{productoId:string;varianteId:string|null;cantidad:number;precioEsperado:number}[];medioPago:string;referencia:string;recibido:number}){return request<{datos:{id:string;numero:string;total:number;repetida:boolean}}>('/ventas/mostrador/ventas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
+export function venderMostrador(datos:{clienteId?:string;cajaId:string;claveIdempotencia:string;lineas:{productoId:string;varianteId:string|null;cantidad:number;precioEsperado:number}[];medioPago:string;referencia:string;recibido:number}){return request<{datos:{id:string;numero:string;total:number;repetida:boolean}}>('/ventas/mostrador/ventas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
 export type UbicacionTrabajo = {id:string;nombre:string;tipo:string;sucursal:{id:string;nombre:string}|null};
 export function obtenerUbicacionTrabajo(signal?:AbortSignal){return request<{datos:UbicacionTrabajo|null}>('/inventario/ubicacion-trabajo',{signal});}
 export function seleccionarUbicacionTrabajo(almacenId:string|null){return request<{datos:UbicacionTrabajo|null}>('/inventario/ubicacion-trabajo',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({almacenId})});}
