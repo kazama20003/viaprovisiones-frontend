@@ -30,7 +30,7 @@ import Reportes from "./design-views/Reportes";
 import Traslados from "./design-views/Traslados";
 import UbicacionesAdmin from "./design-views/UbicacionesAdmin";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { pinPanelMenu, registerPopup } from "./panel-menu-state";
@@ -102,6 +102,8 @@ export function DesignImport({ name, ...props }) {
 
 function ConnectedView({ name }) {
   const router = useRouter();
+  const [hidratado, setHidratado] = useState(false);
+  useEffect(() => { setHidratado(true); }, []);
   const searchParams = useSearchParams();
   const productoId = name === 'ProductoEditar' ? searchParams.get('id') : null;
   const productoPublicoId = name === 'Producto' ? searchParams.get('id') : null;
@@ -166,7 +168,7 @@ function ConnectedView({ name }) {
     if (name === "AdminLogin" && sesion.data) router.replace("/dashboard");
   }, [name, sesion.data, router]);
 
-  if (requiereSesion && (sesion.isPending || sesion.error?.status === 401)) {
+  if (requiereSesion && (!hidratado || sesion.isPending || sesion.error?.status === 401)) {
     return <main className="design-frame-shell" aria-busy="true" />;
   }
   if (requiereSesion && sesion.isError && sesion.error?.status !== 401) {
