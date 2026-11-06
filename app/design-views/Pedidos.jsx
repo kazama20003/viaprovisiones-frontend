@@ -12,6 +12,7 @@ class Component extends DesignLogic {
   }
   renderVals() {
     const B = 'img/';
+    const wa = value => { let n = String(value || '').replace(/\D/g, ''); if (n.length === 9) n = '51' + n; return n.length >= 11 && n.length <= 15 ? 'https://wa.me/' + n : ''; };
     const accent = this.props.accent ?? '#FF914C';
     const st = this.state;
     const money = (n) => 'S/ ' + n.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -30,13 +31,13 @@ class Component extends DesignLogic {
     ];
     const pedidosConectados = ['success', 'pending', 'error'].includes(this.props.apiPedidosState);
     const estadosColumna = { por_pagar: 0, pagado: 1, preparando: 2, enviado: 3, entregado: 4 };
-    const canalNombre = { tienda_web: 'Web', whatsapp: 'WhatsApp', empresas: 'Empresas', mostrador: 'Web', otro: 'Web' };
+    const canalNombre = { tienda_web: 'Web', whatsapp: 'WhatsApp', empresas: 'Empresas', mostrador: 'Mostrador', otro: 'Otro' };
     const tipoNombre = { consumidor: 'Consumidor', minorista: 'Minorista', mayorista: 'Mayorista', empresa: 'Empresa' };
     const ORD = this.props.apiPedidosState === 'success'
       ? (this.props.apiPedidos || []).map((p) => ({
           id: p.numero, apiId: p.id, client: p.cliente.nombre,
           type: tipoNombre[p.cliente.tipoCliente] || 'Consumidor',
-          channel: canalNombre[p.canal] || 'Web',
+          channel: canalNombre[p.canal] || 'Otro', telefono:p.cliente.telefono || '', entrega:p.metodoEntrega || '', creadoEn:p.creadoEn,
           time: new Date(p.creadoEn).toLocaleDateString('es-PE'),
           col: estadosColumna[p.estado] ?? 4,
           tags: [p.estadoPago, p.estado].filter(Boolean), doc: 'comprobante',
@@ -46,7 +47,7 @@ class Component extends DesignLogic {
       : pedidosConectados ? [] : ORDDemo;
     const colOf = (o) => (o.id in st.moved ? st.moved[o.id] : o.col);
     const sum = (o) => o.total ?? o.lines.reduce((a, l) => a + l.qty * l.price, 0);
-    const CH = ['Todos', 'Web', 'WhatsApp', 'Empresas'];
+    const CH = ['Todos', 'Web', 'WhatsApp', 'Empresas', 'Mostrador', 'Otro'];
     const vis = ORD.filter((o) => st.channel === 'Todos' || o.channel === st.channel);
     const S = ORD.find((o) => o.id === st.sel) || ORD[0] || { id: '—', client: 'Sin pedidos registrados', channel: '—', time: '—', col: 0, tags: [], doc: '—', total: 0, lines: [] };
     const MI = (label, href, icon, on) => ({ label, href, icon, bg: on ? '#F4F4F2' : 'transparent', iconBg: on ? '#E8701F' : '#F4F4F2', iconFg: on ? '#FFFFFF' : '#111111' });
@@ -88,16 +89,14 @@ class Component extends DesignLogic {
         return { name: c[0], dot: c[1], count: String(cards.length), cards, empty: cards.length === 0 };
       }),
       sel: {
-        id: S.id, client: S.client, channel: S.channel, time: S.time, total: money(sum(S)), doc: S.doc,
+        id: S.id, apiId:S.apiId || '', telefono:S.telefono || '', whatsapp:wa(S.telefono), client: S.client, channel: S.channel, time: S.time, total: money(sum(S)), doc: S.doc,
         status: COLS[colOf(S)][0], dot: COLS[colOf(S)][1],
         lines: S.lines.map((l) => ({ name: l.name, qty: String(l.qty), unit: money(l.price), total: money(l.qty * l.price), img: B + l.img, lot: l.lot }))
       },
-      times: [['Confirmar pago', '25 min', 25], ['Preparar pedido', '3 h', 60], ['Entregar (Arequipa)', '1 día', 85]].map((t) => ({ name: t[0], v: t[1], w: t[2] + '%' })),
-      deliveries: [
-        ['Recojo en tienda', 'Dean Valdivia 533', '4', '#FFF1E6', '#8A3B0A', 'M3 9l1-5h16l1 5M4 9v11h16V9M3 9h18'],
-        ['Delivery Arequipa', 'Motorizado · 2 rutas', '6', '#E3F1FF', '#0B4A8A', 'M5 17a2 2 0 1 0 0-.1M19 17a2 2 0 1 0 0-.1M7 17h8l2-6h-6l-2-4H5'],
-        ['Agencia a provincias', 'Cusco, Puno, Moquegua', '3', '#EDE7FF', '#4A2E9A', 'M3 7h11v9H3zM14 10h4l3 3v3h-7']
-      ].map((d) => ({ name: d[0], sub: d[1], n: d[2], bg: d[3], fg: d[4], icon: d[5] })),
+      metricasEstado: this.props.apiMetricasPedidosState,
+      metricasError: this.props.apiMetricasPedidosError || '',
+      times: [['Confirmar pago',this.props.apiMetricasPedidos?.confirmarPagoMinutos],['Preparar pedido',this.props.apiMetricasPedidos?.preparacionMinutos],['Entregar pedido',this.props.apiMetricasPedidos?.entregaMinutos]].map(t=>({name:t[0],v:t[1]==null?'—':t[1]<60?t[1]+' min':(t[1]/60).toFixed(1)+' h',w:t[1]==null?'0%':'100%'})),
+      deliveries: [['Recojo en tienda','Entregados hoy','recojo','#FFF1E6','#8A3B0A','M3 9l1-5h16l1 5M4 9v11h16V9M3 9h18'],['Delivery','Entregados hoy','delivery','#E3F1FF','#0B4A8A','M5 17h14'],['Agencia','Entregados hoy','agencia','#EDE7FF','#4A2E9A','M3 7h11v9H3z']].map(d=>({name:d[0],sub:d[1],n:this.props.apiMetricasPedidos ? String(this.props.apiMetricasPedidos.entregasHoy[d[2]]) : '—',bg:d[3],fg:d[4],icon:d[5]})),
       menu: [
         MI('Panel', '/dashboard', 'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z'),
         MI('Pedidos', '/pedidos', 'M6 3h12l1 18H5zM9 7a3 3 0 0 0 6 0', true),
@@ -146,12 +145,12 @@ export default function Pedidos(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
-                <button style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
+                <DesignLink href="/punto-de-venta" style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
                   </svg>
-                  {"Nuevo pedido"}
-                </button>
+                  {"Nueva venta"}
+                </DesignLink>
                 <span style={{ "width": "52px", "height": "52px", "borderRadius": "50%", "background": lookup(v, "accent"), "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "fontWeight": "800" }}>
                   {"BC"}
                 </span>
@@ -176,7 +175,7 @@ export default function Pedidos(props) {
                   </span>
                   <span style={{ "fontSize": "38px", "fontWeight": "400", "letterSpacing": "-0.02em", "color": "#9A9A9A" }}>
                     {lookup(v, "activeCount")}
-                    {" en curso hoy"}
+                    {" en curso"}
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
@@ -328,7 +327,7 @@ export default function Pedidos(props) {
                     {(lookup(v, "sel.lines") || []).map((l, index6) => (
                       <Fragment key={index6}>
                         <div style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "12px 0", "borderBottom": "1px solid #F1F1EE", "flexWrap": "wrap" }}>
-                          <img src={assetSrc(lookup(l, "img"))} alt={""} style={{ "width": "46px", "height": "46px", "borderRadius": "14px", "objectFit": "cover", "flex": "none" }} />
+                          <span aria-hidden="true" style={{width:46,height:46,borderRadius:14,background:"#F4F4F2",display:"grid",placeItems:"center",flex:"none"}}>□</span>
                           <span style={{ "flex": "1 1 200px", "display": "flex", "flexDirection": "column", "gap": "2px" }}>
                             <span style={{ "fontSize": "14px", "fontWeight": "700" }}>
                               {lookup(l, "name")}
@@ -343,7 +342,7 @@ export default function Pedidos(props) {
                             <svg width={"11"} height={"11"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                               <path d={"M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4"}></path>
                             </svg>
-                            {"Sale del lote "}
+                            {"Lote "}
                             {lookup(l, "lot")}
                           </span>
                           <span style={{ "minWidth": "90px", "textAlign": "right", "fontSize": "14px", "fontWeight": "800" }}>
@@ -362,21 +361,12 @@ export default function Pedidos(props) {
                     </div>
                   </div>
                   <div style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap" }}>
-                    <DesignLink href={"https://wa.me/51954802744"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "42px", "padding": "0 18px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
-                      <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#25A244"} strokeWidth={"2"} aria-hidden={"true"}>
-                        <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
-                      </svg>
-                      {"Escribir al cliente"}
-                    </DesignLink>
-                    <button style={{ "height": "42px", "padding": "0 18px", "borderRadius": "999px", "border": "none", "background": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "13px", "fontWeight": "700" }}>
-                      {"Imprimir "}
-                      {lookup(v, "sel.doc")}
-                    </button>
+                    {lookup(v,"sel.whatsapp") && <a href={lookup(v,"sel.whatsapp")} target="_blank" rel="noreferrer" style={{display:'inline-flex',alignItems:'center',height:42,padding:'0 18px',borderRadius:999,background:'#fff',textDecoration:'none',fontSize:13,fontWeight:700}}>Escribir al cliente</a>}
                     <DesignLink href={"/inventario"} style={{ "display": "inline-flex", "alignItems": "center", "height": "42px", "padding": "0 18px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Ver lotes en inventario"}
                     </DesignLink>
-                    <DesignLink href={"/pedido/detalle"} style={{ "display": "inline-flex", "alignItems": "center", "height": "42px", "padding": "0 18px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
-                      {"Ver detalle completo"}
+                    <DesignLink href={lookup(v,"sel.apiId") ? "/pedido/detalle?id="+encodeURIComponent(lookup(v,"sel.apiId")) : "/pedidos"} style={{ "display": "inline-flex", "alignItems": "center", "height": "42px", "padding": "0 18px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                      {"Ver detalle e imprimir"}
                     </DesignLink>
                   </div>
                 </div>
@@ -384,6 +374,7 @@ export default function Pedidos(props) {
                   <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
                     {"Tiempos de atención"}
                   </span>
+                  {lookup(v,"metricasEstado") === "error" && <span role="alert" style={{fontSize:12,color:"#FFB4A8"}}>No se pudieron cargar las métricas. {lookup(v,"metricasError")}</span>}
                   {(lookup(v, "times") || []).map((t, index7) => (
                     <Fragment key={index7}>
                       <div style={{ "display": "flex", "flexDirection": "column", "gap": "6px" }}>
@@ -402,12 +393,12 @@ export default function Pedidos(props) {
                     </Fragment>
                   ))}
                   <span style={{ "marginTop": "auto", "fontSize": "12px", "color": "#BDBDBD" }}>
-                    {"Meta: preparar en menos de 4 h los pedidos pagados antes de las 15:00."}
+                    {"Promedios de transiciones registradas · hasta 5,000 eventos recientes. — indica que no hay datos suficientes."}
                   </span>
                 </div>
                 <div style={{ "flex": "1 1 280px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
                   <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
-                    {"Entregas de hoy"}
+                    {"Entregas registradas hoy"}
                   </span>
                   {(lookup(v, "deliveries") || []).map((d, index8) => (
                     <Fragment key={index8}>

@@ -34,7 +34,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { pinPanelMenu, registerPopup } from "./panel-menu-state";
-import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarProveedoresCompra, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarCuentasCliente, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
+import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarProveedoresCompra, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarCuentasCliente, listarPedidos, obtenerMetricasPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
 
 const views = {
   Admin: dynamic(() => import("./design-views/Admin"), { ssr: false }),
@@ -114,6 +114,7 @@ function ConnectedView({ name }) {
   const clientes = useQuery({ queryKey: ["clientes"], queryFn: ({ signal }) => listarClientes(signal), enabled: name === "Clientes" });
   const cuentasCliente = useQuery({ queryKey: ["cuentas-cliente"], queryFn: ({ signal }) => listarCuentasCliente(signal), enabled: name === "Clientes" });
   const pedidos = useQuery({ queryKey: ["pedidos"], queryFn: ({ signal }) => listarPedidos(signal), enabled: name === "Pedidos" });
+  const metricasPedidos = useQuery({ queryKey:["pedidos","metricas"], queryFn:({signal})=>obtenerMetricasPedidos(signal), enabled:name === "Pedidos" });
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
   const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario", "Traslados"].includes(name) });
   const proveedoresInventario = useQuery({queryKey:['compras','proveedores'],queryFn:({signal})=>listarProveedoresCompra(signal),enabled:name==='Inventario'});
@@ -205,8 +206,12 @@ function ConnectedView({ name }) {
     apiCuentasCliente={cuentasCliente.data?.datos ?? []}
     apiCuentasClienteState={cuentasCliente.status}
     apiCuentasClienteError={cuentasCliente.error?.message ?? ""}
+    pedidoId={name === 'PedidoDetalle' ? searchParams.get('id') || '' : ''}
     apiPedidos={pedidos.data?.datos ?? []}
     apiPedidosState={pedidos.status}
+    apiMetricasPedidos={metricasPedidos.data?.datos ?? null}
+    apiMetricasPedidosState={metricasPedidos.status}
+    apiMetricasPedidosError={metricasPedidos.error?.message ?? ""}
     apiResumen={resumen.data?.datos ?? null}
     apiResumenState={resumen.status}
     kardexProductoId={name === 'Kardex' ? searchParams.get('productoId') || '' : ''}

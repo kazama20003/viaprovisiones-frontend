@@ -21,7 +21,8 @@ class Component extends DesignLogic {
       'Al día': ['#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'],
       'Por cobrar': ['#FFF4D6', '#7A4A00', 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 7v5l3 2'],
       'Pago vencido': ['#FDE4E2', '#8E1C14', 'M12 3l9 16H3zM12 10v4M12 17h.01'],
-      'Sin compras 60 d': ['#EFEFEC', '#4A4A4A', 'M6 12h12']
+      'Sin compras 60 d': ['#EFEFEC', '#4A4A4A', 'M6 12h12'],
+      'Sin datos': ['#EFEFEC', '#4A4A4A', 'M6 12h12']
     };
     const TYPE = { Consumidor: 'Consumidores', Minorista: 'Minoristas y bodegas', Mayorista: 'Mayoristas', Empresa: 'Empresas' };
     const TIER = { Consumidor: 'Precio de tienda', Minorista: 'Precio minorista', Mayorista: 'Precio mayorista', Empresa: 'Precio empresa por volumen' };
@@ -39,14 +40,12 @@ class Component extends DesignLogic {
       C('c10', 'María Q.', 'Consumidor', 'Arequipa', 'Hoy', 7, 892, 'Contado · Yape', 'Al día', null, 'María Q.')
     ];
     const datosConectados = ['success', 'pending', 'error'].includes(this.props.apiClientesState);
-    const CL = this.props.apiClientesState === 'success'
-      ? (this.props.apiClientes || []).map((c) => {
-          const tipo = { consumidor: 'Consumidor', minorista: 'Minorista', mayorista: 'Mayorista', empresa: 'Empresa' }[c.tipoCliente] || 'Consumidor';
-          return C(c.id, c.razonSocial || c.nombre, tipo, '—', 'Sin compras', 0, 0,
-            c.condicionPagoDias ? `Factura a ${c.condicionPagoDias} días` : 'Contado', 'Al día',
-            c.limiteCredito > 0 ? [c.limiteCredito, 0] : null, c.correo || c.telefono || '—');
-        })
-      : datosConectados ? [] : CLDemo;
+    const realCuentas = this.props.apiCuentasClienteState === 'success' ? this.props.apiCuentasCliente || [] : [];
+    const hoyStr = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Lima',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const CL = this.props.apiClientesState === 'success' ? (this.props.apiClientes || []).map(c => {
+      const tipo={consumidor:'Consumidor',minorista:'Minorista',mayorista:'Mayorista',empresa:'Empresa'}[c.tipoCliente] || 'Consumidor', pedidos=c.pedidos||[], deuda=realCuentas.filter(x=>x.cliente.id===c.id&&x.estado!=='anulada'&&x.saldo>0), usado=deuda.reduce((n,x)=>n+Number(x.saldo),0), ultimo=pedidos[0], total=pedidos.reduce((n,x)=>n+Math.max(0,Number(x.total)-Number(x.devuelto||0)),0), vencido=deuda.some(x=>x.fechaVencimiento.slice(0,10)<hoyStr);
+      return {puedeVerCompras:c.puedeVerCompras,...C(c.id,c.razonSocial||c.nombre,tipo,'—',ultimo?new Date(ultimo.creadoEn).toLocaleDateString('es-PE',{timeZone:'America/Lima'}):'Sin compras',pedidos.length,total,c.condicionPagoDias?'Crédito · '+c.condicionPagoDias+' días':'Contado',this.props.apiCuentasClienteState!=='success'||realCuentas.length>=200?'Sin datos':vencido?'Pago vencido':usado>0?'Por cobrar':'Al día',c.limiteCredito>0&&this.props.apiCuentasClienteState==='success'&&realCuentas.length<200?[c.limiteCredito,usado]:null,c.correo||c.telefono||'—'),pedidos,creadoEn:c.creadoEn,numeroDocumento:c.numeroDocumento,telefono:c.telefono};
+    }) : datosConectados ? [] : CLDemo;
     const cuentasListas = this.props.apiCuentasClienteState === 'success';
     const cuentas = cuentasListas ? (this.props.apiCuentasCliente || []).filter(c => c.estado !== 'anulada' && c.saldo > 0) : [];
     const hoyLima = new Intl.DateTimeFormat('en-CA', { timeZone:'America/Lima', year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date());
@@ -58,20 +57,16 @@ class Component extends DesignLogic {
     const SEG = datosConectados
       ? ['Consumidor', 'Minorista', 'Mayorista', 'Empresa'].map((tipo) => [tipo, CL.filter((c) => c.type === tipo).length, CL.filter((c) => c.type === tipo).reduce((suma, c) => suma + c.total, 0)])
       : [['Consumidor', 214, 6900], ['Minorista', 142, 4980], ['Mayorista', 37, 3870], ['Empresa', 21, 2700]];
-    const MON = ['May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct'];
-    const NEW = [14, 17, 15, 19, 21, 23];
-    const W = [0.13, 0.15, 0.14, 0.17, 0.19, 0.22];
-    const sm = W.map((w) => Math.round(S.total * w * 0.45));
-    const smMax = Math.max(...sm);
-    const idx = CL.indexOf(S);
-    const OST = { Pagado: ['#E3F1FF', '#0B4A8A'], Enviado: ['#EDE7FF', '#4A2E9A'], Entregado: ['#E4F4E7', '#1B5E20'] };
-    const avg = S.total / Math.max(1, S.orders);
-    const hist = [0, 1, 2].map((k) => {
-      const status = k === 0 && (S.last === 'Hoy' || S.last === 'Ayer') ? 'Pagado' : 'Entregado';
-      return { id: '#' + (1041 - idx * 2 - k * 9), date: [S.last, '02 oct', '18 set'][k], status, bg: OST[status][0], fg: OST[status][1], total: money2(avg * [1.1, 0.9, 1.05][k]) };
-    });
+    const meses=Array.from({length:6},(_,i)=>{const d=new Date();return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()-5+i,1))});
+    const claves=meses.map(d=>d.toISOString().slice(0,7));
+    const MON=meses.map(d=>new Intl.DateTimeFormat('es-PE',{month:'short',timeZone:'UTC'}).format(d));
+    const NEW=claves.map(k=>CL.filter(x=>x.creadoEn&&x.creadoEn.slice(0,7)===k).length);
+    const sm=claves.map(k=>(S.pedidos||[]).filter(p=>p.creadoEn.slice(0,7)===k).reduce((n,p)=>n+Math.max(0,Number(p.total)-Number(p.devuelto||0)),0));
+    const smMax=Math.max(1,...sm),idx=CL.indexOf(S),avg=S.total/Math.max(1,S.orders);
+    const hist=(S.pedidos||[]).slice(0,3).map(p=>({id:p.numero,apiId:p.id,date:new Date(p.creadoEn).toLocaleDateString('es-PE',{timeZone:'America/Lima'}),status:p.estado.replaceAll('_',' '),bg:'#F4F4F2',fg:'#111',total:money2(Math.max(0,Number(p.total)-Number(p.devuelto||0)))}));
     const corp = S.type === 'Empresa' || S.type === 'Mayorista';
-    const quotes = corp ? [{ id: 'COT-0' + (231 + idx), sub: 'Vence en ' + (3 + idx) + ' días · ' + TIER[S.type], status: idx % 2 ? 'Enviada' : 'En negociación', total: money(avg * 1.6) }] : [];
+    const wa = value => {let n=String(value||'').replace(/\D/g,'');if(n.length===9)n='51'+n;return n.length>=11&&n.length<=15?'https://wa.me/'+n:''};
+    const quotes = [];
     return {
       accent,
       menuOpen: st.menu || !!this.props.menuAbierto,
@@ -84,11 +79,11 @@ class Component extends DesignLogic {
       headStats: [
         { v: datosConectados ? String(CL.length) : '414', k1: 'Clientes', k2: 'registrados', bg: '#FFFFFF', fg: '#111111' },
         { v: datosConectados ? '—' : '62%', k1: 'Vuelven', k2: 'a comprar', bg: '#FFFFFF', fg: '#111111' },
-        { v: datosConectados ? '—' : '3', k1: 'Pagos', k2: 'vencidos', bg: '#FDE4E2', fg: '#8E1C14' },
-        { v: datosConectados ? '—' : 'S/ 18k', k1: 'Por', k2: 'cobrar', bg: '#111111', fg: '#FFFFFF' }
+        { v: cuentasListas ? String(grupos[2].length) : '—', k1: 'Pagos', k2: 'vencidos', bg: '#FDE4E2', fg: '#8E1C14' },
+        { v: cuentasListas ? money(sumaCuentas(cuentas)) : '—', k1: 'Por', k2: 'cobrar', bg: '#111111', fg: '#FFFFFF' }
       ],
       segments: SEG.map((s) => ({
-        name: TYPE[s[0]], n: String(s[1]), sales: money(s[2]), w: Math.round((s[2] / SEG[0][2]) * 100) + '%',
+        name: TYPE[s[0]], n: String(s[1]), sales: money(s[2]), w: Math.round((s[2] / Math.max(1,...SEG.map(x=>x[2]))) * 100) + '%',
         pressed: st.seg === s[0] ? 'true' : 'false', border: st.seg === s[0] ? '#E8701F' : '#FFFFFF',
         pick: () => this.setState({ seg: st.seg === s[0] ? 'Todos' : s[0] })
       })),
@@ -100,7 +95,7 @@ class Component extends DesignLogic {
         ['Vence en 7 días', 'Incluye vencimientos de hoy', '#FFF4D6', '#7A4A00', 'M12 7v5l3 2'],
         ['Vencido', 'Fecha de vencimiento pasada', '#FDE4E2', '#8E1C14', 'M12 4v10M12 18h.01']
       ].map((a,i) => ({ name:a[0], sub:cuentasListas ? grupos[i].length + (grupos[i].length===1?' cuenta · ':' cuentas · ') + a[1] : a[1], v:cuentasListas ? money2(sumaCuentas(grupos[i])) : '—', bg:a[2], fg:a[3], icon:a[4] })),
-      newMonths: NEW.map((n, i) => ({ t: MON[i], n: String(n), h: Math.round((n / 25) * 100) + '%', c: i === 5 ? '#E8701F' : '#F5C3A0' })),
+      newMonths: NEW.map((n, i) => ({ t: MON[i], n: String(n), h: Math.max(2,Math.round((n / Math.max(1,...NEW)) * 100)) + '%', c: i === 5 ? '#E8701F' : '#F5C3A0' })),
       newAria: 'Clientes nuevos por mes: ' + NEW.map((n, i) => MON[i] + ' ' + n).join(', '),
       chips: ['Todos', 'Consumidor', 'Minorista', 'Mayorista', 'Empresa'].map((c) => ({
         name: c === 'Todos' ? 'Todos' : TYPE[c], pressed: st.seg === c ? 'true' : 'false',
@@ -113,17 +108,17 @@ class Component extends DesignLogic {
       rows: vis.map((c) => {
         const on = c.id === S.id;
         return {
-          name: c.name, city: c.city, type: TYPE[c.type], last: c.last, orders: String(c.orders), total: money(c.total), cond: c.cond, ini: ini(c.name),
+          name: c.name, city: c.city, type: TYPE[c.type], last: c.puedeVerCompras===false?'Sin permiso':c.last, orders: c.puedeVerCompras===false?'—':String(c.orders), total: c.puedeVerCompras===false?'—':money(c.total), cond: c.cond, ini: ini(c.name),
           status: c.status, stBg: ST[c.status][0], stFg: ST[c.status][1], stIcon: ST[c.status][2],
           bg: on ? '#FFF6EF' : '#FFFFFF', avBg: on ? '#E8701F' : '#F4F4F2', avFg: on ? '#FFFFFF' : '#111111',
           select: () => this.setState({ sel: c.id })
         };
       }),
       sel: {
-        name: S.name, type: TYPE[S.type], city: S.city, ini: ini(S.name), contact: S.contact,
-        doc: corp || S.type === 'Minorista' ? '[RUC]' : '[DNI]', tier: TIER[S.type], cond: S.cond,
+        name: S.name, type: TYPE[S.type], city: S.city, ini: ini(S.name), contact: S.contact, telefono:S.telefono||'Sin teléfono', whatsapp:wa(S.telefono), puedeVerCompras:S.puedeVerCompras!==false,
+        doc: S.numeroDocumento || 'Sin documento', tier: 'Público (mostrador)', cond: S.cond,
         status: S.status, stBg: ST[S.status][0], stFg: ST[S.status][1], stIcon: ST[S.status][2],
-        total: money(S.total), ticket: money2(avg),
+        total: S.puedeVerCompras===false?'—':money(S.total), ticket: S.puedeVerCompras===false?'—':money2(avg),
         hasCredit: !!S.credit,
         creditTxt: S.credit ? money(S.credit[1]) + ' usados de ' + money(S.credit[0]) : '',
         creditW: S.credit ? Math.round((S.credit[1] / S.credit[0]) * 100) + '%' : '0%',
@@ -135,8 +130,9 @@ class Component extends DesignLogic {
         quotes,
         noQuotes: quotes.length === 0
       },
-      top: [['Constructora [Cliente]', 'Empresa', 5120], ['Ferretería Cayma', 'Mayorista', 3460], ['Minera [Cliente]', 'Empresa', 2980], ['Bodega San Martín', 'Minorista', 1840], ['Hotel [Cliente]', 'Empresa', 1210]].map((t, i) => ({ rank: String(i + 1), name: t[0], type: TYPE[t[1]], v: money(t[2]), w: Math.round((t[2] / 5120) * 100) + '%' })),
-      reactivate: [['Bazar [Cliente]', 'Puno · 73 días sin comprar · 5 pedidos'], ['Hostal [Cliente]', 'Chivay · 65 días · 3 pedidos'], ['Ferretería [Cliente]', 'Mollendo · 61 días · 8 pedidos']].map((r) => ({ name: r[0], sub: r[1], ini: ini(r[0]) }))
+      top: [...CL].filter(c=>c.orders>0).sort((a,b)=>b.total-a.total).slice(0,5).map((t,i,arr)=>({rank:String(i+1),name:t.name,type:TYPE[t.type],v:money(t.total),w:Math.round(t.total/Math.max(1,arr[0].total)*100)+'%'})),
+      reactivate: CL.filter(c=>c.pedidos?.length&&Date.now()-new Date(c.pedidos[0].creadoEn).getTime()>60*86400000).slice(0,5).map(c=>({name:c.name,sub:'Última compra · '+c.last,ini:ini(c.name),telefono:c.telefono,whatsapp:wa(c.telefono)})),
+
     };
   }
 }
@@ -231,7 +227,7 @@ export default function Clientes(props) {
               </div>
             </div>
             <div style={{ "background": "#FFFFFF", "padding": "18px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>
-              <div role="note" style={{padding:"12px 16px",borderRadius:"16px",background:"#FFF4D6",color:"#704900",fontSize:"12px",lineHeight:1.5}}>La lista de clientes y la tarjeta de cuentas por cobrar usan datos reales. Los demás gráficos y estadísticas de esta pantalla todavía son de ejemplo.</div>
+              <div role="note" style={{padding:"12px 16px",borderRadius:"16px",background:"#FFF4D6",color:"#704900",fontSize:"12px",lineHeight:1.5}}>Los gráficos y estadísticas se calculan con los últimos 100 clientes cargados y las últimas 200 cuentas por cobrar.</div>
               <div style={{ "display": "flex", "flexWrap": "wrap", "gap": "14px", "alignItems": "stretch" }}>
                 <div style={{ "flex": "1.3 1 380px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>
                   <span style={{ "display": "flex", "flexDirection": "column" }}>
@@ -255,7 +251,7 @@ export default function Clientes(props) {
                             </strong>
                             {" · "}
                             {lookup(s, "sales")}
-                            {" en oct."}
+                            {" en ventas"}
                           </span>
                         </span>
                         <span style={{ "height": "8px", "borderRadius": "999px", "background": "#F1F1EE" }}>
@@ -311,7 +307,7 @@ export default function Clientes(props) {
                       {"Clientes nuevos por mes"}
                     </span>
                     <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                      {"Mayo a octubre 2026"}
+                      {"Últimos 6 meses · clientes cargados"}
                     </span>
                   </span>
                   <div role={"img"} aria-label={lookup(v, "newAria")} style={{ "flex": "1", "minHeight": "190px", "display": "flex", "alignItems": "flex-end", "gap": "10px", "paddingTop": "10px" }}>
@@ -330,7 +326,7 @@ export default function Clientes(props) {
                     ))}
                   </div>
                   <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
-                    {"El 62 % de los clientes volvió a comprar dentro de los 90 días."}
+                    {"Incluye hasta los últimos 100 clientes registrados."}
                   </span>
                 </div>
               </div>
@@ -478,7 +474,7 @@ export default function Clientes(props) {
                         {"Celular"}
                       </span>
                       <span style={{ "fontWeight": "700" }}>
-                        {"[CELULAR]"}
+                        {lookup(v, "sel.telefono")}
                       </span>
                     </span>
                     <span style={{ "display": "flex", "justifyContent": "space-between", "gap": "10px" }}>
@@ -555,9 +551,10 @@ export default function Clientes(props) {
                         {"Ver en pedidos →"}
                       </DesignLink>
                     </div>
+                    {!(lookup(v, "sel.hist") || []).length && <span style={{fontSize:12,color:'#888'}}>{lookup(v,'sel.puedeVerCompras') ? 'Sin pedidos registrados.' : 'No tienes permiso para consultar compras.'}</span>}
                     {(lookup(v, "sel.hist") || []).map((o, index8) => (
                       <Fragment key={index8}>
-                        <DesignLink href={"/pedidos"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "10px 0", "borderTop": "1px solid #F1F1EE", "textDecoration": "none" }}>
+                        <DesignLink href={lookup(o,"apiId") ? "/pedido/detalle?id="+encodeURIComponent(lookup(o,"apiId")) : "/pedidos"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "10px 0", "borderTop": "1px solid #F1F1EE", "textDecoration": "none" }}>
                           <span style={{ "flex": "1", "display": "flex", "flexDirection": "column" }}>
                             <span style={{ "fontSize": "13px", "fontWeight": "700" }}>
                               {lookup(o, "id")}
@@ -608,18 +605,18 @@ export default function Clientes(props) {
                     {Boolean(lookup(v, "sel.noQuotes")) && (
                       <Fragment>
                         <span style={{ "display": "block", "padding": "10px 0 12px", "borderTop": "1px solid #F1F1EE", "fontSize": "12px", "color": "#8C8C8C" }}>
-                          {"Sin cotizaciones abiertas."}
+                          {"Las cotizaciones aún no están conectadas a esta ficha."}
                         </span>
                       </Fragment>
                     )}
                   </div>
                   <div style={{ "display": "flex", "gap": "8px", "flexWrap": "wrap" }}>
-                    <DesignLink href={"#whatsapp"} style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "gap": "8px", "height": "44px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
+                    {lookup(v,"sel.whatsapp") && <DesignLink href={lookup(v,"sel.whatsapp")} style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "gap": "8px", "height": "44px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#4ADE80"} strokeWidth={"2"} aria-hidden={"true"}>
                         <path d={"M4 20l1.3-4A8 8 0 1 1 8 18.7z"}></path>
                       </svg>
                       {"WhatsApp"}
-                    </DesignLink>
+                    </DesignLink>}
                     <DesignLink href={"/cotizaciones"} style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Nueva cotización"}
                     </DesignLink>
@@ -633,7 +630,7 @@ export default function Clientes(props) {
                 <div style={{ "flex": "1.4 1 460px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "12px" }}>
                   <span style={{ "display": "flex", "justifyContent": "space-between", "alignItems": "center" }}>
                     <span style={{ "fontSize": "15px", "fontWeight": "700" }}>
-                      {"Mejores clientes de octubre"}
+                      {"Clientes con más compras"}
                     </span>
                     <span style={{ "fontSize": "12px", "color": "#6B6B6B" }}>
                       {"Por monto comprado"}
@@ -686,14 +683,14 @@ export default function Clientes(props) {
                             {lookup(r, "sub")}
                           </span>
                         </span>
-                        <DesignLink href={"#whatsapp"} style={{ "height": "34px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
+                        {lookup(r,"whatsapp") && <DesignLink href={lookup(r,"whatsapp")} style={{ "height": "34px", "padding": "0 14px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "display": "inline-flex", "alignItems": "center", "textDecoration": "none", "fontSize": "12px", "fontWeight": "700" }}>
                           {"Escribir"}
-                        </DesignLink>
+                        </DesignLink>}
                       </div>
                     </Fragment>
                   ))}
                   <span style={{ "marginTop": "auto", "fontSize": "12px", "color": "#6B6B6B" }}>
-                    {"Sugerencia: envíales la oferta de la semana desde Enlaces y QR."}
+                    {"Se muestran clientes con compras registradas hace más de 60 días."}
                   </span>
                 </div>
               </div>
