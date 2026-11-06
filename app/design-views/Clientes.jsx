@@ -615,9 +615,9 @@ export default function Clientes(props) {
                       </svg>
                       {"WhatsApp"}
                     </DesignLink>}
-                    <span style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#FFFFFF", "fontSize": "12px", "color": "#777" }}>
-                      Creación de cotizaciones pendiente
-                    </span>
+                    <DesignLink href="/cotizaciones" style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#FFFFFF", "fontSize": "13px", "fontWeight": "700", "textDecoration": "none" }}>
+                      Nueva cotización
+                    </DesignLink>
                     <DesignLink href={"/pedidos"} style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#E8701F", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Nuevo pedido"}
                     </DesignLink>
