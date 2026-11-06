@@ -71,7 +71,7 @@ class Component extends DesignLogic {
       traslado: ['Traslados', 'Traslados', 'Entre tienda y almacén', '/traslados', IC.traslado],
       kardex: ['', 'Kardex', 'Historial por producto y lote', '/kardex', IC.reportes],
       caja: ['Caja', 'Caja del día', 'Apertura, arqueo y cierre', '/caja', IC.caja, 'Abierta'],
-      cobro: ['', 'Cobranzas', 'Cuentas por cobrar', '/clientes', IC.cobro, 'S/ 18k'],
+      cobro: ['', 'Cobranzas', 'Cuentas por cobrar', '/cuentas-por-cobrar', IC.cobro, ''],
       cuentasProveedor: ['', 'Cuentas por pagar', 'Deudas y pagos a proveedores', '/cuentas-por-pagar', IC.finanzas],
       gasto: ['Gastos', 'Gastos', 'Luz, alquiler, sueldos', '/gastos', IC.gasto, '2 por pagar', 2, true],
       sunat: ['Comprobantes', 'Comprobantes SUNAT', 'Boletas y facturas', '/comprobantes', IC.sunat, '3 por emitir', 3, true],
