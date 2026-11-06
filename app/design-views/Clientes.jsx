@@ -47,6 +47,12 @@ class Component extends DesignLogic {
             c.limiteCredito > 0 ? [c.limiteCredito, 0] : null, c.correo || c.telefono || '—');
         })
       : datosConectados ? [] : CLDemo;
+    const cuentasListas = this.props.apiCuentasClienteState === 'success';
+    const cuentas = cuentasListas ? (this.props.apiCuentasCliente || []).filter(c => c.estado !== 'anulada' && c.saldo > 0) : [];
+    const hoyLima = new Intl.DateTimeFormat('en-CA', { timeZone:'America/Lima', year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date());
+    const hoyMs = Date.parse(hoyLima + 'T00:00:00Z');
+    const grupos = [cuentas.filter(c => Date.parse(c.fechaVencimiento.slice(0,10)+'T00:00:00Z') > hoyMs + 7*86400000), cuentas.filter(c => { const f=Date.parse(c.fechaVencimiento.slice(0,10)+'T00:00:00Z'); return f >= hoyMs && f <= hoyMs + 7*86400000; }), cuentas.filter(c => Date.parse(c.fechaVencimiento.slice(0,10)+'T00:00:00Z') < hoyMs)];
+    const sumaCuentas = xs => xs.reduce((n,c) => n + Math.round(c.saldo*100),0)/100;
     const vis = CL.filter((c) => st.seg === 'Todos' || c.type === st.seg);
     const S = CL.find((c) => c.id === st.sel) || CL[0] || C('', 'Sin clientes registrados', 'Consumidor', '—', '—', 0, 0, '—', 'Al día', null, '—');
     const SEG = datosConectados
@@ -86,11 +92,14 @@ class Component extends DesignLogic {
         pressed: st.seg === s[0] ? 'true' : 'false', border: st.seg === s[0] ? '#E8701F' : '#FFFFFF',
         pick: () => this.setState({ seg: st.seg === s[0] ? 'Todos' : s[0] })
       })),
+      cuentasTotal: cuentasListas ? money2(sumaCuentas(cuentas)) : '—',
+      cuentasEstado: this.props.apiCuentasClienteState,
+      cuentasError: this.props.apiCuentasClienteError || '',
       aging: [
-        ['Al día', 'Dentro del plazo · 6 facturas', 'S/ 11,200', '#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'],
-        ['Vence esta semana', '3 facturas', 'S/ 4,980', '#FFF4D6', '#7A4A00', 'M12 7v5l3 2'],
-        ['Vencido', 'Más de 15 días · 3 facturas', 'S/ 2,240', '#FDE4E2', '#8E1C14', 'M12 4v10M12 18h.01']
-      ].map((a) => ({ name: a[0], sub: a[1], v: a[2], bg: a[3], fg: a[4], icon: a[5] })),
+        ['Al día', 'Vence después de 7 días', '#E4F4E7', '#1B5E20', 'M5 12l5 5 9-10'],
+        ['Vence en 7 días', 'Incluye vencimientos de hoy', '#FFF4D6', '#7A4A00', 'M12 7v5l3 2'],
+        ['Vencido', 'Fecha de vencimiento pasada', '#FDE4E2', '#8E1C14', 'M12 4v10M12 18h.01']
+      ].map((a,i) => ({ name:a[0], sub:cuentasListas ? grupos[i].length + (grupos[i].length===1?' cuenta · ':' cuentas · ') + a[1] : a[1], v:cuentasListas ? money2(sumaCuentas(grupos[i])) : '—', bg:a[2], fg:a[3], icon:a[4] })),
       newMonths: NEW.map((n, i) => ({ t: MON[i], n: String(n), h: Math.round((n / 25) * 100) + '%', c: i === 5 ? '#E8701F' : '#F5C3A0' })),
       newAria: 'Clientes nuevos por mes: ' + NEW.map((n, i) => MON[i] + ' ' + n).join(', '),
       chips: ['Todos', 'Consumidor', 'Minorista', 'Mayorista', 'Empresa'].map((c) => ({
@@ -198,7 +207,7 @@ export default function Clientes(props) {
                     {"Clientes"}
                   </span>
                   <span style={{ "fontSize": "38px", "fontWeight": "400", "letterSpacing": "-0.02em", "color": "#9A9A9A" }}>
-                    {"23 nuevos en octubre"}
+                    {"Cartera de clientes"}
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
@@ -222,6 +231,7 @@ export default function Clientes(props) {
               </div>
             </div>
             <div style={{ "background": "#FFFFFF", "padding": "18px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>
+              <div role="note" style={{padding:"12px 16px",borderRadius:"16px",background:"#FFF4D6",color:"#704900",fontSize:"12px",lineHeight:1.5}}>La lista de clientes y la tarjeta de cuentas por cobrar usan datos reales. Los demás gráficos y estadísticas de esta pantalla todavía son de ejemplo.</div>
               <div style={{ "display": "flex", "flexWrap": "wrap", "gap": "14px", "alignItems": "stretch" }}>
                 <div style={{ "flex": "1.3 1 380px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>
                   <span style={{ "display": "flex", "flexDirection": "column" }}>
@@ -261,15 +271,14 @@ export default function Clientes(props) {
                       {"Cuentas por cobrar"}
                     </span>
                     <span style={{ "fontSize": "12px", "color": "#BDBDBD" }}>
-                      {"Crédito a empresas"}
+                      {"Últimas 200 cuentas"}
                     </span>
                   </span>
                   <span style={{ "fontSize": "40px", "fontWeight": "800", "letterSpacing": "-0.02em" }}>
-                    <span style={{ "color": "#FF914C" }}>
-                      {"S/"}
-                    </span>
-                    {" 18,420"}
+                    <span style={{ "color": "#FF914C" }}>{lookup(v, "cuentasTotal")}</span>
                   </span>
+                  {lookup(v, "cuentasEstado") === "pending" && <span style={{fontSize:12,color:"#BDBDBD"}}>Cargando cuentas…</span>}
+                  {lookup(v, "cuentasEstado") === "error" && <span role="alert" style={{fontSize:12,color:"#FFB4A8"}}>No se pudieron cargar las cuentas. {lookup(v, "cuentasError")}</span>}
                   {(lookup(v, "aging") || []).map((a, index3) => (
                     <Fragment key={index3}>
                       <div style={{ "display": "flex", "alignItems": "center", "gap": "12px", "padding": "10px 12px", "borderRadius": "16px", "background": "#1E1E1E" }}>
@@ -292,8 +301,8 @@ export default function Clientes(props) {
                       </div>
                     </Fragment>
                   ))}
-                  <DesignLink href={"/pedidos"} style={{ "marginTop": "auto", "height": "42px", "borderRadius": "999px", "background": "#FF914C", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "800" }}>
-                    {"Ver facturas por cobrar"}
+                  <DesignLink href={"/cuentas-por-cobrar"} style={{ "marginTop": "auto", "height": "42px", "borderRadius": "999px", "background": "#FF914C", "color": "#111111", "display": "flex", "alignItems": "center", "justifyContent": "center", "textDecoration": "none", "fontSize": "13px", "fontWeight": "800" }}>
+                    {"Ver cuentas por cobrar"}
                   </DesignLink>
                 </div>
                 <div style={{ "flex": "1 1 320px", "minWidth": "0", "borderRadius": "30px", "background": "#F4F4F2", "padding": "22px", "display": "flex", "flexDirection": "column", "gap": "14px" }}>

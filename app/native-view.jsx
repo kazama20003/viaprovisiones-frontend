@@ -34,7 +34,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { pinPanelMenu, registerPopup } from "./panel-menu-state";
-import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarProveedoresCompra, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
+import { avanzarPedido, cerrarSesion, guardarProducto, registrarLote, operarLote, subirArchivoProducto, elegirImagenPrincipal, iniciarSesion, listarProveedoresCompra, listarCategorias, guardarCategoria, listarMarcas, guardarMarca, listarClientes, listarCuentasCliente, listarPedidos, listarProductos, obtenerProductoTienda, listarProductosAdministracion, obtenerResumenPanel, obtenerSesion, listarSucursales, listarAlmacenes, guardarUbicacion, listarMovimientos, listarTraslados, crearTraslado, accionarTraslado } from "./backend-api";
 
 const views = {
   Admin: dynamic(() => import("./design-views/Admin"), { ssr: false }),
@@ -112,6 +112,7 @@ function ConnectedView({ name }) {
   const cargaCatalogo = ["Main", "Categoria", "Busqueda"].includes(name);
   const requiereSesion = panelViews.has(name) && name !== "AdminLogin";
   const clientes = useQuery({ queryKey: ["clientes"], queryFn: ({ signal }) => listarClientes(signal), enabled: name === "Clientes" });
+  const cuentasCliente = useQuery({ queryKey: ["cuentas-cliente"], queryFn: ({ signal }) => listarCuentasCliente(signal), enabled: name === "Clientes" });
   const pedidos = useQuery({ queryKey: ["pedidos"], queryFn: ({ signal }) => listarPedidos(signal), enabled: name === "Pedidos" });
   const resumen = useQuery({ queryKey: ["panel", "resumen"], queryFn: ({ signal }) => obtenerResumenPanel(signal), enabled: name === "Dashboard" });
   const productosAdmin = useQuery({ queryKey: ["productos", "admin"], queryFn: ({ signal }) => listarProductosAdministracion(signal), enabled: ["ProductoEditar", "Inventario", "Traslados"].includes(name) });
@@ -199,6 +200,9 @@ function ConnectedView({ name }) {
     loginLoading={iniciar.isPending}
     apiClientes={clientes.data?.datos ?? []}
     apiClientesState={clientes.status}
+    apiCuentasCliente={cuentasCliente.data?.datos ?? []}
+    apiCuentasClienteState={cuentasCliente.status}
+    apiCuentasClienteError={cuentasCliente.error?.message ?? ""}
     apiPedidos={pedidos.data?.datos ?? []}
     apiPedidosState={pedidos.status}
     apiResumen={resumen.data?.datos ?? null}
