@@ -72,6 +72,9 @@ export function cerrarSesion() {
   return request<{ datos: { cerrada: boolean } }>("/sesion/cerrar", { method: "POST" });
 }
 
+export type NuevoCliente = { nombre:string; tipoCliente:'consumidor'|'minorista'|'mayorista'|'empresa'; tipoDocumento:'sin_documento'|'dni'|'ruc'|'ce'; numeroDocumento?:string; correo?:string; telefono?:string };
+export function crearCliente(datos:NuevoCliente){return request<{datos:{id:string;nombre:string}}>('/clientes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(datos)});}
+
 export function listarClientes(signal?: AbortSignal) {
   return request<{ datos: ClientePanel[] }>("/clientes", { signal });
 }

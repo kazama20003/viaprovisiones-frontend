@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import FormularioCliente from "./FormularioCliente";
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
@@ -134,6 +135,7 @@ class Component extends DesignLogic {
 const defaults = {"accent": "#FF914C", "menuAbierto": false};
 
 export default function Clientes(props) {
+  const [formularioAbierto, setFormularioAbierto] = useState(false);
   return <DesignHost Logic={Component} defaults={defaults} componentProps={props} render={(v) => (
     <Fragment>
       <style>{"\nbody{margin:0;background:#E9E9E7}\na{color:#111111}\n.noscroll{scrollbar-width:none;-ms-overflow-style:none}.noscroll::-webkit-scrollbar{display:none}\n"}</style>
@@ -167,7 +169,7 @@ export default function Clientes(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
-                <button style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
+                <button type="button" onClick={() => setFormularioAbierto(true)} aria-expanded={formularioAbierto} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 22px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "Manrope, sans-serif", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}>
                     <path d={"M12 5v14M5 12h14"}></path>
                   </svg>
@@ -189,6 +191,7 @@ export default function Clientes(props) {
                   <input type={"search"} placeholder={"Nombre, RUC o celular…"} style={{ "width": "170px", "border": "none", "background": "transparent", "fontFamily": "inherit", "fontSize": "13px", "outline": "none" }} />
                 </label>
               </div>
+              {formularioAbierto && <FormularioCliente onCerrar={() => setFormularioAbierto(false)} />}
               <div style={{ "display": "flex", "alignItems": "flex-end", "gap": "24px", "flexWrap": "wrap" }}>
                 <span style={{ "display": "flex", "flexDirection": "column", "lineHeight": "1.12", "minWidth": "300px" }}>
                   <span style={{ "fontSize": "38px", "fontWeight": "600", "letterSpacing": "-0.02em" }}>
