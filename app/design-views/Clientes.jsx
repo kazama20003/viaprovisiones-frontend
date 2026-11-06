@@ -44,7 +44,7 @@ class Component extends DesignLogic {
     const hoyStr = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Lima',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
     const CL = this.props.apiClientesState === 'success' ? (this.props.apiClientes || []).map(c => {
       const tipo={consumidor:'Consumidor',minorista:'Minorista',mayorista:'Mayorista',empresa:'Empresa'}[c.tipoCliente] || 'Consumidor', pedidos=c.pedidos||[], deuda=realCuentas.filter(x=>x.cliente.id===c.id&&x.estado!=='anulada'&&x.saldo>0), usado=deuda.reduce((n,x)=>n+Number(x.saldo),0), ultimo=pedidos[0], total=pedidos.reduce((n,x)=>n+Math.max(0,Number(x.total)-Number(x.devuelto||0)),0), vencido=deuda.some(x=>x.fechaVencimiento.slice(0,10)<hoyStr);
-      return {puedeVerCompras:c.puedeVerCompras,...C(c.id,c.razonSocial||c.nombre,tipo,'—',ultimo?new Date(ultimo.creadoEn).toLocaleDateString('es-PE',{timeZone:'America/Lima'}):'Sin compras',pedidos.length,total,c.condicionPagoDias?'Crédito · '+c.condicionPagoDias+' días':'Contado',this.props.apiCuentasClienteState!=='success'||realCuentas.length>=200?'Sin datos':vencido?'Pago vencido':usado>0?'Por cobrar':'Al día',c.limiteCredito>0&&this.props.apiCuentasClienteState==='success'&&realCuentas.length<200?[c.limiteCredito,usado]:null,c.correo||c.telefono||'—'),pedidos,creadoEn:c.creadoEn,numeroDocumento:c.numeroDocumento,telefono:c.telefono};
+      return {puedeVerCompras:c.puedeVerCompras,...C(c.id,c.razonSocial||c.nombre,tipo,'—',ultimo?new Date(ultimo.creadoEn).toLocaleDateString('es-PE',{timeZone:'America/Lima'}):'Sin compras',pedidos.length,total,c.condicionPagoDias?'Crédito · '+c.condicionPagoDias+' días':'Contado',this.props.apiCuentasClienteState!=='success'||realCuentas.length>=200?'Sin datos':vencido?'Pago vencido':usado>0?'Por cobrar':'Al día',c.limiteCredito>0&&this.props.apiCuentasClienteState==='success'&&realCuentas.length<200?[c.limiteCredito,usado]:null,c.correo||c.telefono||'—'),pedidos,cotizaciones:c.cotizaciones||[],creadoEn:c.creadoEn,numeroDocumento:c.numeroDocumento,telefono:c.telefono};
     }) : datosConectados ? [] : CLDemo;
     const cuentasListas = this.props.apiCuentasClienteState === 'success';
     const cuentas = cuentasListas ? (this.props.apiCuentasCliente || []).filter(c => c.estado !== 'anulada' && c.saldo > 0) : [];
@@ -66,7 +66,7 @@ class Component extends DesignLogic {
     const hist=(S.pedidos||[]).slice(0,3).map(p=>({id:p.numero,apiId:p.id,date:new Date(p.creadoEn).toLocaleDateString('es-PE',{timeZone:'America/Lima'}),status:p.estado.replaceAll('_',' '),bg:'#F4F4F2',fg:'#111',total:money2(Math.max(0,Number(p.total)-Number(p.devuelto||0)))}));
     const corp = S.type === 'Empresa' || S.type === 'Mayorista';
     const wa = value => {let n=String(value||'').replace(/\D/g,'');if(n.length===9)n='51'+n;return n.length>=11&&n.length<=15?'https://wa.me/'+n:''};
-    const quotes = [];
+    const quotes = (S.cotizaciones||[]).map(q=>({id:q.numero,sub:new Date(q.creadaEn).toLocaleDateString('es-PE',{timeZone:'America/Lima'}),status:q.estado.replaceAll('_',' '),total:money2(q.total)}));
     return {
       accent,
       menuOpen: st.menu || !!this.props.menuAbierto,
@@ -578,13 +578,11 @@ export default function Clientes(props) {
                       <span style={{ "fontSize": "13px", "fontWeight": "700" }}>
                         {"Cotizaciones"}
                       </span>
-                      <DesignLink href={"/cotizaciones"} style={{ "fontSize": "12px", "fontWeight": "700", "color": "#C2410C", "textDecoration": "none" }}>
-                        {"Ver todas →"}
-                      </DesignLink>
+                      <span style={{fontSize:12,color:'#777'}}>Últimas 5</span>
                     </div>
                     {(lookup(v, "sel.quotes") || []).map((q, index9) => (
                       <Fragment key={index9}>
-                        <DesignLink href={"/cotizaciones"} style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "10px 0", "borderTop": "1px solid #F1F1EE", "textDecoration": "none" }}>
+                        <div style={{ "display": "flex", "alignItems": "center", "gap": "10px", "padding": "10px 0", "borderTop": "1px solid #F1F1EE", "textDecoration": "none" }}>
                           <span style={{ "flex": "1", "display": "flex", "flexDirection": "column" }}>
                             <span style={{ "fontSize": "13px", "fontWeight": "700" }}>
                               {lookup(q, "id")}
@@ -599,13 +597,13 @@ export default function Clientes(props) {
                           <span style={{ "minWidth": "86px", "textAlign": "right", "fontSize": "13px", "fontWeight": "800" }}>
                             {lookup(q, "total")}
                           </span>
-                        </DesignLink>
+                        </div>
                       </Fragment>
                     ))}
                     {Boolean(lookup(v, "sel.noQuotes")) && (
                       <Fragment>
                         <span style={{ "display": "block", "padding": "10px 0 12px", "borderTop": "1px solid #F1F1EE", "fontSize": "12px", "color": "#8C8C8C" }}>
-                          {"Las cotizaciones aún no están conectadas a esta ficha."}
+                          {lookup(v,'sel.puedeVerCompras') ? 'No hay cotizaciones registradas para este cliente.' : 'No tienes permiso para consultar cotizaciones.'}
                         </span>
                       </Fragment>
                     )}
@@ -617,9 +615,9 @@ export default function Clientes(props) {
                       </svg>
                       {"WhatsApp"}
                     </DesignLink>}
-                    <DesignLink href={"/cotizaciones"} style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
-                      {"Nueva cotización"}
-                    </DesignLink>
+                    <span style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#FFFFFF", "fontSize": "12px", "color": "#777" }}>
+                      Creación de cotizaciones pendiente
+                    </span>
                     <DesignLink href={"/pedidos"} style={{ "flex": "1 1 140px", "display": "inline-flex", "alignItems": "center", "justifyContent": "center", "height": "44px", "borderRadius": "999px", "background": "#E8701F", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "13px", "fontWeight": "700" }}>
                       {"Nuevo pedido"}
                     </DesignLink>
