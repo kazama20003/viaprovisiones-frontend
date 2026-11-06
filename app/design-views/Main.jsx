@@ -412,7 +412,7 @@ export default function Main(props) {
                     <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: "12px", textTransform: "uppercase" }}>{lookup(p, "categoria") || "VIA Provisiones"}</span>
                     <h3 style={{ margin: 0, fontFamily: "Archivo, sans-serif", fontSize: "18px", textTransform: "uppercase" }}><DesignLink href={`/producto?id=${encodeURIComponent(p.id)}`}>{lookup(p, "nombre")}</DesignLink></h3>
                     <strong style={{ fontFamily: "'Roboto Mono', monospace" }}>S/ {Number(lookup(p, "precio") || 0).toFixed(2)}</strong>
-                    <button onClick={add} style={{ height: "44px", borderRadius: "999px", border: "2px solid #111111", background: "#FFFFFF", cursor: "pointer", fontWeight: "700" }}>Añadir al carrito</button>
+                    <DesignLink href={`/producto?id=${encodeURIComponent(p.id)}`} style={{ height: "44px", borderRadius: "999px", border: "2px solid #111111", background: "#FFFFFF", display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", fontWeight: "700" }}>Ver producto</DesignLink>
                   </article>
                 ))}
               </div>

@@ -1,0 +1,4 @@
+const KEY='via-carrito-v1';
+export function leerCarrito(){try{const data=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(data))return [];return data.filter(x=>x&&typeof x.productoId==='string'&&(x.varianteId===null||typeof x.varianteId==='string')&&Number.isInteger(x.cantidad)&&x.cantidad>0&&x.cantidad<=999).slice(0,50)}catch{return []}}
+export function guardarCarrito(items){localStorage.setItem(KEY,JSON.stringify(items));window.dispatchEvent(new Event('via-carrito-cambio'))}
+export function agregarCarrito(productoId,varianteId,cantidad=1){const items=leerCarrito(),i=items.findIndex(x=>x.productoId===productoId&&x.varianteId===varianteId);if(i>=0)items[i]={...items[i],cantidad:Math.min(999,items[i].cantidad+cantidad)};else if(items.length<50)items.push({productoId,varianteId,cantidad});else throw new Error('El carrito admite hasta 50 productos diferentes.');guardarCarrito(items)}
