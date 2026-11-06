@@ -10,7 +10,7 @@ class Component extends DesignLogic {
   constructor(props) {
     super(props);
     this.state = {
-      menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), sec: 'Negocio', saved: false, method: 'PEPS',
+      menu: false, pinned: (() => { try { return localStorage.getItem('via-menu-pinned') === '1'; } catch (e) { return false; } })(), sec: ({usuarios:'Usuarios y roles',pagos:'Pagos',envios:'Envíos',precios:'Precios y listas',notificaciones:'Notificaciones',tienda:'Tienda web'})[props.seccionAjustes] || 'Negocio', saved: false, method: 'PEPS',
       on: { yape: true, plin: true, transf: true, efectivo: true, tarjeta: false, recojo: true, delivery: true, agencia: true, nPedido: true, nStock: true, nGarantia: true, nCotiz: true, nResumen: false, wStock: true, wMayor: true, wPausa: false, wWhats: true },
       perm: { 'Pedidos-1': true, 'Cotizaciones-1': true, 'Inventario y lotes-2': true, 'Compras a proveedores-2': true }
     };
@@ -83,7 +83,7 @@ class Component extends DesignLogic {
       secWeb: st.sec === 'Tienda web',
       secs: SECS.map((s) => {
         const a = st.sec === s[0];
-        return { label: s[0], icon: s[1], hint: s[2], current: a ? 'page' : 'false', bg: a ? '#111111' : 'transparent', fg: a ? '#FFFFFF' : '#111111', iconBg: a ? '#E8701F' : '#F4F4F2', iconFg: a ? '#FFFFFF' : '#111111', subFg: a ? '#BDBDBD' : '#8C8C8C', pick: () => this.setState({ sec: s[0], saved: false }) };
+        return { label: s[0], icon: s[1], hint: s[2], current: a ? 'page' : 'false', bg: a ? '#111111' : 'transparent', fg: a ? '#FFFFFF' : '#111111', iconBg: a ? '#E8701F' : '#F4F4F2', iconFg: a ? '#FFFFFF' : '#111111', subFg: a ? '#BDBDBD' : '#8C8C8C', pick: () => { this.setState({ sec: s[0], saved: false }); this.props.onSeccionAjustes?.(({ 'Negocio':'negocio', 'Usuarios y roles':'usuarios', 'Pagos':'pagos', 'Envíos':'envios', 'Precios y listas':'precios', 'Notificaciones':'notificaciones', 'Tienda web':'tienda' })[s[0]]); } };
       }),
       headStats: [
         { v: '3', k1: 'Usuarios', k2: 'con acceso', bg: '#FFFFFF', fg: '#111111' },

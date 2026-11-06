@@ -191,7 +191,9 @@ function ConnectedView({ name }) {
       event.preventDefault();
       cerrar.mutate();
     }
-  }}><DesignImport key={name === 'ProductoEditar' ? productoId || 'nuevo' : name} name={name}
+  }}><DesignImport key={name === 'ProductoEditar' ? productoId || 'nuevo' : name === 'Ajustes' ? `ajustes-${searchParams.get('seccion') || 'negocio'}` : name} name={name}
+    seccionAjustes={name === 'Ajustes' ? searchParams.get('seccion') : null}
+    onSeccionAjustes={(seccion) => router.replace(seccion === 'negocio' ? '/ajustes' : `/ajustes?seccion=${encodeURIComponent(seccion)}`, { scroll: false })}
     apiProductos={productos.data?.datos ?? []}
     apiCatalogState={cargaCatalogo ? productos.status : "idle"}
     apiCatalogError={productos.error?.message ?? ""}

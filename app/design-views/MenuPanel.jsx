@@ -82,7 +82,7 @@ class Component extends DesignLogic {
       panel: ['Panel', 'Panel de inicio', 'Resumen del día', '/dashboard', IC.panel],
       reportes: ['Reportes', 'Reportes', 'Ventas y márgenes', '/reportes', IC.reportes],
       ajustes: ['Ajustes', 'Ajustes', 'Negocio, pagos, envíos', '/ajustes', IC.ajustes],
-      roles: ['', 'Usuarios y roles', 'Quién ve qué', '/ajustes', IC.roles],
+      roles: ['UsuariosRoles', 'Usuarios y roles', 'Quién ve qué', '/ajustes?seccion=usuarios', IC.roles],
       notif: ['Notificaciones', 'Notificaciones y perfil', 'Avisos y tu cuenta', '/notificaciones', 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4', '5 sin leer', 5, true]
     };
     const G = [

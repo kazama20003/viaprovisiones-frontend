@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import MenuPanel from "./design-views/MenuPanel";
 import { viewForPath } from "./view-map";
 import { isPopupOpen, subscribePopup } from "./panel-menu-state";
@@ -17,10 +17,12 @@ const getPinned = () => { try { return localStorage.getItem("via-menu-pinned") =
 
 export default function PersistentPanelMenu() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const pinned = useSyncExternalStore(subscribe, getPinned, () => false);
   const popupOpen = useSyncExternalStore(subscribePopup, isPopupOpen, () => false);
   const name = viewForPath(pathname || "/")?.name;
   const visible = pinned && !popupOpen && panelNames.has(name);
+  const active = name === "Ajustes" && searchParams.get("seccion") === "usuarios" ? "UsuariosRoles" : (activeNames[name] || name);
 
   useEffect(() => {
     document.body.classList.toggle("via-pinned-panel", visible);
@@ -33,6 +35,6 @@ export default function PersistentPanelMenu() {
   }
 
   return <div className={`via-persistent-menu ${visible ? "is-open" : ""}`} inert={!visible}>
-    <MenuPanel mode="bar" active={activeNames[name] || name} onPin={unpin} />
+    <MenuPanel mode="bar" active={active} onPin={unpin} />
   </div>;
 }
