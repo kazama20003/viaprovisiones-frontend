@@ -1,8 +1,7 @@
 "use client";
-
+import AnimatedPanelMenu from '../animated-panel-menu';
 import { useState } from "react";
 import Link from "next/link";
-import { DesignImport } from "../native-view";
 import { nivelCategoria, opcionesCategoria, rutaCategoria } from '../categoria-jerarquia';
 
 export default function CategoriasAdmin({ categorias = [], estado, error, guardarCategoria, pendiente, reintentar }) {
@@ -27,7 +26,7 @@ export default function CategoriasAdmin({ categorias = [], estado, error, guarda
     try { await guardarCategoria(categoria.id, { activa: !categoria.activa }); setMessage(categoria.activa ? 'Categoría desactivada.' : 'Categoría activada.'); }
     catch (err) { setFailure(err.message || 'No se pudo cambiar el estado.'); }
   };
-  const pin = () => { const next = localStorage.getItem('via-menu-pinned') !== '1'; localStorage.setItem('via-menu-pinned', next ? '1' : '0'); window.dispatchEvent(new CustomEvent('via-menu-pin-change', { detail: next })); setMenu(false); };
+
   const rows = opcionesCategoria(categorias).filter(c => rutaCategoria(categorias, c.id).toLocaleLowerCase('es').includes(filter.trim().toLocaleLowerCase('es')));
   return <div className="ca-page">
     <style>{`
@@ -78,6 +77,6 @@ export default function CategoriasAdmin({ categorias = [], estado, error, guarda
         </form>
       </section>
     </div>
-    {menu && <div className="ca-overlay"><div className="ca-overlay-inner"><DesignImport name="MenuPanel" mode="pop" active="CategoriasAdmin" onClose={() => setMenu(false)} onPin={pin} /></div></div>}
+    {menu&&<AnimatedPanelMenu active="CategoriasAdmin" onClose={()=>setMenu(false)}/>} 
   </div>;
 }

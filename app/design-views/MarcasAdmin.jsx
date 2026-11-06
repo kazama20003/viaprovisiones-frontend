@@ -1,7 +1,7 @@
 'use client';
+import AnimatedPanelMenu from '../animated-panel-menu';
 import { useState } from 'react';
 import Link from 'next/link';
-import { DesignImport } from '../native-view';
 
 export default function MarcasAdmin({ marcas = [], marcasEstado, marcasError, reintentarMarcas, guardarMarca, marcaPendiente }) {
   const [menu, setMenu] = useState(false);
@@ -25,5 +25,5 @@ export default function MarcasAdmin({ marcas = [], marcasEstado, marcasError, re
     {marcasEstado === 'success' && !marcas.length && <div className="via-empty-state"><span><strong>Aún no hay marcas</strong>Crea una para asignarla a tus productos.</span></div>}
     {marcas.filter(m => m.nombre.toLocaleLowerCase('es').includes(buscar.trim().toLocaleLowerCase('es'))).map(m => <div className="ma-row" key={m.id}><strong style={{ flex:1,minWidth:130 }}>{m.nombre}</strong><span style={{ fontSize:12,color:m.activa?'#1b5e20':'#777' }}>{m.activa?'Activa':'Inactiva'}</span><button className="ma-btn ma-sub" disabled={marcaPendiente} onClick={() => { setId(m.id); setNombre(m.nombre); setError(''); }}>Editar</button><button className="ma-btn ma-sub" disabled={marcaPendiente} onClick={() => toggle(m)}>{m.activa?'Desactivar':'Activar'}</button></div>)}
   </section><section className="ma-card ma-form"><strong>{id ? 'Editar marca' : 'Nueva marca'}</strong><p style={{ fontSize:13,color:'#8c8c8c' }}>Las marcas activas aparecen al crear productos.</p>{mensaje && <p role="status" style={{ color:'#1b5e20' }}>{mensaje}</p>}{error && <p role="alert" style={{ color:'#8e1c14' }}>{error}</p>}<form onSubmit={guardar}><label htmlFor="ma-nombre" style={{ display:'block',fontWeight:700,fontSize:12,margin:'16px 0 6px' }}>Nombre</label><input id="ma-nombre" className="ma-input" maxLength={100} required value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Ej.: Philips"/><div style={{ display:'flex',gap:8,marginTop:18 }}><button className="ma-btn" style={{ background:'#e8701f' }} disabled={marcaPendiente}>{marcaPendiente?'Guardando…':id?'Guardar cambios':'Crear marca'}</button>{id && <button className="ma-btn ma-sub" type="button" onClick={() => { setId(null); setNombre(''); setError(''); }}>Cancelar</button>}</div></form></section></div>
-  {menu && <div className="ma-overlay"><div className="ma-overlay-inner"><DesignImport name="MenuPanel" mode="pop" active="MarcasAdmin" onClose={() => setMenu(false)}/></div></div>}</div>;
+  {menu&&<AnimatedPanelMenu active="MarcasAdmin" onClose={()=>setMenu(false)}/>} </div>;
 }

@@ -86,3 +86,13 @@ body.via-pinned-panel .native-panel-shell > .native-content > div > div { border
   .native-panel-shell .via-panel-stat > span:last-child { font-size: 11px !important; }
 }
 .via-work-location{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:600 12px Manrope,system-ui,sans-serif;color:#555}.via-work-location label{display:flex;align-items:center;gap:8px;min-width:0}.via-work-location select{max-width:250px;min-width:0;height:40px;padding:0 30px 0 12px;border:1px solid #e4e4e0;border-radius:999px;background:#f4f4f2;color:#111;font:700 12px Manrope,system-ui,sans-serif;cursor:pointer}.via-work-location [role=alert]{color:#a12419}.via-work-location.is-compact label>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.via-work-location.is-compact select{max-width:165px}@media(max-width:600px){.via-work-location.is-compact select{max-width:110px}}
+/* Menú del panel: entrada y salida compartidas por las vistas administrativas. */
+@keyframes via-popup-fade-in { from { opacity: 0; backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(5px); } }
+@keyframes via-popup-fade-out { from { opacity: 1; backdrop-filter: blur(5px); } to { opacity: 0; backdrop-filter: blur(0); } }
+@keyframes via-popup-enter { 0% { opacity: 0; transform: translate3d(0,-30px,0) scale(.94); filter: blur(8px); } 58% { opacity: 1; transform: translate3d(0,5px,0) scale(1.012); filter: blur(0); } 78% { transform: translate3d(0,-2px,0) scale(.999); } 100% { opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0); } }
+@keyframes via-popup-exit { from { opacity: 1; transform: translate3d(0,0,0) scale(1); filter: blur(0); } to { opacity: 0; transform: translate3d(0,-18px,0) scale(.975); filter: blur(5px); } }
+.via-popup-backdrop { position:absolute; inset:0; z-index:90; background:rgba(17,17,17,.3); padding:96px 24px 24px; box-sizing:border-box; animation:via-popup-fade-in 420ms ease both; }
+.via-popup-panel { width:100%; max-width:1100px; margin:0 auto; transform-origin:center top; animation:via-popup-enter 640ms cubic-bezier(.16,1,.3,1) both; }
+.via-popup-backdrop.is-closing { animation:via-popup-fade-out 420ms ease both; pointer-events:none; }
+.via-popup-backdrop.is-closing .via-popup-panel { animation:via-popup-exit 420ms cubic-bezier(.4,0,1,1) both; }
+@media (prefers-reduced-motion: reduce) { .via-popup-backdrop, .via-popup-panel { animation-duration:.01ms !important; } }
