@@ -63,7 +63,6 @@ class Component extends DesignLogic {
       scanning: st.scanning, abrirEscaner: () => this.setState({ scanning: true }), cerrarEscaner: () => this.setState({ scanning: false }), codigoDetectado: (value) => this.setState({ codigoBarras: value, scanning: false, saved: false }),
       productoId: st.id, productoPublicado: this.props.productoActual?.estado === 'publicado', productoVisible: !!this.props.productoActual?.visibleEnTienda,
       codigoGuardado: this.props.productoActual?.codigoBarras || '',
-      setSku: (e) => this.setState({ sku: e.target.value, saved: false }),
       setMarca: (e) => this.setState({ marca: e.target.value, saved: false }),
       setCodigoBarras: (e) => this.setState({ codigoBarras: e.target.value, saved: false }),
       setName: (e) => this.setState({ name: (e && e.target && e.target.value) || '', saved: false }),
@@ -316,11 +315,6 @@ export default function ProductoEditar(props) {
                     <label className={"pe-lab"}>
                       {"Marca"}
                       <select className={"pe-in"} value={lookup(v, "marca")} onChange={lookup(v, "setMarca")} disabled={lookup(v, 'marcasEstado') !== 'success'}><option value="">Sin marca</option>{(lookup(v, 'marcas') || []).map(m => <option key={m.id} value={m.nombre}>{m.nombre}{m.activa ? '' : ' (inactiva)'}</option>)}</select><DesignLink href="/marcas" style={{ fontSize:12,color:'#c2410c',fontWeight:700 }}>Administrar marcas ›</DesignLink>
-                    </label>
-                    <label className={"pe-lab"}>
-                      {"Código / SKU"}
-                      <input className={"pe-in"} value={lookup(v, "sku")} onChange={lookup(v, "setSku")} placeholder="Se genera al guardar" maxLength={60} style={{ "fontVariantNumeric": "tabular-nums" }} />
-                      <span style={{fontSize:12,color:'#6B6B6B'}}>Déjalo vacío para generarlo al guardar, o escribe tu propio código.</span>
                     </label>
                     <label className={"pe-lab"}>
                       {"Código de barras"}
