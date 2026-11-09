@@ -30,7 +30,7 @@ class Component extends DesignLogic {
     const productosApi = Array.isArray(this.props.apiProductos) ? this.props.apiProductos : [];
     const productos = catalogoConectado
       ? productosApi.map((p) => ({
-          id: p.id, sub: p.categoria || 'Otros', ruta: p.categoriasRuta?.length ? p.categoriasRuta : [p.categoria || 'Otros'], name: p.nombre,
+          id: p.id, sku: p.sku, sub: p.categoria || 'Otros', ruta: p.categoriasRuta?.length ? p.categoriasRuta : [p.categoria || 'Otros'], name: p.nombre,
           price: 'S/ ' + Number(p.precio).toFixed(2), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
           badge: p.stockDisponible <= 5 ? (p.stockDisponible > 0 ? 'Pocas unidades' : 'Agotado') : '',
           stockDisponible: p.stockDisponible,
@@ -182,7 +182,7 @@ export default function Categoria(props) {
               {(lookup(v, "items") || []).map((p, index2) => (
                 <Fragment key={index2}>
                   <article style={{ "display": "flex", "flexDirection": "column" }}>
-                    <DesignLink href={p.id ? rutaProducto(p.name,p.id) : '/producto'} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
+                    <DesignLink href={p.id ? rutaProducto(p.name,p.id,p.sku) : '/producto'} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
                       <img src={assetSrc(lookup(p, "img"))} alt={lookup(p, "name")} style={{ "position": "absolute", "inset": "0", "width": "100%", "height": "100%", "objectFit": "cover" }} />
                       {Boolean(lookup(p, "badge")) && (
                         <Fragment>
@@ -197,7 +197,7 @@ export default function Categoria(props) {
                       {lookup(p, "sub")}
                     </span>
                     <h3 style={{ "margin": "6px 0 0", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "lineHeight": "1.3", "minHeight": "44px" }}>
-                      <DesignLink href={p.id ? rutaProducto(p.name,p.id) : '/producto'} style={{ "textDecoration": "none" }}>
+                      <DesignLink href={p.id ? rutaProducto(p.name,p.id,p.sku) : '/producto'} style={{ "textDecoration": "none" }}>
                         {lookup(p, "name")}
                       </DesignLink>
                     </h3>

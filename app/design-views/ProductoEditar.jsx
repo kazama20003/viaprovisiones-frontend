@@ -272,7 +272,7 @@ export default function ProductoEditar(props) {
                     </Fragment>
                   ))}
                 </div>
-                <DesignLink href={lookup(v, 'productoId') ? rutaProducto(props.productoActual?.nombre || lookup(v, 'name'), lookup(v, 'productoId')) : '/producto'} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "52px", "padding": "0 20px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
+                <DesignLink href={lookup(v, 'productoId') ? rutaProducto(props.productoActual?.nombre || lookup(v, 'name'), lookup(v, 'productoId'), lookup(v, 'sku')) : '/producto'} style={{ "display": "inline-flex", "alignItems": "center", "gap": "8px", "height": "52px", "padding": "0 20px", "borderRadius": "999px", "background": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"}></path>
                   </svg>
@@ -381,7 +381,7 @@ export default function ProductoEditar(props) {
                   {lookup(v, 'marcasEstado') === 'error' && <p role="alert" style={{ margin:0,color:'#8e1c14',fontSize:12 }}>{props.marcasError || 'No se pudieron cargar las marcas.'} <button type="button" onClick={props.reintentarMarcas}>Reintentar</button></p>}
                   {truthy(lookup(v, 'scanning')) && <EscanerCodigo onDetectar={lookup(v, 'codigoDetectado')} onCerrar={lookup(v, 'cerrarEscaner')} />}
                 </section>
-                {lookup(v, 'productoId') && <div className="pe-codes"><QrProducto id={lookup(v, 'productoId')} nombre={props.productoActual?.nombre || lookup(v, 'name')} publicado={lookup(v, 'productoPublicado')} visible={lookup(v, 'productoVisible')} /><CodigoBarras valor={lookup(v, 'sku')} /></div>}
+                {lookup(v, 'productoId') && <div className="pe-codes"><QrProducto id={lookup(v, 'productoId')} nombre={props.productoActual?.nombre || lookup(v, 'name')} sku={lookup(v, 'sku')} publicado={lookup(v, 'productoPublicado')} visible={lookup(v, 'productoVisible')} /><CodigoBarras valor={lookup(v, 'sku')} /></div>}
                 <section style={{ "borderRadius": "30px", "background": "#FFFFFF", "padding": "24px", "display": "flex", "flexDirection": "column", "gap": "16px" }}>
                   <span style={{ "display": "flex", "alignItems": "baseline", "justifyContent": "space-between", "gap": "12px" }}>
                     <span style={{ "fontSize": "18px", "fontWeight": "700" }}>

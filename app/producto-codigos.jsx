@@ -31,11 +31,11 @@ export function EscanerCodigo({ onDetectar, onCerrar }) {
 const subscribeOrigin = () => () => {};
 const getOrigin = () => (process.env.NEXT_PUBLIC_STOREFRONT_URL || window.location.origin).replace(/\/$/, '');
 
-export function QrProducto({ id, nombre, publicado, visible }) {
+export function QrProducto({ id, nombre, sku, publicado, visible }) {
   const origen = useSyncExternalStore(subscribeOrigin, getOrigin, () => '');
   const svg = useRef(null);
   if (!id || !origen) return null;
-  const url = `${origen}${rutaProducto(nombre,id)}`;
+  const url = `${origen}${rutaProducto(nombre,id,sku)}`;
   const local = /^(localhost|127(?:\.\d+){3}|\[::1\])$/i.test(new URL(origen).hostname);
   const descargar = () => {
     const data = new XMLSerializer().serializeToString(svg.current);
