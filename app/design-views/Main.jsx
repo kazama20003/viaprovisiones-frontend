@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import { rutaProducto } from '../producto-url.mjs';
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
@@ -410,9 +411,9 @@ export default function Main(props) {
                   <article key={lookup(p, "id") || index7} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <img src={assetSrc(lookup(p, "imagen") || "img/a58999411e32d7481815ba8cdc175e97")} alt={lookup(p, "textoAlternativo") || lookup(p, "nombre")} style={{ width: "100%", aspectRatio: "1", borderRadius: "18px", objectFit: "cover", background: "#F4F4F2" }} />
                     <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: "12px", textTransform: "uppercase" }}>{lookup(p, "categoria") || "VIA Provisiones"}</span>
-                    <h3 style={{ margin: 0, fontFamily: "Archivo, sans-serif", fontSize: "18px", textTransform: "uppercase" }}><DesignLink href={`/producto?id=${encodeURIComponent(p.id)}`}>{lookup(p, "nombre")}</DesignLink></h3>
+                    <h3 style={{ margin: 0, fontFamily: "Archivo, sans-serif", fontSize: "18px", textTransform: "uppercase" }}><DesignLink href={rutaProducto(p.nombre,p.id)}>{lookup(p, "nombre")}</DesignLink></h3>
                     <strong style={{ fontFamily: "'Roboto Mono', monospace" }}>S/ {Number(lookup(p, "precio") || 0).toFixed(2)}</strong>
-                    <DesignLink href={`/producto?id=${encodeURIComponent(p.id)}`} style={{ height: "44px", borderRadius: "999px", border: "2px solid #111111", background: "#FFFFFF", display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", fontWeight: "700" }}>Ver producto</DesignLink>
+                    <DesignLink href={rutaProducto(p.nombre,p.id)} style={{ height: "44px", borderRadius: "999px", border: "2px solid #111111", background: "#FFFFFF", display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", fontWeight: "700" }}>Ver producto</DesignLink>
                   </article>
                 ))}
               </div>

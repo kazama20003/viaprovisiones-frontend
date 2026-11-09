@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { rutaProducto } from './producto-url.mjs';
 
 export function EscanerCodigo({ onDetectar, onCerrar }) {
   const video = useRef(null);
@@ -30,11 +31,11 @@ export function EscanerCodigo({ onDetectar, onCerrar }) {
 const subscribeOrigin = () => () => {};
 const getOrigin = () => (process.env.NEXT_PUBLIC_STOREFRONT_URL || window.location.origin).replace(/\/$/, '');
 
-export function QrProducto({ id, publicado, visible }) {
+export function QrProducto({ id, nombre, publicado, visible }) {
   const origen = useSyncExternalStore(subscribeOrigin, getOrigin, () => '');
   const svg = useRef(null);
   if (!id || !origen) return null;
-  const url = `${origen}/producto?id=${encodeURIComponent(id)}`;
+  const url = `${origen}${rutaProducto(nombre,id)}`;
   const local = /^(localhost|127(?:\.\d+){3}|\[::1\])$/i.test(new URL(origen).hostname);
   const descargar = () => {
     const data = new XMLSerializer().serializeToString(svg.current);

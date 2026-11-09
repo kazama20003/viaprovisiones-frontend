@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {slugProducto,rutaProducto,idDeRutaProducto,idProductoValido} from '../app/producto-url.mjs';
+const id='0b7ef725-6f5a-43a0-8ca5-ee0873869bff';
+assert.equal(slugProducto('Lámpara LED + Ñandú'),'lampara-led-nandu');
+assert.equal(slugProducto('...'),'producto');
+assert.equal(slugProducto('A'.repeat(100)).length,80);
+assert.equal(rutaProducto('Linterna LED recargable',id),`/producto/linterna-led-recargable--${id}`);
+assert.equal(idDeRutaProducto(`nombre-antiguo--${id}`),id);
+assert.notEqual(rutaProducto('Nombre nuevo',id),rutaProducto('Nombre antiguo',id));
+assert.notEqual(rutaProducto('Nombre nuevo',id),rutaProducto('Nombre nuevo','0b7ef725-6f5a-43a0-8ca5-ee0873869bfe'));
+assert.equal(idDeRutaProducto('editar'),null);
+assert.equal(idProductoValido('not-an-id'),false);
+console.log('Rutas legibles, nombres repetidos e identificadores estables verificados.');

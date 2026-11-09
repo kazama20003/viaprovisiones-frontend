@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import { rutaProducto } from '../producto-url.mjs';
 import DesignLink from "../design-link";
 import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
@@ -181,7 +182,7 @@ export default function Categoria(props) {
               {(lookup(v, "items") || []).map((p, index2) => (
                 <Fragment key={index2}>
                   <article style={{ "display": "flex", "flexDirection": "column" }}>
-                    <DesignLink href={p.id ? `/producto?id=${encodeURIComponent(p.id)}` : '/producto'} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
+                    <DesignLink href={p.id ? rutaProducto(p.name,p.id) : '/producto'} style={{ "position": "relative", "display": "block", "aspectRatio": "1 / 1", "borderRadius": "19px", "overflow": "hidden" }}>
                       <img src={assetSrc(lookup(p, "img"))} alt={lookup(p, "name")} style={{ "position": "absolute", "inset": "0", "width": "100%", "height": "100%", "objectFit": "cover" }} />
                       {Boolean(lookup(p, "badge")) && (
                         <Fragment>
@@ -196,7 +197,7 @@ export default function Categoria(props) {
                       {lookup(p, "sub")}
                     </span>
                     <h3 style={{ "margin": "6px 0 0", "fontFamily": "Archivo, sans-serif", "fontSize": "17px", "fontWeight": "700", "textTransform": "uppercase", "lineHeight": "1.3", "minHeight": "44px" }}>
-                      <DesignLink href={p.id ? `/producto?id=${encodeURIComponent(p.id)}` : '/producto'} style={{ "textDecoration": "none" }}>
+                      <DesignLink href={p.id ? rutaProducto(p.name,p.id) : '/producto'} style={{ "textDecoration": "none" }}>
                         {lookup(p, "name")}
                       </DesignLink>
                     </h3>
