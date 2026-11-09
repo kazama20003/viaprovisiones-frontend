@@ -18,13 +18,29 @@ class Component extends DesignLogic {
       name: p?.nombre || '', sku: p?.sku || '', marca: p?.marca || '', codigoBarras: p?.codigoBarras || '',
       desc: p?.descripcion || '',
       prices: { pub: p?.precios?.['Público'] ?? p?.precio ?? 0, min: p?.precios?.Minorista ?? 0, may: p?.precios?.Mayorista ?? 0, emp: p?.precios?.Empresa ?? 0 },
-      uploading: false, uploadError: '', uploadMessage: '', scanning: false, scanningVariante: '',
+      uploading: false, uploadError: '', uploadMessage: '', archivosPendientes: [], subidosLocales: {imagen:0,video:0}, esNuevo: !p?.id, scanning: false, scanningVariante: '',
       gruposVariantes: atributosIniciales(p?.datosAdicionales), preciosVariantes: Object.fromEntries((p?.variantes || []).map(v => [claveVariante(v.atributos), v.precioPublico == null ? '' : String(v.precioPublico)])),
       codigosVariantes: Object.fromEntries((p?.variantes || []).map(v => [claveVariante(v.atributos), v.codigoBarras || ''])),
       categoria: p?.categoriaId || '', tags: p?.datosAdicionales?.etiquetas || [], tagInput: '',
       peso: p?.datosAdicionales?.peso || '', medidas: p?.datosAdicionales?.medidas || '', garantia: p?.datosAdicionales?.garantia || 'Sin garantía', tipoEnvio: p?.datosAdicionales?.tipoEnvio || 'Paquete pequeño',
       visible: p?.visibleEnTienda ?? false, featured: p?.destacado ?? false, delivery: p?.permiteDelivery ?? true, agency: p?.permiteAgencia ?? true, pickup: p?.permiteRecojo ?? true, minStock: p?.stockMinimo ?? 0
     };
+  }
+  componentWillUnmount() { for (const item of this.state.archivosPendientes) if (item.preview) URL.revokeObjectURL(item.preview); }
+  async subirPendientes(id) {
+    if (!id || this.state.uploading || !this.state.archivosPendientes.length) return !this.state.archivosPendientes.length;
+    this.setState({uploading:true,uploadError:'',uploadMessage:''});
+    let subidos = 0;
+    while (this.state.archivosPendientes.length) {
+      const item = this.state.archivosPendientes[0];
+      try { await this.props.onSubirArchivo(id, item.file); }
+      catch (error) { this.setState({uploading:false,uploadError:`El producto está guardado. ${subidos ? subidos + ' archivo(s) subidos. ' : ''}No se pudo subir «${item.file.name}»: ${error.message || 'inténtalo nuevamente.'} Los archivos pendientes siguen seleccionados.`}); return false; }
+      if (item.preview) URL.revokeObjectURL(item.preview);
+      subidos++;
+      this.setState({archivosPendientes:this.state.archivosPendientes.slice(1),subidosLocales:{...this.state.subidosLocales,[item.tipo]:this.state.subidosLocales[item.tipo]+1}});
+    }
+    this.setState({uploading:false,uploadMessage:`${subidos} archivo(s) subidos correctamente.`});
+    return true;
   }
   renderVals() {
     const st = this.state;
@@ -89,7 +105,7 @@ class Component extends DesignLogic {
       saved: st.saved,
       error: st.error, saving: st.saving, dismiss: () => this.setState({ saved: false }),
       save: async () => {
-        if (this.state.saving) return;
+        if (this.state.saving || this.state.uploading) return;
         if (!st.name.trim()) { this.setState({ error: 'Completa el nombre del producto.' }); return; }
         if (st.id && !st.sku.trim()) { this.setState({ error: 'El SKU de un producto guardado no puede estar vacío.' }); return; }
         if (errorVariantes) { this.setState({ error: errorVariantes }); return; }
@@ -101,22 +117,31 @@ class Component extends DesignLogic {
         this.setState({ saving: true, error: '', saved: false });
         try {
           const result = await this.props.onGuardarProducto(st.id, { nombre: st.name, sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras, descripcion: st.desc, estado: ({ Publicado: 'publicado', Borrador: 'borrador', Oculto: 'oculto' })[st.status], categoriaId: st.categoria || null, datosAdicionales: { peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, etiquetas: st.tags, colores: preparado.atributos.find(a => a.nombre.toLocaleLowerCase('es') === 'color')?.valores || [], capacidades: preparado.atributos.find(a => a.nombre.toLocaleLowerCase('es') === 'capacidad')?.valores || [], atributosVariantes: preparado.atributos }, preciosVariantes, codigosVariantes, visibleEnTienda: st.visible, destacado: st.featured, permiteDelivery: st.delivery, permiteAgencia: st.agency, permiteRecojo: st.pickup, stockMinimo: st.minStock, precios: st.prices });
-          this.setState({ id: result.datos.id, sku: result.datos.sku, saving: false, saved: true });
+          this.setState({ id: result.datos.id, sku: result.datos.sku, saved: true });
+          const subidos = await this.subirPendientes(result.datos.id);
+          this.setState({ saving: false });
+          if (subidos && this.state.esNuevo) this.props.onProductoCreado(result.datos.id);
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo guardar el producto.' }); }
       },
-      mainImg: principal?.url || '',
+      mainImg: principal?.url || st.archivosPendientes.find(x=>x.tipo==='imagen')?.preview || '',
       photos: imagenes.map((p, i) => ({ src: p.url, n: String(i + 1), aria: 'Usar foto ' + (i + 1) + ' como principal', pressed: p.principal ? 'true' : 'false', ring: p.principal ? '#E8701F' : 'transparent', pick: async () => { try { await this.props.onImagenPrincipal(st.id, p.id); this.setState({ uploadError: '', uploadMessage: 'Foto principal actualizada.' }); } catch (error) { this.setState({ uploadError: error.message || 'No se pudo actualizar la foto.' }); } } })),
       videos, uploading: st.uploading, uploadError: st.uploadError, uploadMessage: st.uploadMessage,
+      pendientes: st.archivosPendientes.map(item=>({nombre:item.file.name,preview:item.preview,tipo:item.tipo,quitar:()=>{if(item.preview)URL.revokeObjectURL(item.preview);this.setState({archivosPendientes:this.state.archivosPendientes.filter(x=>x!==item),uploadError:'',uploadMessage:''})}})),
+      reintentarArchivos: async () => { if (await this.subirPendientes(this.state.id) && this.state.esNuevo) this.props.onProductoCreado(this.state.id); },
       onArchivos: async e => {
         const files = Array.from(e.target.files || []); e.target.value = '';
         if (!files.length) return;
-        if (!st.id) { this.setState({ uploadError: 'Primero guarda el producto para poder subir archivos.', uploadMessage: '' }); return; }
-        this.setState({ uploading: true, uploadError: '', uploadMessage: '' });
-        let subidos = 0;
-        try {
-          for (const file of files) { await this.props.onSubirArchivo(st.id, file); subidos++; }
-          this.setState({ uploading: false, uploadMessage: `${subidos} archivo(s) guardado(s).` });
-        } catch (error) { this.setState({ uploading: false, uploadError: `${subidos ? subidos + ' archivo(s) guardado(s). ' : ''}${error.message || 'No se pudo subir el archivo.'}` }); }
+        const permitidos = ['image/jpeg','image/png','image/webp','video/mp4','video/webm'];
+        if (files.some(f=>!permitidos.includes(f.type))) { this.setState({uploadError:'Usa imágenes JPG, PNG o WebP, o videos MP4 o WebM.'}); return; }
+        if (files.some(f=>f.size===0 || f.size>(f.type.startsWith('image/')?10:50)*1024*1024)) { this.setState({uploadError:'Cada imagen admite hasta 10 MB y cada video hasta 50 MB; los archivos no pueden estar vacíos.'}); return; }
+        const registrados = this.props.productoActual?.archivos || [];
+        const imagenesActuales = registrados.filter(x=>x.tipo==='imagen').length + (this.state.esNuevo && !this.props.productoActual ? this.state.subidosLocales.imagen : 0);
+        const videosActuales = registrados.filter(x=>x.tipo==='video').length + (this.state.esNuevo && !this.props.productoActual ? this.state.subidosLocales.video : 0);
+        const pendientes = this.state.archivosPendientes;
+        if (imagenesActuales + pendientes.filter(x=>x.tipo==='imagen').length + files.filter(f=>f.type.startsWith('image/')).length > 8 || videosActuales + pendientes.filter(x=>x.tipo==='video').length + files.filter(f=>f.type.startsWith('video/')).length > 3) { this.setState({uploadError:'El producto admite hasta 8 fotos y 3 videos en total.'}); return; }
+        const seleccionados = files.map(file=>({file,tipo:file.type.startsWith('image/')?'imagen':'video',preview:file.type.startsWith('image/')?URL.createObjectURL(file):''}));
+        this.setState({archivosPendientes:[...pendientes,...seleccionados],uploadError:'',uploadMessage:st.id?'':'Archivos seleccionados. Se subirán cuando guardes el producto.'});
+        if (this.state.id) { const ok = await this.subirPendientes(this.state.id); if (ok && this.state.esNuevo) this.props.onProductoCreado(this.state.id); }
       },
       costText: soles(cost),
       floorText: soles(cost),
@@ -235,7 +260,7 @@ export default function ProductoEditar(props) {
                   </svg>
                   {"Ver en la tienda"}
                 </DesignLink>
-                <button disabled={lookup(v, "saving")} onClick={lookup(v, "save")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 24px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700" }}>
+                <button disabled={lookup(v, "saving") || lookup(v, "uploading")} onClick={lookup(v, "save")} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "height": "52px", "padding": "0 24px", "borderRadius": "999px", "border": "none", "background": "#E8701F", "color": "#FFFFFF", "cursor": "pointer", "fontFamily": "inherit", "fontSize": "14px", "fontWeight": "700" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                     <path d={"M5 12l5 5 9-10"}></path>
                   </svg>
@@ -370,7 +395,7 @@ export default function ProductoEditar(props) {
                         </Fragment>
                       ))}
                       <label style={{ "gridColumn": "span 2", "border": "2px dashed #DCDCD8", "borderRadius": "20px", "padding": "16px", "display": "flex", "alignItems": "center", "gap": "12px", "cursor": "pointer" }}>
-                        <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple disabled={lookup(v, "uploading")} onChange={lookup(v, "onArchivos")} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }} />
+                        <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple disabled={lookup(v, "uploading") || lookup(v, "saving")} onChange={lookup(v, "onArchivos")} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }} />
                         <span style={{ "width": "42px", "height": "42px", "borderRadius": "50%", "background": "#FFF1E6", "display": "flex", "alignItems": "center", "justifyContent": "center", "flex": "none" }}>
                           <svg width={"18"} height={"18"} viewBox={"0 0 24 24"} fill={"none"} stroke={"#C2410C"} strokeWidth={"2"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>
                             <path d={"M12 16V4M7 9l5-5 5 5M4 20h16"}></path>
@@ -385,7 +410,10 @@ export default function ProductoEditar(props) {
                           </span>
                         </span>
                       </label>
+                      {(lookup(v, 'pendientes') || []).map((item, i) => <div key={i} style={{gridColumn:'span 2',display:'flex',alignItems:'center',gap:10,background:'#f4f4f2',borderRadius:14,padding:8,minWidth:0}}>{item.preview && <img src={item.preview} alt="" style={{width:45,height:45,objectFit:'cover',borderRadius:9}}/>}<span style={{flex:1,minWidth:0,overflowWrap:'anywhere',fontSize:12}}>{item.nombre}<br/><span style={{color:'#777'}}>Pendiente de subida</span></span><button type="button" disabled={lookup(v,'uploading') || lookup(v,'saving')} onClick={item.quitar} aria-label={`Quitar ${item.nombre}`} style={{border:0,borderRadius:999,padding:'8px 12px',cursor:'pointer'}}>Quitar</button></div>)}
+                      {!lookup(v,'productoId') && (lookup(v,'pendientes') || []).some(item=>item.tipo==='imagen') && <p style={{gridColumn:'span 2',fontSize:12,color:'#6b6b6b',margin:0}}>La primera foto seleccionada será la principal; podrás cambiarla después.</p>}
                       {lookup(v, "uploadError") && <p role="alert" style={{ gridColumn: 'span 2', color: '#8E1C14', margin: 0 }}>{lookup(v, "uploadError")}</p>}
+                      {lookup(v,'productoId') && (lookup(v,'pendientes') || []).length > 0 && !lookup(v,'uploading') && !lookup(v,'saving') && <button type="button" onClick={lookup(v,'reintentarArchivos')} style={{gridColumn:'span 2',border:0,borderRadius:999,padding:'10px 15px',background:'#111',color:'#fff',cursor:'pointer'}}>Reintentar archivos pendientes</button>}
                       {lookup(v, "uploadMessage") && <p role="status" style={{ gridColumn: 'span 2', color: '#1B5E20', margin: 0 }}>{lookup(v, "uploadMessage")}</p>}
                     </div>
                   </div>

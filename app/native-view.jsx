@@ -232,8 +232,9 @@ function ConnectedView({ name }) {
     categorias={categorias.data?.datos || []} estado={categorias.status} error={categorias.error?.message || ''} reintentar={() => categorias.refetch()}
     marcas={marcas.data?.datos || []} marcasEstado={marcas.status} marcasError={marcas.error?.message || ''} reintentarMarcas={() => marcas.refetch()} guardarMarca={(id, datos) => marcaMutation.mutateAsync({ id, datos })} marcaPendiente={marcaMutation.isPending}
     guardarCategoria={(id, datos) => categoriaMutation.mutateAsync({ id, datos })} pendiente={categoriaMutation.isPending}
-    onGuardarProducto={async (id, datos) => { const result = await productoMutation.mutateAsync({ id, datos }); if (!id) router.replace(`/producto/editar?id=${encodeURIComponent(result.datos.id)}`); return result; }}
-    onSubirArchivo={async (id, archivo) => { const result = await subirArchivoProducto(id, archivo); await actualizarArchivos(); return result; }}
+    onGuardarProducto={async (id, datos) => productoMutation.mutateAsync({ id, datos })}
+    onProductoCreado={(id) => router.replace(`/producto/editar?id=${encodeURIComponent(id)}`, { scroll: false })}
+    onSubirArchivo={async (id, archivo) => { const result = await subirArchivoProducto(id, archivo); actualizarArchivos().catch(() => {}); return result; }}
     onImagenPrincipal={async (productoId, id) => { const result = await elegirImagenPrincipal(productoId, id); await actualizarArchivos(); return result; }}
     onRegistrarLote={(datos) => loteMutation.mutateAsync(datos)}
     onOperarLote={(id, accion, datos) => operarLoteMutation.mutateAsync({ id, accion, datos })}
