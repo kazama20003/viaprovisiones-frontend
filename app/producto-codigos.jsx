@@ -62,5 +62,5 @@ export function CodigoBarras({ valor }) {
     const objectUrl = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg.current)], { type:'image/svg+xml;charset=utf-8' }));
     const link = document.createElement('a'); link.href = objectUrl; link.download = 'codigo-barras.svg'; link.click(); URL.revokeObjectURL(objectUrl);
   };
-  return <section className="pe-code-card" aria-label="Código de barras"><div className="pe-code-copy"><strong>Código de barras</strong><p>Formato Code 128 · código guardado</p><div className="pe-barcode-preview"><svg ref={svg} role="img" aria-label={`Código de barras ${valor}`} /></div>{error && <p role="alert">{error}</p>}<button type="button" className="pe-code-button" disabled={!!error} onClick={descargar}>Descargar código</button></div></section>;
+  return <section className="pe-code-card" aria-label="Código de barras"><div className="pe-code-copy"><strong>Código de barras interno</strong><p>Formato Code 128 · contiene el SKU asignado</p><div className="pe-barcode-preview"><svg ref={svg} role="img" aria-label={`Código de barras ${valor}`} /></div>{error && <p role="alert">{error}</p>}<button type="button" className="pe-code-button" disabled={!!error} onClick={descargar}>Descargar código</button></div></section>;
 }

@@ -84,7 +84,7 @@ export function listarProductosAdministracion(signal?: AbortSignal) {
 }
 
 export type DetallesProducto = { peso: string; medidas: string; garantia: string; tipoEnvio: string; etiquetas: string[]; colores: string[]; capacidades: string[]; atributosVariantes?: { nombre:string; valores:string[] }[] };
-export type Variante = { id:string; sku:string; atributos:Record<string,string>; precioPublico:number | null; stock:number };
+export type Variante = { id:string; sku:string; codigoBarras?:string|null; atributos:Record<string,string>; precioPublico:number | null; stock:number };
 export type ProductoAdmin = { id: string; sku: string; nombre: string; descripcion: string | null; marca: string | null; codigoBarras: string | null; estado: string; categoria: string | null; categoriaId: string | null; precio: number; precios: Record<string, number>; datosAdicionales: Partial<DetallesProducto>; variantes: Variante[]; historial: { accion: string; creadoEn: string }[]; imagen: string | null; archivos: ArchivoProducto[]; stockDisponible: number; stockMinimo: number; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; lotes: { id: string; codigo: string; varianteId: string | null; costoUnitario: number; fechaIngreso: string; garantiaHasta: string | null; estado: string; proveedor: { nombre: string } | null; existencias: { cantidadFisica: number; cantidadReservada: number; almacen: { id: string; nombre: string; codigo: string } }[] }[] };
 export type CategoriaAdmin = { id: string; nombre: string; descripcion: string | null; activa: boolean; categoriaPadreId: string | null; _count: { productos: number } };
 export function listarCategorias(signal?: AbortSignal) { return request<{ datos: CategoriaAdmin[] }>('/categorias', { signal }); }
@@ -100,7 +100,7 @@ export function subirArchivoProducto(id: string, archivo: File) {
 export function elegirImagenPrincipal(productoId: string, id: string) {
   return request(`/productos/${encodeURIComponent(productoId)}/archivos/${encodeURIComponent(id)}/principal`, { method: 'POST' });
 }
-export type ProductoGuardar = { nombre: string; sku: string; descripcion: string; marca: string; codigoBarras: string; estado: string; categoriaId: string | null; datosAdicionales: DetallesProducto; preciosVariantes?: Record<string, number | null>; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; stockMinimo: number; precios: Record<string, number> };
+export type ProductoGuardar = { nombre: string; sku: string; descripcion: string; marca: string; codigoBarras: string; estado: string; categoriaId: string | null; datosAdicionales: DetallesProducto; preciosVariantes?: Record<string, number | null>; codigosVariantes?: Record<string, string>; visibleEnTienda: boolean; destacado: boolean; permiteDelivery: boolean; permiteAgencia: boolean; permiteRecojo: boolean; stockMinimo: number; precios: Record<string, number> };
 export function guardarProducto(id: string | null, datos: ProductoGuardar) {
   return request<{ datos: { id: string } }>(id ? `/productos/${encodeURIComponent(id)}` : '/productos', { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(datos) });
 }
