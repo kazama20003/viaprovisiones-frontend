@@ -7,6 +7,7 @@ import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-run
 import { opcionesCategoria, rutaCategoria } from '../categoria-jerarquia';
 import { CodigoBarras, EscanerCodigo, QrProducto } from '../producto-codigos';
 import { atributosIniciales, claveVariante, nombreVariante, prepararVariantes } from '../variantes';
+import { resumenCosto, calcularMargen, precioEquilibrio } from '../margen-producto.mjs';
 
 class Component extends DesignLogic {
   constructor(props) {
@@ -48,7 +49,12 @@ class Component extends DesignLogic {
     const soles = (n) => 'S/ ' + Number(n || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const LOTS = (this.props.productoActual?.lotes || []).filter(l => l.estado === 'disponible').map(l => [l.codigo, l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.map(x => x.almacen.nombre).join(', ')]);
     const units = LOTS.reduce((a, l) => a + l[1], 0);
-    const cost = units ? LOTS.reduce((a, l) => a + l[1] * l[2], 0) / units : 0;
+    const hoy = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Lima',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const lotes = this.props.productoActual?.lotes || [];
+    const resumen = resumenCosto(lotes, hoy);
+    const cost = resumen.costo;
+    const tasa = this.props.productoActual?.tasaIgv;
+    const incluyeIgv = this.props.preciosIncluyenIgv;
     const OK = 'M5 12l5 5 9-10', WARN = 'M12 7v6M12 17h.01', BAD = 'M6 6l12 12M18 6L6 18';
     const TIERS = [['pub', 'Público', 'Tienda web y mostrador', '1 unidad'], ['min', 'Minorista', 'Bodegas y tiendas', 'Desde 6 u.'], ['may', 'Mayorista', 'Distribuidores', 'Desde 24 u.'], ['emp', 'Empresa', 'Minería, constructoras', 'Desde 50 u.']];
     const archivos = this.props.productoActual?.archivos || [];
@@ -62,6 +68,10 @@ class Component extends DesignLogic {
     const sstock = units <= st.minStock ? ['Stock bajo', '#7A4A00', WARN] : ['Disponible', '#1B5E20', OK];
     const pub = st.prices.pub;
     const vcount = preparado.combinaciones.length;
+    const comparable = vcount === 0;
+    const margenPublico = comparable ? calcularMargen(pub,cost,tasa,incluyeIgv) : null;
+    const piso = comparable ? precioEquilibrio(cost,tasa,incluyeIgv) : null;
+    const porcentaje = valor => valor === null ? '—' : `${(valor*100).toFixed(1)}%`;
     const todasCategorias = this.props.categorias || [];
     const categorias = opcionesCategoria(todasCategorias).filter(c => c.activa || c.id === st.categoria).map(c => ({ ...c, ruta: rutaCategoria(todasCategorias, c.id) }));
     const categoriaNombre = categorias.find(c => c.id === st.categoria)?.ruta || this.props.productoActual?.categoria || 'Sin categoría';
@@ -94,7 +104,7 @@ class Component extends DesignLogic {
       addTag: () => { const tag = this.state.tagInput.trim(); if (tag && !this.state.tags.includes(tag) && this.state.tags.length < 20) this.setState({ tags: [...this.state.tags, tag], tagInput: '', saved: false }); },
       headStats: [
         [String(units), 'Unidades', 'en ' + LOTS.length + ' lotes', '#FFFFFF', '#111111'],
-        [(pub ? Math.round(((pub - cost) / pub) * 100) : 0) + '%', 'Margen', 'precio público', '#FFFFFF', '#111111'],
+        [porcentaje(margenPublico), 'Margen bruto', comparable ? 'precio público' : 'ver variantes', '#FFFFFF', '#111111'],
         ['—', 'Vendidas', 'últimos 90 días', '#FFFFFF', '#111111'],
         [String(vcount), 'Variantes', 'activas', '#111111', '#FFFFFF']
       ].map((h) => ({ v: h[0], k1: h[1], k2: h[2], bg: h[3], fg: h[4] })),
@@ -143,17 +153,20 @@ class Component extends DesignLogic {
         this.setState({archivosPendientes:[...pendientes,...seleccionados],uploadError:'',uploadMessage:st.id?'':'Archivos seleccionados. Se subirán cuando guardes el producto.'});
         if (this.state.id) { const ok = await this.subirPendientes(this.state.id); if (ok && this.state.esNuevo) this.props.onProductoCreado(this.state.id); }
       },
-      costText: soles(cost),
-      floorText: soles(cost),
+      costText: cost === null ? '—' : soles(cost),
+      costNote: resumen.razon === 'sin_stock' ? 'Sin lotes disponibles con stock.' : resumen.razon === 'costo_pendiente' ? 'Hay lotes con costo cero o inválido; revisa sus costos.' : 'Promedio ponderado del stock disponible, sin IGV.',
+      floorText: piso === null ? '—' : soles(piso),
+      floorNote: !comparable ? 'El producto tiene variantes: consulta el margen de cada una abajo.' : cost === null ? 'Registra lotes con stock y costo para estimar el margen.' : typeof incluyeIgv !== 'boolean' ? 'No se pudo cargar la configuración de IGV.' : 'Estimación con costos sin IGV; no incluye otros gastos. El aviso aparece con margen menor al 25 %.',
+      taxNote: typeof incluyeIgv !== 'boolean' ? 'Configuración de IGV no disponible.' : incluyeIgv ? 'Precios de venta incluyen IGV; se excluye para calcular el margen.' : 'Precios de venta sin IGV; el margen se calcula sin IGV.',
       tiers: TIERS.map((t) => {
         const v = st.prices[t[0]] || 0;
-        const m = v > 0 ? (v - cost) / v : -1;
-        const s = m < 0 ? ['Pierdes', '#FDE4E2', '#8E1C14', BAD] : m < 0.25 ? ['Margen bajo', '#FFF4D6', '#7A4A00', WARN] : ['Bien', '#E4F4E7', '#1B5E20', OK];
+        const m = comparable ? calcularMargen(v,cost,tasa,incluyeIgv) : null;
+        const s = m === null ? [vcount ? 'Ver variantes' : v <= 0 ? 'Sin precio' : 'Sin costo', '#EFEFEC', '#666666', WARN] : m < 0 ? ['Pierdes', '#FDE4E2', '#8E1C14', BAD] : m < 0.25 ? ['Margen bajo', '#FFF4D6', '#7A4A00', WARN] : ['Bien', '#E4F4E7', '#1B5E20', OK];
         return {
           name: t[1], who: t[2], minQty: t[3], aria: 'Precio ' + t[1], val: String(v),
           change: (e) => { const n = parseFloat((e && e.target && e.target.value) || '0'); this.setState({ prices: Object.assign({}, st.prices, { [t[0]]: isNaN(n) ? 0 : n }), saved: false }); },
-          margin: m < 0 ? '−' + Math.round(-m * 100) + '%' : Math.round(m * 100) + '%',
-          w: Math.max(0, Math.min(100, Math.round(m * 200))) + '%',
+          margin: porcentaje(m),
+          w: Math.max(0, Math.min(100, Math.round((m ?? 0) * 200))) + '%',
           sLabel: s[0], sBg: s[1], sFg: s[2], sIcon: s[3]
         };
       }),
@@ -168,12 +181,16 @@ class Component extends DesignLogic {
         const key = claveVariante(atributos);
         const existente = (this.props.productoActual?.variantes || []).find(v => claveVariante(v.atributos) === key);
         const stock = existente?.stock || 0;
+        const costoVariante = resumenCosto(lotes.filter(l => l.varianteId === existente?.id), hoy).costo;
+        const precioVariante = st.preciosVariantes[key] === '' || st.preciosVariantes[key] == null ? pub : Number(st.preciosVariantes[key]);
+        const margenVariante = calcularMargen(precioVariante,costoVariante,tasa,incluyeIgv);
         return {
           name: nombreVariante(atributos),
           sku: existente?.sku || 'Se asigna al guardar',
           codigoProveedor: st.codigosVariantes[key] || '', setCodigoProveedor: e => this.setState({codigosVariantes:{...this.state.codigosVariantes,[key]:e.target.value},saved:false}),
           escaneando: st.scanningVariante === key, abrirEscaner: () => this.setState({scanningVariante:key}), cerrarEscaner: () => this.setState({scanningVariante:''}), detectarCodigo: value => this.setState({codigosVariantes:{...this.state.codigosVariantes,[key]:value},scanningVariante:'',saved:false}),
           codigoInterno: existente?.sku || '',
+          costoMargen: costoVariante === null ? 'Sin costo' : `${soles(costoVariante)} · ${porcentaje(margenVariante)}`,
           price: st.preciosVariantes[key] ?? '', setPrice: e => this.setState({ preciosVariantes: { ...st.preciosVariantes, [key]:e.target.value }, saved:false }),
           stock: stock ? stock + ' u.' : 'Sin stock',
           fg: stock ? (stock < 5 ? '#7A4A00' : '#1B5E20') : '#8E1C14',
@@ -425,7 +442,7 @@ export default function ProductoEditar(props) {
                       {"Precios por lista"}
                     </span>
                     <span style={{ "fontSize": "12px", "color": "#8C8C8C" }}>
-                      {"El margen se calcula con el costo promedio de los lotes con stock"}
+                      {"Estimación según el costo de lotes disponibles"}
                     </span>
                   </span>
                   <div style={{ "display": "flex", "gap": "12px", "flexWrap": "wrap" }}>
@@ -437,7 +454,7 @@ export default function ProductoEditar(props) {
                         {lookup(v, "costText")}
                       </span>
                       <span style={{ "fontSize": "12px", "color": "#BDBDBD" }}>
-                        {"Solo lectura · se actualiza al ingresar lotes"}
+                        {lookup(v, "costNote")}
                       </span>
                     </div>
                     <div style={{ "flex": "2 1 320px", "borderRadius": "22px", "background": "#FFF1E6", "color": "#8A3B0A", "padding": "18px", "display": "flex", "gap": "12px", "alignItems": "flex-start" }}>
@@ -446,11 +463,11 @@ export default function ProductoEditar(props) {
                       </svg>
                       <span style={{ "fontSize": "13px", "lineHeight": "1.5" }}>
                         <strong>
-                          {"Precio mínimo sin perder: "}
+                          {"Precio de equilibrio estimado: "}
                           {lookup(v, "floorText")}
                           {"."}
                         </strong>
-                        {" Por debajo de ese precio vendes a pérdida. Te avisamos si una lista deja menos de 25 % de margen."}
+                        {" "}{lookup(v, "floorNote")}<br/>{lookup(v, "taxNote")}
                       </span>
                     </div>
                   </div>
@@ -551,6 +568,7 @@ export default function ProductoEditar(props) {
                             {"Precio público"}
                           </th>
                           <th style={{ "padding": "8px 10px", "fontWeight": "600" }}>Código del proveedor (opcional)</th>
+                          <th style={{ "padding": "8px 10px", "fontWeight": "600" }}>Costo sin IGV · margen bruto</th>
                           <th style={{ "padding": "8px 10px", "fontWeight": "600" }}>
                             {"Stock"}
                           </th>
@@ -570,6 +588,7 @@ export default function ProductoEditar(props) {
                                 <input type="number" min="0" step="0.01" aria-label={`Precio público ${r.name}`} value={r.price} onChange={r.setPrice} placeholder="Precio del producto" style={{ width:150,maxWidth:'100%',border:'1px solid #e4e4e0',borderRadius:10,padding:8 }} />
                               </td>
                               <td style={{padding:'12px 10px'}}><input aria-label={`Código del proveedor ${r.name}`} maxLength={80} value={r.codigoProveedor} onChange={r.setCodigoProveedor} placeholder="Opcional" style={{width:160,border:'1px solid #e4e4e0',borderRadius:10,padding:8}} /><button type="button" onClick={r.abrirEscaner} aria-label={`Escanear código ${r.name}`} style={{marginLeft:6,border:0,borderRadius:10,padding:8,cursor:'pointer'}}>Escanear</button>{r.escaneando && <EscanerCodigo onDetectar={r.detectarCodigo} onCerrar={r.cerrarEscaner}/>}</td>
+                              <td style={{padding:'12px 10px',whiteSpace:'nowrap'}}>{r.costoMargen}</td>
                               <td style={{ "padding": "12px 10px" }}>
                                 <span style={{ "display": "inline-flex", "alignItems": "center", "gap": "6px", "fontWeight": "700", "color": lookup(r, "fg") }}>
                                   <svg width={"12"} height={"12"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.6"} strokeLinecap={"round"} strokeLinejoin={"round"} aria-hidden={"true"}>

@@ -6,6 +6,7 @@ import { DesignImport } from "../native-view";
 import { DesignLogic, DesignHost, lookup, assetSrc, truthy } from "../design-runtime";
 import { nombreVariante } from '../variantes';
 import { estadoLote } from '../inventario-lotes.mjs';
+import { resumenCosto, calcularMargen } from '../margen-producto.mjs';
 import { opcionesCategoria, perteneceACategoria, rutaCategoria } from '../categoria-jerarquia';
 
 class Component extends DesignLogic {
@@ -47,7 +48,7 @@ class Component extends DesignLogic {
     const PROD = this.props.apiProductosAdminState === 'success'
       ? (this.props.apiProductosAdmin || []).map((p) => ({
           id: p.id, estadoProducto: p.estado, name: p.nombre, sku: p.sku, cat: p.categoria || 'Sin categoría', categoriaId: p.categoriaId || null, variantes: p.variantes || [],
-          price: Number(p.precio || 0), min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
+          price: Number(p.precios?.['Público'] ?? p.precio ?? 0), tasaIgv: p.tasaIgv, costoCalculado: resumenCosto(p.lotes, new Intl.DateTimeFormat('en-CA',{timeZone:'America/Lima',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())).costo, min: Number(p.stockMinimo || 0), img: p.imagen || 'a58999411e32d7481815ba8cdc175e97',
           lots: (p.lotes || []).map(l => ({ ...LOT(l.codigo, [l.proveedor?.nombre || 'Sin proveedor', l.variante && nombreVariante(l.variante.atributos)].filter(Boolean).join(' · '), new Date(l.fechaIngreso).toLocaleDateString('es-PE'), l.existencias.reduce((n,x) => n + x.cantidadFisica, 0), l.existencias.reduce((n,x) => n + x.cantidadFisica - x.cantidadReservada, 0), l.costoUnitario, l.existencias.map(x => x.almacen.nombre).join(', '), l.garantiaHasta ? new Date(l.garantiaHasta).toLocaleDateString('es-PE') : '—', estadoLote(l.estado, l.existencias.reduce((n,x) => n + Number(x.cantidadFisica), 0), l.existencias.reduce((n,x) => n + Number(x.cantidadReservada), 0))), id: l.id, estadoReal: l.estado, existencias: l.existencias })),
           stockDisponible: Number(p.stockDisponible || 0),
         }))
@@ -142,7 +143,6 @@ class Component extends DesignLogic {
       ],
       stockValue: totalValue.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       retailValue: retail.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-      potMargin: (retail ? Math.round(((retail - totalValue) / retail) * 100) : 0) + '%',
       byCat: catArr.map(([name, v]) => ({ name, v: money(v, 0), w: Math.round((v / catArr[0][1]) * 100) + '%' })),
       health: ['Disponible', 'Stock bajo', 'Agotado'].map((k) => ({ name: k, n: String(counts[k]), w: Math.max(3, Math.round((counts[k] / enrich.length) * 100)) + '%', c: SS[k][3], icon: SS[k][2],
         note: k === 'Disponible' ? 'Sobre el mínimo' : k === 'Stock bajo' ? 'Por debajo del mínimo' : 'Sin unidades para vender',
@@ -162,7 +162,7 @@ class Component extends DesignLogic {
           name: p.name, sku: p.sku, cat: p.cat, enBorrador:p.estadoProducto === 'borrador', img: p.img.startsWith('http') || p.img.startsWith('/') ? p.img : B + p.img,
           lotsActive: String(active.length), lotsNote: 'disponibles',
           stock: String(p.stock), min: String(p.min), w: (p.min ? Math.min(100, Math.round((p.stock / (p.min * 3)) * 100)) : (p.stock ? 100 : 0)) + '%', barC: SS[p.state][3],
-          cost: p.stock > 0 ? money(p.avg) : '—', price: money(p.price), margin: p.stock > 0 && p.price ? Math.round(((p.price - p.avg) / p.price) * 100) + '%' : '—',
+          cost: p.costoCalculado == null ? '—' : money(p.costoCalculado), price: money(p.price), margin: (()=>{const m=p.variantes?.length ? null : calcularMargen(p.price,p.costoCalculado,p.tasaIgv,this.props.preciosIncluyenIgv);return m===null?'—':(m*100).toFixed(1)+'%'})(),
           status: p.state, sBg: SS[p.state][0], sFg: SS[p.state][1], sIcon: SS[p.state][2],
           border: open ? '#E8701F' : '#FFFFFF', open, expanded: open ? 'true' : 'false', chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
           toggle: () => this.setState({ open: open ? null : p.id }),
@@ -326,8 +326,7 @@ export default function Inventario(props) {
                   <span style={{ "fontSize": "12px", "color": "#BDBDBD" }}>
                     {"Valor a precio de venta: S/ "}
                     {lookup(v, "retailValue")}
-                    {" · margen potencial "}
-                    {lookup(v, "potMargin")}
+                    {" · estimado con precio público"}
                   </span>
                   {(lookup(v, "byCat") || []).map((c, index2) => (
                     <Fragment key={index2}>
@@ -557,7 +556,7 @@ export default function Inventario(props) {
                               <span style={{ "textAlign": "right", "fontSize": "13px", "fontWeight": "700" }}>
                                 {lookup(p, "price")}
                               </span>
-                              <span style={{ "textAlign": "right", "fontSize": "13px", "fontWeight": "700", "color": "#1B5E20" }}>
+                              <span style={{ "textAlign": "right", "fontSize": "13px", "fontWeight": "700", "color": "#111111" }}>
                                 {lookup(p, "margin")}
                               </span>
                               <span style={{ "justifySelf": "start", "display": "inline-flex", "alignItems": "center", "gap": "6px", "padding": "4px 10px", "borderRadius": "999px", "background": lookup(p, "sBg"), "color": lookup(p, "sFg"), "fontSize": "11px", "fontWeight": "700", "whiteSpace": "nowrap" }}>
@@ -728,7 +727,7 @@ export default function Inventario(props) {
                         <input type={"number"} min="0" value={lookup(v, "cantidad")} onChange={lookup(v, "setCantidad")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                       </label>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>
-                        {"Costo unitario (S/)"}
+                        {"Costo unitario sin IGV (S/)"}
                         <input type={"number"} min="0" step="0.01" value={lookup(v, "costo")} onChange={lookup(v, "setCosto")} style={{ "height": "44px", "border": "none", "borderRadius": "14px", "padding": "0 12px", "background": "#FFFFFF", "fontFamily": "inherit", "fontSize": "13px" }} />
                       </label>
                       <label style={{ "display": "flex", "flexDirection": "column", "gap": "6px", "fontSize": "12px", "fontWeight": "700" }}>

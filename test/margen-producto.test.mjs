@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {resumenCosto,calcularMargen,precioEquilibrio} from '../app/margen-producto.mjs';
+const hoy='2026-11-09',lote=(costo,fisica,reservada=0,extra={})=>({estado:'disponible',costoUnitario:costo,existencias:[{cantidadFisica:fisica,cantidadReservada:reservada}],...extra});
+assert.equal(resumenCosto([],hoy).costo,null);
+assert.equal(resumenCosto([lote(0,2)],hoy).razon,'costo_pendiente');
+assert.equal(resumenCosto([lote(50,10,2),lote(70,2),lote(5,10,0,{fechaVencimiento:'2026-11-08T00:00:00.000Z'}),lote(1,5,0,{estado:'en_revision'})],hoy).costo,54);
+assert.equal(calcularMargen(59.9,null,.18,true),null);
+assert.ok(Math.abs(calcularMargen(59.9,50,.18,true)-0.01502504)<1e-7);
+assert.ok(Math.abs(calcularMargen(59.9,50,.18,false)-0.16527546)<1e-7);
+assert.ok(calcularMargen(30,50,.18,true)<0);
+assert.equal(precioEquilibrio(50,.18,true),59);
+assert.equal(precioEquilibrio(50.001,.18,true),59.01);
+assert.equal(precioEquilibrio(50.001,.18,false),50.01);
+console.log('Margen, IGV, costo ponderado, reservas, vencimientos y ausencia de costo verificados.');

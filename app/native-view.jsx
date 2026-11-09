@@ -229,6 +229,7 @@ function ConnectedView({ name }) {
     pedidoError={transicionarPedido.error?.message ?? ""}
     onAvanzarPedido={(id, estado) => transicionarPedido.mutate({ id, estado })}
     productoActual={productosAdmin.data?.datos.find(p => p.id === productoId) || null}
+    preciosIncluyenIgv={productosAdmin.data?.configuracion?.preciosIncluyenIgv}
     categorias={categorias.data?.datos || []} estado={categorias.status} error={categorias.error?.message || ''} reintentar={() => categorias.refetch()}
     marcas={marcas.data?.datos || []} marcasEstado={marcas.status} marcasError={marcas.error?.message || ''} reintentarMarcas={() => marcas.refetch()} guardarMarca={(id, datos) => marcaMutation.mutateAsync({ id, datos })} marcaPendiente={marcaMutation.isPending}
     guardarCategoria={(id, datos) => categoriaMutation.mutateAsync({ id, datos })} pendiente={categoriaMutation.isPending}
