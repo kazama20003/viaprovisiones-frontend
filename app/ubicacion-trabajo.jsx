@@ -17,9 +17,11 @@ export function useUbicacionTrabajo() {
 export default function SelectorUbicacion({compacto=false}) {
   const u=useUbicacionTrabajo();
   if(!u.permitido)return null;
+  const etiqueta = a => `${a.tipo === 'tienda' ? 'Tienda' : a.tipo === 'almacen' ? 'Almacén' : 'Ubicación'} · ${a.nombre}${a.sucursal?.nombre ? ' — ' + a.sucursal.nombre : ''}`;
+  const seleccionada = u.almacenes.find(a => a.id === u.actual?.id) || u.actual;
   return <div className={'via-work-location'+(compacto?' is-compact':'')}>
-    <label><span>Ubicación de trabajo</span><select aria-label="Ubicación de trabajo" value={u.actual?.id||''} disabled={u.pendiente||u.guardando} onChange={e=>u.cambiar(e.target.value||null).catch(()=>{})}>
-      <option value="">Seleccionar ubicación</option>{u.almacenes.map(a=><option key={a.id} value={a.id}>{a.sucursal?.nombre ? a.sucursal.nombre+' · ' : ''}{a.nombre}</option>)}
+    <label><span>Ubicación de trabajo</span><select aria-label="Ubicación de trabajo: tienda o almacén" title={seleccionada ? etiqueta(seleccionada) : 'Selecciona la tienda o almacén donde trabajas'} value={u.actual?.id||''} disabled={u.pendiente||u.guardando} onChange={e=>u.cambiar(e.target.value||null).catch(()=>{})}>
+      <option value="">Seleccionar ubicación</option>{u.almacenes.map(a=><option key={a.id} value={a.id}>{etiqueta(a)}</option>)}
     </select></label>
     {u.error&&<span role="alert">{u.error}</span>}
   </div>;
