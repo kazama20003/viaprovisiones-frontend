@@ -1,0 +1,10 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import 'leaflet/dist/leaflet.css';
+export default function SelectorMapa({latitud,longitud,onChange}) {
+ const host=useRef(null),mapa=useRef(null),marca=useRef(null),cambio=useRef(onChange),[error,setError]=useState(''),[listo,setListo]=useState(false);
+ cambio.current=onChange;
+ useEffect(()=>{let cancelado=false;let mapaLocal;import('leaflet').then(L=>{if(cancelado||!host.current)return;mapaLocal=L.map(host.current).setView([-16.409,-71.537],13);mapa.current=mapaLocal;setListo(true);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(mapaLocal);mapaLocal.on('click',e=>cambio.current(e.latlng.lat.toFixed(6),e.latlng.lng.toFixed(6)));}).catch(()=>{if(!cancelado)setError('No se pudo cargar el mapa. Puedes ingresar las coordenadas manualmente.');});return()=>{cancelado=true;mapaLocal?.remove();mapa.current=null;marca.current=null}},[]);
+ useEffect(()=>{let activo=true;const a=Number(latitud),b=Number(longitud);if(!mapa.current||latitud===''||longitud===''||!Number.isFinite(a)||!Number.isFinite(b)||a< -90||a>90||b< -180||b>180){marca.current?.remove();marca.current=null;return}import('leaflet').then(L=>{if(!activo||!mapa.current)return;if(!marca.current){marca.current=L.circleMarker([a,b],{radius:9,color:'#111',fillColor:'#e8701f',fillOpacity:1,weight:2}).addTo(mapa.current);mapa.current.setView([a,b],15);}else marca.current.setLatLng([a,b]);});return()=>{activo=false}},[latitud,longitud,listo]);
+ return <div><div ref={host} role="application" aria-label="Mapa para seleccionar ubicación" style={{height:260,borderRadius:16,background:'#e8e8e5',zIndex:0}}/>{error&&<p role="alert" style={{fontSize:12,color:'#8e1c14'}}>{error}</p>}<p style={{fontSize:12,color:'#777'}}>Haz clic en el mapa para marcar el punto. El centro inicial es una referencia, no se guarda hasta seleccionarlo.</p></div>;
+}
