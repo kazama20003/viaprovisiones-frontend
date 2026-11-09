@@ -90,7 +90,8 @@ class Component extends DesignLogic {
       error: st.error, saving: st.saving, dismiss: () => this.setState({ saved: false }),
       save: async () => {
         if (this.state.saving) return;
-        if (!st.name.trim() || !st.sku.trim()) { this.setState({ error: 'Completa el nombre y el código SKU.' }); return; }
+        if (!st.name.trim()) { this.setState({ error: 'Completa el nombre del producto.' }); return; }
+        if (st.id && !st.sku.trim()) { this.setState({ error: 'El SKU de un producto guardado no puede estar vacío.' }); return; }
         if (errorVariantes) { this.setState({ error: errorVariantes }); return; }
         const preciosVariantes = {};
         for (const atributos of preparado.combinaciones) { const key = claveVariante(atributos); const value = st.preciosVariantes[key]; if (value === '' || value == null) preciosVariantes[key] = null; else if (!Number.isFinite(Number(value)) || Number(value) < 0) { this.setState({ error:'El precio de la variante no es válido.' }); return; } else preciosVariantes[key] = Number(value); }
@@ -98,7 +99,7 @@ class Component extends DesignLogic {
         this.setState({ saving: true, error: '', saved: false });
         try {
           const result = await this.props.onGuardarProducto(st.id, { nombre: st.name, sku: st.sku, marca: st.marca, codigoBarras: st.codigoBarras, descripcion: st.desc, estado: ({ Publicado: 'publicado', Borrador: 'borrador', Oculto: 'oculto' })[st.status], categoriaId: st.categoria || null, datosAdicionales: { peso: st.peso, medidas: st.medidas, garantia: st.garantia, tipoEnvio: st.tipoEnvio, etiquetas: st.tags, colores: preparado.atributos.find(a => a.nombre.toLocaleLowerCase('es') === 'color')?.valores || [], capacidades: preparado.atributos.find(a => a.nombre.toLocaleLowerCase('es') === 'capacidad')?.valores || [], atributosVariantes: preparado.atributos }, preciosVariantes, visibleEnTienda: st.visible, destacado: st.featured, permiteDelivery: st.delivery, permiteAgencia: st.agency, permiteRecojo: st.pickup, stockMinimo: st.minStock, precios: st.prices });
-          this.setState({ id: result.datos.id, saving: false, saved: true });
+          this.setState({ id: result.datos.id, sku: result.datos.sku, saving: false, saved: true });
         } catch (error) { this.setState({ saving: false, error: error.message || 'No se pudo guardar el producto.' }); }
       },
       mainImg: principal?.url || '',
@@ -318,7 +319,8 @@ export default function ProductoEditar(props) {
                     </label>
                     <label className={"pe-lab"}>
                       {"Código / SKU"}
-                      <input className={"pe-in"} value={lookup(v, "sku")} onChange={lookup(v, "setSku")} style={{ "fontVariantNumeric": "tabular-nums" }} />
+                      <input className={"pe-in"} value={lookup(v, "sku")} onChange={lookup(v, "setSku")} placeholder="Se genera al guardar" maxLength={60} style={{ "fontVariantNumeric": "tabular-nums" }} />
+                      <span style={{fontSize:12,color:'#6B6B6B'}}>Déjalo vacío para generarlo al guardar, o escribe tu propio código.</span>
                     </label>
                     <label className={"pe-lab"}>
                       {"Código de barras"}
