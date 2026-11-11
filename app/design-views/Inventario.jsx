@@ -244,6 +244,7 @@ export default function Inventario(props) {
                   </span>
                 </span>
                 <span style={{ "flex": "1" }}></span>
+                <DesignLink href="/compras" style={{display:'inline-flex',alignItems:'center',gap:10,minHeight:52,padding:'0 20px',borderRadius:999,background:'#fff',color:'#111',textDecoration:'none',fontSize:14,fontWeight:700,border:'1px solid #deded9'}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>Recibir una compra</DesignLink>
                 <DesignLink href={"/producto/editar"} style={{ "display": "inline-flex", "alignItems": "center", "gap": "10px", "minHeight": "52px", "padding": "0 22px", "borderRadius": "999px", "background": "#111111", "color": "#FFFFFF", "textDecoration": "none", "fontSize": "14px", "fontWeight": "700", "whiteSpace": "nowrap" }}>
                   <svg width={"16"} height={"16"} viewBox={"0 0 24 24"} fill={"none"} stroke={"currentColor"} strokeWidth={"2.4"} strokeLinecap={"round"} aria-hidden={"true"}><path d={"M12 5v14M5 12h14"}></path></svg>
                   {"Crear producto"}
